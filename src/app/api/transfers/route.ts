@@ -52,13 +52,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { product_id, from_store_id, to_store_id } = body;
+    const { product_id, to_store_id } = body;
+    let { from_store_id } = body;
 
-    if (!product_id || !from_store_id || !to_store_id) {
+    if (!product_id || !to_store_id) {
       return NextResponse.json(
-        { error: 'Champs requis: product_id, from_store_id, to_store_id' },
+        { error: 'Champs requis: product_id, to_store_id' },
         { status: 400 }
       );
+    }
+
+    // Auto-detect from_store_id from product if not provided
+    if (!from_store_id) {
+      const { data: prod } = await supabase.from('products').select('store_id').eq('id', product_id).single();
+      if (prod) from_store_id = prod.store_id;
     }
 
     if (from_store_id === to_store_id) {

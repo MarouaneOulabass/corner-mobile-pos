@@ -64,6 +64,11 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get('x-user-id');
 
     // Validate required fields
+    const userStore = request.headers.get('x-user-store');
+    if (!body.store_id && userStore) {
+      body.store_id = userStore;
+    }
+
     const required = ['product_type', 'brand', 'model', 'condition', 'purchase_price', 'selling_price', 'store_id'];
     const missing = required.filter((f) => !body[f] && body[f] !== 0);
     if (missing.length > 0) {

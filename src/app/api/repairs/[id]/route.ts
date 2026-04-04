@@ -21,7 +21,7 @@ export async function GET(
 
     // Fetch status logs with user info
     const { data: logs } = await supabase
-      .from('repair_status_logs')
+      .from('repair_status_log')
       .select('*, user:users(*)')
       .eq('repair_id', params.id)
       .order('changed_at', { ascending: true });
@@ -82,7 +82,7 @@ export async function PATCH(
 
     // If status changed, create status log
     if (body.status && body.status !== current.status) {
-      await supabase.from('repair_status_logs').insert({
+      await supabase.from('repair_status_log').insert({
         repair_id: params.id,
         status: body.status,
         changed_by: userId,
@@ -114,7 +114,7 @@ export async function PATCH(
 
     // Fetch updated logs
     const { data: logs } = await supabase
-      .from('repair_status_logs')
+      .from('repair_status_log')
       .select('*, user:users(*)')
       .eq('repair_id', params.id)
       .order('changed_at', { ascending: true });

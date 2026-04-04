@@ -60,18 +60,43 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get('x-user-id');
     const userStore = request.headers.get('x-user-store');
 
+    // Auto-create customer if phone provided but no customer_id
+    let customerId = body.customer_id || null;
+    if (!customerId && body.customer_phone) {
+      const { data: existing } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('phone', body.customer_phone)
+        .maybeSingle();
+
+      if (existing) {
+        customerId = existing.id;
+      } else {
+        const { data: newCust } = await supabase
+          .from('customers')
+          .insert({
+            name: body.customer_name || 'Client',
+            phone: body.customer_phone,
+            whatsapp: body.customer_phone,
+          })
+          .select('id')
+          .single();
+        if (newCust) customerId = newCust.id;
+      }
+    }
+
     // Validate required fields
-    const required = ['customer_id', 'device_brand', 'device_model', 'problem', 'estimated_cost'];
+    const required = ['device_brand', 'device_model', 'problem'];
     const missing = required.filter((f) => !body[f] && body[f] !== 0);
-    if (missing.length > 0) {
+    if (missing.length > 0 || !customerId) {
       return NextResponse.json(
-        { error: `Champs requis manquants: ${missing.join(', ')}` },
+        { error: `Champs requis manquants: ${[...missing, !customerId ? 'customer' : ''].filter(Boolean).join(', ')}` },
         { status: 400 }
       );
     }
 
     const repair = {
-      customer_id: body.customer_id,
+      customer_id: customerId,
       store_id: body.store_id || userStore,
       technician_id: body.technician_id || null,
       device_brand: body.device_brand,
@@ -97,7 +122,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create initial status log
-    await supabase.from('repair_status_logs').insert({
+    await supabase.from('repair_status_log').insert({
       repair_id: data.id,
       status: 'received',
       changed_by: userId,

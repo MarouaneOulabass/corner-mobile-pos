@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProductType, ProductCondition } from '@/types';
 import { validateIMEI, conditionLabels, formatPrice } from '@/lib/utils';
+import IMEIScanner from '@/components/features/IMEIScanner';
 
 const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Oppo', 'Realme', 'Tecno', 'Infinix', 'Nokia', 'Autre'];
 const STORAGES = ['16 Go', '32 Go', '64 Go', '128 Go', '256 Go', '512 Go', '1 To'];
@@ -216,24 +217,27 @@ export default function AddProductPage() {
         {form.product_type === 'phone' && (
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">IMEI</label>
-            <div className="relative">
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={15}
-                placeholder="Entrer ou scanner l'IMEI"
-                value={form.imei}
-                onChange={(e) => updateField('imei', e.target.value.replace(/\D/g, ''))}
-                onBlur={handleImeiBlur}
-                className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-                  errors.imei ? 'border-red-400' : 'border-gray-200'
-                }`}
-              />
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={15}
+                  placeholder="Entrer ou scanner l'IMEI"
+                  value={form.imei}
+                  onChange={(e) => updateField('imei', e.target.value.replace(/\D/g, ''))}
+                  onBlur={handleImeiBlur}
+                  className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+                    errors.imei ? 'border-red-400' : 'border-gray-200'
+                  }`}
+                />
               {imeiChecking && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="w-4 h-4 border-2 border-[#2AA8DC] border-t-transparent rounded-full animate-spin" />
                 </div>
               )}
+              </div>
+              <IMEIScanner onScan={(imei) => updateField('imei', imei)} />
             </div>
             {errors.imei && <p className="text-xs text-red-500 mt-1">{errors.imei}</p>}
           </div>

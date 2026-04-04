@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Customer, User } from '@/types';
+import IMEIScanner from '@/components/features/IMEIScanner';
 
 const commonProblems = [
   'Écran cassé',
@@ -290,13 +291,16 @@ export default function NewRepairPage() {
             required
             className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
           />
-          <input
-            type="text"
-            placeholder="IMEI (optionnel)"
-            value={imei}
-            onChange={(e) => setImei(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="IMEI (optionnel)"
+              value={imei}
+              onChange={(e) => setImei(e.target.value)}
+              className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+            />
+            <IMEIScanner onScan={(value) => setImei(value)} />
+          </div>
         </section>
 
         {/* Problem Section */}

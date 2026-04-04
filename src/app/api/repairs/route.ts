@@ -30,10 +30,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      // Search by device or customer — use inner join filter on customer
-      query = query.or(
-        `device_brand.ilike.%${search}%,device_model.ilike.%${search}%,imei.ilike.%${search}%,customer.name.ilike.%${search}%,customer.phone.ilike.%${search}%`
-      );
+      const sanitized = search.replace(/[^a-zA-Z0-9\s\-àâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ]/g, '');
+      if (sanitized) {
+        // Search by device or customer — use inner join filter on customer
+        query = query.or(
+          `device_brand.ilike.%${sanitized}%,device_model.ilike.%${sanitized}%,imei.ilike.%${sanitized}%,customer.name.ilike.%${sanitized}%,customer.phone.ilike.%${sanitized}%`
+        );
+      }
     }
 
     const from = (page - 1) * limit;

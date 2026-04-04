@@ -14,6 +14,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   const isPublicPath = publicPaths.some(p => pathname.startsWith(p));
+  const isFullscreenPath = pathname === '/pos';
 
   useEffect(() => {
     if (!loading && !user && !isPublicPath) {
@@ -38,6 +39,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   }
 
   if (!user) return null;
+
+  // Full-screen pages (e.g. POS): render without Header/BottomNav
+  if (isFullscreenPath) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

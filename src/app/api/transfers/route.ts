@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       .from('products')
       .update({
         store_id: to_store_id,
-        status: 'transferred',
+        status: 'in_stock',
         updated_at: new Date().toISOString(),
       })
       .eq('id', product_id);

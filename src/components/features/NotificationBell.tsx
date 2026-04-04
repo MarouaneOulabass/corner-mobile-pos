@@ -10,6 +10,7 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showPanel, setShowPanel] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
@@ -21,7 +22,7 @@ export default function NotificationBell() {
         setUnreadCount(data.unread_count || 0);
       }
     } catch {
-      // silently fail
+      setError('Erreur de chargement');
     }
   }, [user]);
 
@@ -63,7 +64,9 @@ export default function NotificationBell() {
             <div className="px-4 py-3 border-b border-gray-100">
               <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
             </div>
-            {notifications.length === 0 ? (
+            {error ? (
+              <div className="px-4 py-4 text-center text-sm text-red-600">{error} <button onClick={() => { setError(null); fetchNotifications(); }} className="ml-2 underline">Réessayer</button></div>
+            ) : notifications.length === 0 ? (
               <p className="px-4 py-8 text-center text-sm text-gray-400">Aucune notification</p>
             ) : (
               notifications.map((n) => (

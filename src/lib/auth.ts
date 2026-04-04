@@ -1,21 +1,34 @@
 import { createServiceClient } from './supabase';
 import { User, UserRole } from '@/types';
 import { SignJWT, jwtVerify } from 'jose';
+import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || 'fallback-secret');
-const JWT_EXPIRY = '24h';
+const SALT_ROUNDS = 12;
+
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('NEXTAUTH_SECRET must be set and at least 32 characters');
+  }
+  return new TextEncoder().encode(secret);
+}
+
+const JWT_EXPIRY = '8h';
 
 export async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hash));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return bcrypt.hash(password, SALT_ROUNDS);
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  const passwordHash = await hashPassword(password);
-  return passwordHash === hash;
+  // Support legacy SHA-256 hashes (64 hex chars) for migration
+  if (hash.length === 64 && /^[a-f0-9]+$/.test(hash)) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    const legacyHash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+    return legacyHash === hash;
+  }
+  return bcrypt.compare(password, hash);
 }
 
 export async function createToken(user: User): Promise<string> {
@@ -29,7 +42,7 @@ export async function createToken(user: User): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRY)
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<{
@@ -40,7 +53,7 @@ export async function verifyToken(token: string): Promise<{
   store_id: string;
 } | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as {
       sub: string;
       email: string;
@@ -55,16 +68,24 @@ export async function verifyToken(token: string): Promise<{
 
 export async function authenticateUser(email: string, password: string): Promise<User | null> {
   const supabase = createServiceClient();
-  const passwordHash = await hashPassword(password);
 
   const { data, error } = await supabase
     .from('users')
     .select('*, store:stores(*)')
     .eq('email', email)
-    .eq('password_hash', passwordHash)
     .single();
 
   if (error || !data) return null;
+
+  const valid = await verifyPassword(password, data.password_hash);
+  if (!valid) return null;
+
+  // Migrate legacy SHA-256 hash to bcrypt on successful login
+  if (data.password_hash.length === 64 && /^[a-f0-9]+$/.test(data.password_hash)) {
+    const newHash = await hashPassword(password);
+    await supabase.from('users').update({ password_hash: newHash }).eq('id', data.id);
+  }
+
   return data as User;
 }
 

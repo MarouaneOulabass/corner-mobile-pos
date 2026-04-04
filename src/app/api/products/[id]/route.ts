@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createServiceClient();
+    const userRole = request.headers.get('x-user-role');
+    const userStore = request.headers.get('x-user-store');
 
     const { data, error } = await supabase
       .from('products')
@@ -16,6 +18,14 @@ export async function GET(
 
     if (error || !data) {
       return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
+    }
+
+    // Store scoping: non-superadmin users can only view products from their store
+    if (userRole !== 'superadmin' && userStore && data.store_id !== userStore) {
+      return NextResponse.json(
+        { error: 'Permission refusée. Ce produit n\'appartient pas à votre magasin.' },
+        { status: 403 }
+      );
     }
 
     return NextResponse.json(data);
@@ -31,10 +41,58 @@ export async function PATCH(
   try {
     const supabase = createServiceClient();
     const body = await request.json();
+    const userRole = request.headers.get('x-user-role');
+    const userStore = request.headers.get('x-user-store');
 
-    // Remove fields that shouldn't be updated directly
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _rm1, created_at: _rm2, created_by: _rm3, store: _rm4, ...updates } = body;
+    // Fetch existing product for store scoping check
+    const { data: existing, error: fetchError } = await supabase
+      .from('products')
+      .select('id, store_id, status')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
+    }
+
+    // Store scoping: non-superadmin users can only update products from their store
+    if (userRole !== 'superadmin' && userStore && existing.store_id !== userStore) {
+      return NextResponse.json(
+        { error: 'Permission refusée. Ce produit n\'appartient pas à votre magasin.' },
+        { status: 403 }
+      );
+    }
+
+    // Role-based field restrictions
+    let allowedFields: string[];
+    if (userRole === 'superadmin') {
+      // Superadmin can update all product fields (except system fields)
+      allowedFields = [
+        'product_type', 'brand', 'model', 'storage', 'color', 'condition',
+        'purchase_price', 'selling_price', 'imei', 'supplier', 'notes',
+        'purchase_date', 'store_id', 'status',
+      ];
+    } else if (userRole === 'manager') {
+      allowedFields = ['selling_price', 'notes', 'color', 'condition'];
+    } else {
+      // seller or other roles
+      allowedFields = ['notes'];
+    }
+
+    // Filter body to only allowed fields
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (key in body) {
+        updates[key] = body[key];
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: 'Aucun champ autorisé à mettre à jour pour votre rôle.' },
+        { status: 403 }
+      );
+    }
 
     const { data, error } = await supabase
       .from('products')
@@ -70,6 +128,24 @@ export async function DELETE(
       return NextResponse.json(
         { error: 'Permission refusée. Rôle manager ou supérieur requis.' },
         { status: 403 }
+      );
+    }
+
+    // Check product status — cannot delete sold products
+    const { data: product, error: fetchError } = await supabase
+      .from('products')
+      .select('id, status')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError || !product) {
+      return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
+    }
+
+    if (product.status === 'sold') {
+      return NextResponse.json(
+        { error: 'Impossible de supprimer un produit vendu.' },
+        { status: 400 }
       );
     }
 

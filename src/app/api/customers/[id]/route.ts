@@ -28,9 +28,25 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const body = await request.json();
     const supabase = createServiceClient();
 
+    // Only allow updating specific fields
+    const allowedFields = ['name', 'phone', 'whatsapp', 'email'];
+    const sanitizedBody: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (key in body) {
+        sanitizedBody[key] = body[key];
+      }
+    }
+
+    if (Object.keys(sanitizedBody).length === 0) {
+      return NextResponse.json(
+        { error: 'Aucun champ valide à mettre à jour.' },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabase
       .from('customers')
-      .update(body)
+      .update(sanitizedBody)
       .eq('id', id)
       .select()
       .single();

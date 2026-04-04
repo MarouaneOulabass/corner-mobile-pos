@@ -25,6 +25,7 @@ export default function RepairsPage() {
   const router = useRouter();
   const [repairs, setRepairs] = useState<Repair[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('all');
   const [search, setSearch] = useState('');
   const [searchDebounced, setSearchDebounced] = useState('');
@@ -50,7 +51,7 @@ export default function RepairsPage() {
         setRepairs(data.repairs || []);
       }
     } catch {
-      // silent
+      setError('Erreur de chargement');
     } finally {
       setLoading(false);
     }
@@ -69,6 +70,8 @@ export default function RepairsPage() {
   return (
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold text-gray-900">Réparations</h1>
+
+      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error} <button onClick={() => { setError(null); fetchRepairs(); }} className="ml-2 underline">Réessayer</button></div>}
 
       {/* Search */}
       <input

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { validateIMEI } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,9 +36,12 @@ export async function GET(request: NextRequest) {
     if (condition) query = query.eq('condition', condition);
 
     if (search) {
-      query = query.or(
-        `imei.ilike.%${search}%,model.ilike.%${search}%,brand.ilike.%${search}%`
-      );
+      const sanitized = search.replace(/[^a-zA-Z0-9\s\-]/g, '');
+      if (sanitized) {
+        query = query.or(
+          `imei.ilike.%${sanitized}%,model.ilike.%${sanitized}%,brand.ilike.%${sanitized}%`
+        );
+      }
     }
 
     const from = (page - 1) * limit;
@@ -76,6 +80,16 @@ export async function POST(request: NextRequest) {
         { error: `Champs requis manquants: ${missing.join(', ')}` },
         { status: 400 }
       );
+    }
+
+    // Validate IMEI with Luhn algorithm for phones
+    if (body.imei && body.product_type === 'phone') {
+      if (!validateIMEI(body.imei)) {
+        return NextResponse.json(
+          { error: 'IMEI invalide. Veuillez vérifier le numéro.' },
+          { status: 400 }
+        );
+      }
     }
 
     // Check duplicate IMEI

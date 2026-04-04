@@ -18,9 +18,12 @@ export async function GET(request: NextRequest) {
     if (phone) {
       query = query.eq('phone', phone);
     } else if (search) {
-      query = query.or(
-        `name.ilike.%${search}%,phone.ilike.%${search}%`
-      );
+      const sanitized = search.replace(/[^a-zA-Z0-9\s\-àâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ]/g, '');
+      if (sanitized) {
+        query = query.or(
+          `name.ilike.%${sanitized}%,phone.ilike.%${sanitized}%`
+        );
+      }
     }
 
     const from = (page - 1) * limit;

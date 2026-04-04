@@ -192,10 +192,10 @@ export default function ReportsPage() {
       .sort((a, b) => b.revenue - a.revenue);
     setSellers(sellersArr);
 
-    // Trend
+    // Trend - sort by raw ISO dates first, then format for display
     const trendArr = Object.entries(dailyRevenue)
-      .map(([date, rev]) => ({ date: formatDate(date), revenue: rev }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, rev]) => ({ date: formatDate(date), revenue: rev }));
     setTrend(trendArr);
 
     setLoading(false);

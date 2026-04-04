@@ -33,6 +33,7 @@ export default function StockPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   // View
+  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
   // Detail sheet
@@ -72,7 +73,7 @@ export default function StockPage() {
         }
         setTotal(data.total || 0);
       } catch {
-        // silently fail
+        setError('Erreur de chargement');
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -109,6 +110,7 @@ export default function StockPage() {
 
   return (
     <div className="px-4 pt-4">
+      {error && <div className="mx-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-3">{error} <button onClick={() => { setError(null); fetchProducts(1); }} className="ml-2 underline">Réessayer</button></div>}
       {/* Search bar */}
       <div className="flex items-center gap-2 mb-3">
         <div className="relative flex-1">

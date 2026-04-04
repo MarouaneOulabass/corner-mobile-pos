@@ -325,7 +325,7 @@ export default function AddProductPage() {
           <label className="block text-xs font-medium text-gray-500 mb-1.5">Prix d&apos;achat (MAD) *</label>
           <input
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             placeholder="0"
             value={form.purchase_price}
             onChange={(e) => updateField('purchase_price', e.target.value)}
@@ -342,7 +342,7 @@ export default function AddProductPage() {
           <div className="flex gap-2">
             <input
               type="number"
-              inputMode="numeric"
+              inputMode="decimal"
               placeholder="0"
               value={form.selling_price}
               onChange={(e) => updateField('selling_price', e.target.value)}

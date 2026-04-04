@@ -2,11 +2,23 @@ import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
 import { hashPassword } from '@/lib/auth';
 
-// POST /api/auth/setup — Initialize stores and users with proper password hashes
-// Run once to seed the database
+// POST /api/auth/setup — Initialize stores and users
+// Only works if no users exist yet (one-time setup)
 export async function POST() {
+  // Block in production unless ALLOW_SETUP=true
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_SETUP !== 'true') {
+    return NextResponse.json({ error: 'Setup désactivé en production' }, { status: 403 });
+  }
+
   try {
     const supabase = createServiceClient();
+
+    // Check if users already exist — abort if so
+    const { count } = await supabase.from('users').select('id', { count: 'exact', head: true });
+    if (count && count > 0) {
+      return NextResponse.json({ error: 'La base contient déjà des utilisateurs. Setup annulé.' }, { status: 409 });
+    }
+
     const password = await hashPassword('corner2024');
 
     // Create stores
@@ -19,7 +31,7 @@ export async function POST() {
       return NextResponse.json({ error: 'Stores: ' + storesError.message }, { status: 500 });
     }
 
-    // Create users
+    // Create users (no credentials in response)
     const users = [
       { id: 'b0000000-0000-0000-0000-000000000001', email: 'admin@cornermobile.ma', name: 'Admin Corner', role: 'superadmin', store_id: 'a0000000-0000-0000-0000-000000000001', password_hash: password },
       { id: 'b0000000-0000-0000-0000-000000000002', email: 'manager.m1@cornermobile.ma', name: 'Youssef Manager', role: 'manager', store_id: 'a0000000-0000-0000-0000-000000000001', password_hash: password },
@@ -36,8 +48,8 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      message: 'Database seeded successfully',
-      users: users.map(u => ({ email: u.email, role: u.role, password: 'corner2024' })),
+      message: 'Base initialisée. Changez les mots de passe par défaut immédiatement.',
+      users_created: users.map(u => ({ email: u.email, role: u.role })),
     });
   } catch (error) {
     return NextResponse.json({ error: 'Setup failed: ' + String(error) }, { status: 500 });

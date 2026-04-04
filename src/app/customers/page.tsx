@@ -11,6 +11,7 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerSales, setCustomerSales] = useState<Record<string, unknown>[]>([]);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
@@ -18,13 +19,18 @@ export default function CustomersPage() {
 
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
-    let query = supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(50);
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
+    try {
+      let query = supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(50);
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
+      }
+      const { data } = await query;
+      setCustomers(data || []);
+    } catch {
+      setError('Erreur de chargement');
+    } finally {
+      setLoading(false);
     }
-    const { data } = await query;
-    setCustomers(data || []);
-    setLoading(false);
   }, [search]);
 
   useEffect(() => {
@@ -74,6 +80,8 @@ export default function CustomersPage() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-gray-900">Clients</h1>
       </div>
+
+      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-4">{error} <button onClick={() => { setError(null); fetchCustomers(); }} className="ml-2 underline">Réessayer</button></div>}
 
       {/* Search */}
       <input

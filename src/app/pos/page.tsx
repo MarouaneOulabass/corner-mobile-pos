@@ -539,6 +539,7 @@ export default function POSPage() {
             <div className="flex gap-2">
               <input
                 type="number"
+                inputMode="decimal"
                 value={manualPrice}
                 onChange={(e) => setManualPrice(e.target.value)}
                 placeholder="Prix (MAD)"
@@ -623,6 +624,7 @@ export default function POSPage() {
                   <div className="flex items-center gap-1 ml-auto">
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={item.unit_price}
                       onChange={(e) => updateItemPrice(index, e.target.value)}
                       className="w-24 bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-right text-white focus:outline-none focus:ring-1 focus:ring-[#2AA8DC] focus:border-transparent"
@@ -667,6 +669,7 @@ export default function POSPage() {
               </div>
               <input
                 type="number"
+                inputMode="decimal"
                 value={discountValue}
                 onChange={(e) => setDiscountValue(e.target.value)}
                 placeholder={discountType === 'flat' ? 'Montant' : 'Pourcentage'}
@@ -782,6 +785,7 @@ export default function POSPage() {
                   <label className="text-xs text-slate-400 mb-1 block">Esp&egrave;ces</label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     value={mixteAmounts.cash}
                     onChange={(e) => setMixteAmounts({ ...mixteAmounts, cash: e.target.value })}
                     placeholder="0"
@@ -792,6 +796,7 @@ export default function POSPage() {
                   <label className="text-xs text-slate-400 mb-1 block">Carte</label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     value={mixteAmounts.card}
                     onChange={(e) => setMixteAmounts({ ...mixteAmounts, card: e.target.value })}
                     placeholder="0"

@@ -1,20 +1,30 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from '@/components/layouts/Header';
 import BottomNav from '@/components/layouts/BottomNav';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+const publicPaths = ['/login'];
+
+export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isPublicPath = publicPaths.some(p => pathname.startsWith(p));
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !isPublicPath) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isPublicPath]);
+
+  // Public pages: render without shell
+  if (isPublicPath) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

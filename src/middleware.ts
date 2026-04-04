@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { jwtVerify } from 'jose';
+import { UserRole } from '@/types';
+
+const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || 'fallback-secret');
 
 const publicPaths = ['/login', '/api/auth'];
 
@@ -31,20 +34,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  const payload = await verifyToken(token);
-  if (!payload) {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const sub = payload.sub as string;
+    const role = payload.role as UserRole;
+    const storeId = payload.store_id as string;
+
+    // Add user info to request headers for API routes
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-user-id', sub);
+    requestHeaders.set('x-user-role', role);
+    requestHeaders.set('x-user-store', storeId);
+
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  } catch {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Session invalide' }, { status: 401 });
+    }
     const response = NextResponse.redirect(new URL('/login', request.url));
     response.cookies.set('token', '', { maxAge: 0 });
     return response;
   }
-
-  // Add user info to request headers for API routes
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-user-id', payload.sub);
-  requestHeaders.set('x-user-role', payload.role);
-  requestHeaders.set('x-user-store', payload.store_id);
-
-  return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
 export const config = {

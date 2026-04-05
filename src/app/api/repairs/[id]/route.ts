@@ -68,7 +68,7 @@ export async function PATCH(
 
     // Build update object — strip fields that shouldn't be updated
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _r1, created_at: _r2, customer: _r3, technician: _r4, status_logs: _r5, ...updates } = body;
+    const { id: _r1, created_at: _r2, customer: _r3, technician: _r4, status_logs: _r5, notes: statusNote, status_note: _sn, ...updates } = body;
 
     const { data, error } = await supabase
       .from('repairs')
@@ -87,7 +87,7 @@ export async function PATCH(
         repair_id: params.id,
         status: body.status,
         changed_by: userId,
-        notes: body.status_note || null,
+        notes: statusNote || null,
       });
 
       // If new status is 'ready', notify store managers

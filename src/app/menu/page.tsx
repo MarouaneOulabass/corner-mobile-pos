@@ -6,6 +6,13 @@ import { hasPermission } from '@/lib/auth';
 
 const menuItems = [
   {
+    title: 'Historique des ventes',
+    description: 'Consulter les ventes passées',
+    href: '/sales',
+    icon: '🧾',
+    minRole: 'seller' as const,
+  },
+  {
     title: 'Réparations',
     description: 'Gérer les tickets de réparation',
     href: '/repairs',

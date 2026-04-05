@@ -4,7 +4,7 @@ import { UserRole } from '@/types';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || 'fallback-secret');
 
-const publicPaths = ['/login', '/api/auth'];
+const publicPaths = ['/login', '/api/auth', '/track', '/api/repairs/track'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

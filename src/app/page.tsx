@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatPrice } from '@/lib/utils';
@@ -17,6 +17,19 @@ interface DashboardData {
   topSeller: { name: string; total: number } | null;
 }
 
+interface StockAlerts {
+  slowMoverCount: number;
+  negativMarginCount: number;
+}
+
+interface ActivityItem {
+  id: string;
+  type: 'sale' | 'repair' | 'transfer';
+  label: string;
+  detail: string;
+  created_at: string;
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData>({
@@ -29,13 +42,31 @@ export default function DashboardPage() {
     repairsByStatus: {},
     topSeller: null,
   });
+  const [stockAlerts, setStockAlerts] = useState<StockAlerts>({ slowMoverCount: 0, negativMarginCount: 0 });
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const fetchAll = useCallback(async () => {
+    if (!user) return;
+    const isInitial = lastRefresh === null;
+    if (!isInitial) setIsRefreshing(true);
+    await fetchDashboard();
+    await Promise.all([fetchStockAlerts(), fetchActivities()]);
+    setLastRefresh(new Date());
+    if (!isInitial) {
+      setTimeout(() => setIsRefreshing(false), 600);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
-    fetchDashboard();
+    fetchAll();
+    const interval = setInterval(fetchAll, 30000);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, fetchAll]);
 
   async function fetchDashboard() {
     setLoading(true);
@@ -155,6 +186,125 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
+  async function fetchStockAlerts() {
+    const storeId = user!.store_id;
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+    const cutoff = sixtyDaysAgo.toISOString();
+
+    // Slow movers: in_stock and created more than 60 days ago
+    let slowQuery = supabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'in_stock')
+      .lt('created_at', cutoff);
+
+    if (user!.role !== 'superadmin') {
+      slowQuery = slowQuery.eq('store_id', storeId);
+    }
+
+    const { count: slowMoverCount } = await slowQuery;
+
+    // Negative margin: selling_price < purchase_price
+    let marginQuery = supabase
+      .from('products')
+      .select('id, purchase_price, selling_price')
+      .eq('status', 'in_stock');
+
+    if (user!.role !== 'superadmin') {
+      marginQuery = marginQuery.eq('store_id', storeId);
+    }
+
+    const { data: marginProducts } = await marginQuery;
+    const negativMarginCount = marginProducts
+      ? marginProducts.filter((p) => p.selling_price < p.purchase_price).length
+      : 0;
+
+    setStockAlerts({ slowMoverCount: slowMoverCount || 0, negativMarginCount });
+  }
+
+  async function fetchActivities() {
+    const storeId = user!.store_id;
+    const isSuperadmin = user!.role === 'superadmin';
+
+    // Fetch latest 5 sales
+    let salesQ = supabase
+      .from('sales')
+      .select('id, total, created_at, seller:users(name), items:sale_items(product:products(brand, model))')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (!isSuperadmin) salesQ = salesQ.eq('store_id', storeId);
+    const { data: recentSales } = await salesQ;
+
+    // Fetch latest 5 repairs
+    let repairsQ = supabase
+      .from('repairs')
+      .select('id, device_brand, device_model, created_at')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (!isSuperadmin) repairsQ = repairsQ.eq('store_id', storeId);
+    const { data: recentRepairs } = await repairsQ;
+
+    // Fetch latest 5 transfers
+    let transfersQ = supabase
+      .from('transfers')
+      .select('id, created_at, product:products(brand, model), to_store:stores!to_store_id(name)')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (!isSuperadmin) transfersQ = transfersQ.or(`from_store_id.eq.${storeId},to_store_id.eq.${storeId}`);
+    const { data: recentTransfers } = await transfersQ;
+
+    const items: ActivityItem[] = [];
+
+    if (recentSales) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const s of recentSales as any[]) {
+        const sellerName = s.seller?.name || 'Vendeur';
+        const productName = s.items?.[0]?.product
+          ? `${s.items[0].product.brand} ${s.items[0].product.model}`
+          : 'Article';
+        items.push({
+          id: `sale-${s.id}`,
+          type: 'sale',
+          label: `${sellerName} a vendu ${productName}`,
+          detail: formatPrice(s.total),
+          created_at: s.created_at,
+        });
+      }
+    }
+
+    if (recentRepairs) {
+      for (const r of recentRepairs) {
+        items.push({
+          id: `repair-${r.id}`,
+          type: 'repair',
+          label: `Nouveau ticket réparation`,
+          detail: `${r.device_brand} ${r.device_model}`,
+          created_at: r.created_at,
+        });
+      }
+    }
+
+    if (recentTransfers) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const t of recentTransfers as any[]) {
+        const productName = t.product ? `${t.product.brand} ${t.product.model}` : 'Produit';
+        const storeName = t.to_store?.name || '?';
+        items.push({
+          id: `transfer-${t.id}`,
+          type: 'transfer',
+          label: `Transfert ${productName}`,
+          detail: `→ ${storeName}`,
+          created_at: t.created_at,
+        });
+      }
+    }
+
+    // Sort by created_at desc, take top 5
+    items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setActivities(items.slice(0, 5));
+  }
+
   if (loading) {
     return (
       <div className="p-4 space-y-4">
@@ -175,9 +325,16 @@ export default function DashboardPage() {
     <div className="p-4 space-y-4">
       {/* Welcome */}
       <div className="mb-2">
-        <h1 className="text-xl font-bold text-gray-900">
-          {greeting}, {user?.name?.split(' ')[0]}
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-gray-900">
+            {greeting}, {user?.name?.split(' ')[0]}
+          </h1>
+          {lastRefresh && (
+            <span className="text-xs text-gray-400">
+              Dernière maj: {lastRefresh.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-gray-500">
           {new Date().toLocaleDateString('fr-FR', {
             weekday: 'long',
@@ -189,7 +346,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Sales Today */}
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-medium text-gray-500">Ventes aujourd&apos;hui</span>
           <span className="text-xs bg-[#2AA8DC]/10 text-[#2AA8DC] px-2 py-0.5 rounded-full font-medium">
@@ -200,7 +360,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Margin */}
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
         <span className="text-sm font-medium text-gray-500">Marge du jour</span>
         <div className="flex items-end gap-3 mt-1">
           <p className="text-2xl font-bold text-[#5BBF3E]">{formatPrice(data.marginToday)}</p>
@@ -211,7 +374,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Stock Summary */}
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
         <span className="text-sm font-medium text-gray-500 mb-3 block">Stock</span>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -226,7 +392,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Open Repairs */}
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium text-gray-500">Réparations en cours</span>
           <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
@@ -258,6 +427,70 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mt-2">
             <p className="text-lg font-bold text-white">{data.topSeller.name}</p>
             <p className="text-lg font-bold text-white">{formatPrice(data.topSeller.total)}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Stock Alerts */}
+      {(stockAlerts.slowMoverCount > 0 || stockAlerts.negativMarginCount > 0) && (
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">⚠</span>
+            <span className="text-sm font-semibold text-orange-800">Alertes stock</span>
+          </div>
+          <div className="space-y-2">
+            {stockAlerts.slowMoverCount > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-orange-700">Articles en stock depuis +60 jours</span>
+                <span className="text-sm font-bold text-orange-800 bg-orange-100 px-2 py-0.5 rounded-full">
+                  {stockAlerts.slowMoverCount}
+                </span>
+              </div>
+            )}
+            {stockAlerts.negativMarginCount > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-orange-700">Prix de vente &lt; prix d&apos;achat</span>
+                <span className="text-sm font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">
+                  {stockAlerts.negativMarginCount}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Activity Feed */}
+      {activities.length > 0 && (
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <span className="text-sm font-medium text-gray-500 mb-3 block">Activité récente</span>
+          <div className="space-y-3">
+            {activities.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-3">
+                <div className="mt-1 flex-shrink-0">
+                  <span
+                    className={`inline-block w-2 h-2 rounded-full ${
+                      activity.type === 'sale'
+                        ? 'bg-[#5BBF3E]'
+                        : activity.type === 'repair'
+                        ? 'bg-orange-400'
+                        : 'bg-[#2AA8DC]'
+                    }`}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-800 truncate">{activity.label}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">{activity.detail}</span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(activity.created_at).toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

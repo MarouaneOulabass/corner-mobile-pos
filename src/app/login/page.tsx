@@ -93,7 +93,13 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-gray-500 text-xs mt-8">
+        <div className="text-center mt-6">
+          <a href="/track" className="text-sm text-[#2AA8DC] hover:text-[#2AA8DC]/80 transition">
+            Suivre une réparation ?
+          </a>
+        </div>
+
+        <p className="text-center text-gray-500 text-xs mt-4">
           Corner Mobile &copy; {new Date().getFullYear()}
         </p>
       </div>

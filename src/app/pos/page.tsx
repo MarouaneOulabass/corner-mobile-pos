@@ -452,8 +452,19 @@ export default function POSPage() {
         </div>
       )}
 
+      {/* Top bar with navigation */}
+      <div className="flex items-center justify-between px-4 pt-3 pb-1 max-w-lg mx-auto">
+        <a href="/" className="flex items-center gap-2 text-white/70 hover:text-white transition">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="text-xs">Accueil</span>
+        </a>
+        <h1 className="text-lg font-bold">Point de vente</h1>
+        <a href="/stock" className="text-xs text-white/70 hover:text-white transition">Stock</a>
+      </div>
+
       <div className="p-4 max-w-lg mx-auto pb-48">
-        <h1 className="text-lg font-bold mb-4">Point de vente</h1>
 
         {/* Search */}
         <div className="relative mb-4">

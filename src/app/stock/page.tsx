@@ -224,9 +224,12 @@ export default function StockPage() {
   const handleCsvImport = async () => {
     if (!user) return;
     setImporting(true);
-    const errors: string[] = [];
     const totalRows = csvRows.length;
     setImportProgress({ done: 0, total: totalRows, errors: [] });
+
+    // Build all products from CSV rows
+    const products: Record<string, unknown>[] = [];
+    const skippedErrors: string[] = [];
 
     for (let i = 0; i < totalRows; i++) {
       const row = csvRows[i];
@@ -239,42 +242,47 @@ export default function StockPage() {
 
       // Skip rows with no brand or model
       if (!product.brand && !product.model) {
-        errors.push(`Ligne ${i + 2}: marque et modele manquants`);
-        setImportProgress({ done: i + 1, total: totalRows, errors: [...errors] });
+        skippedErrors.push(`Ligne ${i + 2}: marque et modele manquants`);
         continue;
       }
 
-      try {
-        const res = await fetch('/api/products', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-user-store': user.store_id,
-            'x-user-role': user.role,
-          },
-          body: JSON.stringify({
-            brand: product.brand || 'Autre',
-            model: product.model || 'Inconnu',
-            imei: product.imei || undefined,
-            storage: product.storage || undefined,
-            color: product.color || undefined,
-            condition: product.condition || 'good',
-            purchase_price: Number(product.purchase_price) || 0,
-            selling_price: Number(product.selling_price) || 0,
-            supplier: product.supplier || undefined,
-            product_type: 'phone',
-            store_id: user.store_id,
-            created_by: user.id,
-          }),
-        });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          errors.push(`Ligne ${i + 2}: ${errData.error || 'Erreur serveur'}`);
-        }
-      } catch {
-        errors.push(`Ligne ${i + 2}: Erreur reseau`);
-      }
-      setImportProgress({ done: i + 1, total: totalRows, errors: [...errors] });
+      products.push({
+        brand: product.brand || 'Autre',
+        model: product.model || 'Inconnu',
+        imei: product.imei || undefined,
+        storage: product.storage || undefined,
+        color: product.color || undefined,
+        condition: product.condition || 'good',
+        purchase_price: Number(product.purchase_price) || 0,
+        selling_price: Number(product.selling_price) || 0,
+        supplier: product.supplier || undefined,
+        product_type: 'phone',
+        store_id: user.store_id,
+        created_by: user.id,
+      });
+    }
+
+    try {
+      const res = await fetch('/api/products/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-store': user.store_id,
+          'x-user-role': user.role,
+          'x-user-id': user.id,
+        },
+        body: JSON.stringify({ products }),
+      });
+
+      const data = await res.json();
+      const apiErrors = (data.errors || []).map(
+        (e: { row: number; error: string }) => `Ligne ${e.row + 1}: ${e.error}`
+      );
+      const allErrors = [...skippedErrors, ...apiErrors];
+
+      setImportProgress({ done: totalRows, total: totalRows, errors: allErrors });
+    } catch {
+      setImportProgress({ done: totalRows, total: totalRows, errors: [...skippedErrors, 'Erreur reseau'] });
     }
 
     setImporting(false);

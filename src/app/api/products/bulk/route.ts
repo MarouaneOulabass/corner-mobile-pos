@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
 import { validateIMEI } from '@/lib/utils';
+import { journalWriteBatch } from '@/lib/backup';
 
 export async function POST(request: NextRequest) {
   try {
@@ -122,6 +123,10 @@ export async function POST(request: NextRequest) {
       }
 
       imported = data?.length || 0;
+
+      if (data && data.length > 0) {
+        void journalWriteBatch(data.map((p, i) => ({ event_type: 'product_created' as const, entity_id: p.id, entity_type: 'product' as const, user_id: userId || 'unknown', store_id: (insertData[i]?.store_id as string) || storeId || 'unknown', data: { ...insertData[i], id: p.id } })));
+      }
     }
 
     return NextResponse.json({ imported, errors }, { status: 201 });

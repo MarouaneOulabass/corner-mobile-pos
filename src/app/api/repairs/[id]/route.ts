@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
 import { validRepairTransitions } from '@/lib/utils';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(
   _request: NextRequest,
@@ -11,7 +12,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('repairs')
-      .select('*, customer:customers(*), technician:users(*)')
+      .select('*, customer:customers(*), technician:users(id, name, role, email)')
       .eq('id', params.id)
       .single();
 
@@ -22,7 +23,7 @@ export async function GET(
     // Fetch status logs with user info
     const { data: logs } = await supabase
       .from('repair_status_log')
-      .select('*, user:users(*)')
+      .select('*, user:users(id, name, role)')
       .eq('repair_id', params.id)
       .order('changed_at', { ascending: true });
 
@@ -73,7 +74,7 @@ export async function PATCH(
       .from('repairs')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', params.id)
-      .select('*, customer:customers(*), technician:users(*)')
+      .select('*, customer:customers(*), technician:users(id, name, role, email)')
       .single();
 
     if (error) {
@@ -115,9 +116,11 @@ export async function PATCH(
     // Fetch updated logs
     const { data: logs } = await supabase
       .from('repair_status_log')
-      .select('*, user:users(*)')
+      .select('*, user:users(id, name, role)')
       .eq('repair_id', params.id)
       .order('changed_at', { ascending: true });
+
+    void journalWrite({ event_type: 'repair_status_changed', entity_id: params.id, entity_type: 'repair', user_id: userId!, data: { old_status: current.status, new_status: body.status, final_cost: body.final_cost } });
 
     return NextResponse.json({ ...data, status_logs: logs || [] });
   } catch {

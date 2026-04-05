@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(request: NextRequest) {
   try {
@@ -84,6 +85,9 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    const userId = request.headers.get('x-user-id');
+    void journalWrite({ event_type: 'customer_created', entity_id: data.id, entity_type: 'customer', user_id: userId || 'system', data });
 
     return NextResponse.json(data, { status: 201 });
   } catch {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(
   request: NextRequest,
@@ -109,6 +110,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
     }
 
+    void journalWrite({ event_type: 'product_updated', entity_id: params.id, entity_type: 'product', user_id: request.headers.get('x-user-id') || 'unknown', store_id: existing.store_id, data: { old: existing, new: data } });
+
     return NextResponse.json(data);
   } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
@@ -134,7 +137,7 @@ export async function DELETE(
     // Check product status — cannot delete sold products
     const { data: product, error: fetchError } = await supabase
       .from('products')
-      .select('id, status')
+      .select('id, status, store_id')
       .eq('id', params.id)
       .single();
 
@@ -157,6 +160,8 @@ export async function DELETE(
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    void journalWrite({ event_type: 'product_deleted', entity_id: params.id, entity_type: 'product', user_id: request.headers.get('x-user-id') || 'unknown', store_id: product.store_id || 'unknown', data: product });
 
     return NextResponse.json({ success: true });
   } catch {

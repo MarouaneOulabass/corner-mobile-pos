@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -54,6 +55,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    void journalWrite({ event_type: 'customer_updated', entity_id: id, entity_type: 'customer', user_id: request.headers.get('x-user-id') || 'unknown', data: body });
 
     return NextResponse.json(data);
   } catch {

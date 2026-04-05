@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('sales')
       .select(
-        '*, seller:users(*), customer:customers(*), items:sale_items(*, product:products(*))',
+        '*, seller:users(id, name, role, email), customer:customers(*), items:sale_items(*, product:products(*))',
         { count: 'exact' }
       );
 
@@ -250,6 +251,8 @@ export async function POST(request: NextRequest) {
       .from('sales')
       .select('*, seller:users(id,name), customer:customers(*), items:sale_items(*, product:products(*))')
       .eq('id', sale.id).single();
+
+    void journalWrite({ event_type: 'sale_created', entity_id: sale.id, entity_type: 'sale', user_id: sellerId, store_id: storeId, data: completeSale || sale });
 
     return NextResponse.json(completeSale || sale, { status: 201 });
   } catch {

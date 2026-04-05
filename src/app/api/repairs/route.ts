@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('repairs')
-      .select('*, customer:customers(*), technician:users(*)', { count: 'exact' });
+      .select('*, customer:customers(*), technician:users(id, name, role, email)', { count: 'exact' });
 
     // Filter by store
     if (userRole !== 'superadmin' && userStore) {
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase
       .from('repairs')
       .insert(repair)
-      .select('*, customer:customers(*), technician:users(*)')
+      .select('*, customer:customers(*), technician:users(id, name, role, email)')
       .single();
 
     if (error) {
@@ -131,6 +132,8 @@ export async function POST(request: NextRequest) {
       changed_by: userId,
       notes: 'Réparation créée',
     });
+
+    void journalWrite({ event_type: 'repair_created', entity_id: data.id, entity_type: 'repair', user_id: userId!, store_id: userStore!, data });
 
     return NextResponse.json(data, { status: 201 });
   } catch {

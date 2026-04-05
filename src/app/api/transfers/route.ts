@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
+import { journalWrite } from '@/lib/backup';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('transfers')
       .select(
-        '*, product:products(*, store:stores(*)), from_store:stores!from_store_id(*), to_store:stores!to_store_id(*), initiator:users!initiated_by(*)'
+        '*, product:products(*, store:stores(*)), from_store:stores!from_store_id(*), to_store:stores!to_store_id(*), initiator:users!initiated_by(id, name, role, email)'
       )
       .order('created_at', { ascending: false });
 
@@ -110,7 +111,7 @@ export async function POST(request: NextRequest) {
         initiated_by: userId,
       })
       .select(
-        '*, product:products(*, store:stores(*)), from_store:stores!from_store_id(*), to_store:stores!to_store_id(*), initiator:users!initiated_by(*)'
+        '*, product:products(*, store:stores(*)), from_store:stores!from_store_id(*), to_store:stores!to_store_id(*), initiator:users!initiated_by(id, name, role, email)'
       )
       .single();
 
@@ -151,6 +152,8 @@ export async function POST(request: NextRequest) {
 
       await supabase.from('notifications').insert(notifications);
     }
+
+    void journalWrite({ event_type: 'transfer_created', entity_id: transfer.id, entity_type: 'transfer', user_id: userId!, data: { product_id, from_store_id, to_store_id } });
 
     return NextResponse.json(transfer, { status: 201 });
   } catch {

@@ -558,7 +558,7 @@ export default function POSPage() {
             <ThermalPrintButton
               receiptData={receiptESCPOS}
               fallbackHTML={receiptHTML}
-              label="Imprimer le re\u00e7u"
+              label="Imprimer le recu"
             />
 
             {/* Receipt preview button */}
@@ -602,6 +602,7 @@ export default function POSPage() {
         {showReceiptPreview && receiptHTML && (
           <ReceiptPreview
             html={receiptHTML}
+            onClose={() => setShowReceiptPreview(false)}
             onPrintBrowser={() => {
               const printWindow = window.open('', '_blank');
               if (printWindow) {

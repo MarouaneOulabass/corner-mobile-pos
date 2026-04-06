@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatPrice } from '@/lib/utils';
 import { repairStatusLabels, repairStatusColors } from '@/lib/utils';
+import GuidedTour from '@/components/features/GuidedTour';
 
 interface DashboardData {
   salesToday: number;
@@ -372,8 +373,17 @@ export default function DashboardPage() {
   const greeting = getGreeting();
   const totalOpenRepairs = Object.values(data.repairsByStatus).reduce((a, b) => a + b, 0);
 
+  const [showTour, setShowTour] = useState(false);
+  useEffect(() => {
+    const done = localStorage.getItem('corner_tour_done');
+    if (!done && !loading && user) {
+      setTimeout(() => setShowTour(true), 1500);
+    }
+  }, [loading, user]);
+
   return (
     <div className="p-4 space-y-4">
+      {showTour && <GuidedTour onComplete={() => setShowTour(false)} />}
       {/* Welcome */}
       <div className="mb-2">
         <div className="flex items-center justify-between">
@@ -398,6 +408,7 @@ export default function DashboardPage() {
 
       {/* Sales Today */}
       <div
+        data-tour="dashboard-sales"
         className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
@@ -444,6 +455,7 @@ export default function DashboardPage() {
 
       {/* Open Repairs */}
       <div
+        data-tour="dashboard-repairs"
         className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
@@ -484,6 +496,7 @@ export default function DashboardPage() {
 
       {/* Cash Session Widget */}
       <div
+        data-tour="dashboard-cash"
         className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >

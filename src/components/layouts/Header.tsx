@@ -47,6 +47,7 @@ export default function Header() {
             }}
             className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-muted)] hover:bg-[var(--surface-2)] press transition-colors"
             title="Mode sombre"
+            data-tour="header-dark"
           >
             <svg className="w-[18px] h-[18px] dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -56,7 +57,7 @@ export default function Header() {
             </svg>
           </button>
 
-          <NotificationBell />
+          <span data-tour="header-notif"><NotificationBell /></span>
 
           <div className="relative">
             <button

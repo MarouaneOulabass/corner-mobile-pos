@@ -82,6 +82,7 @@ export default function BottomNav() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  data-tour="nav-pos"
                   className="flex flex-col items-center justify-center -mt-4"
                   onClick={() => navigator.vibrate?.(10)}
                 >
@@ -101,6 +102,7 @@ export default function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                data-tour={item.href === '/stock' ? 'nav-stock' : item.href === '/menu' ? 'nav-menu' : undefined}
                 className="flex flex-col items-center justify-center min-w-[64px] min-h-[48px] gap-0.5 press"
                 onClick={() => navigator.vibrate?.(10)}
               >

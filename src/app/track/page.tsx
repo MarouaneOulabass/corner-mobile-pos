@@ -109,7 +109,7 @@ export default function TrackPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="06XXXXXXXX"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-[#2AA8DC] focus:ring-1 focus:ring-[#2AA8DC] transition"
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#2AA8DC] focus:ring-1 focus:ring-[#2AA8DC] transition"
                 required
               />
             </div>

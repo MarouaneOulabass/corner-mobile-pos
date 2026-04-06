@@ -57,10 +57,16 @@ export type EventType =
   | 'part_used_in_repair'
   | 'checklist_completed'
   | 'signature_captured'
-  | 'whatsapp_sent';
+  | 'whatsapp_sent'
+  | 'store_created'
+  | 'store_updated'
+  | 'store_deleted'
+  | 'user_created'
+  | 'user_updated'
+  | 'user_deleted';
 
 export type EntityType =
-  | 'product' | 'sale' | 'repair' | 'transfer' | 'customer' | 'user'
+  | 'product' | 'sale' | 'repair' | 'transfer' | 'customer' | 'user' | 'store'
   | 'return' | 'trade_in' | 'cash_session' | 'cash_movement'
   | 'installment' | 'gift_card' | 'loyalty' | 'commission'
   | 'clock' | 'supplier' | 'purchase_order' | 'part' | 'checklist';

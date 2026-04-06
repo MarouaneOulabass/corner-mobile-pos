@@ -136,6 +136,13 @@ const menuSections = [
         minRole: 'manager' as const,
       },
       {
+        title: 'Magasins',
+        description: 'Gerer les points de vente',
+        href: '/stores',
+        icon: '🏪',
+        minRole: 'superadmin' as const,
+      },
+      {
         title: 'Utilisateurs',
         description: 'Gérer les comptes',
         href: '/users',

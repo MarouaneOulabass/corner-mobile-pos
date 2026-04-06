@@ -85,6 +85,7 @@ export interface Product {
   // New fields
   bin_location?: string;
   warranty_months?: number;
+  quantity?: number;
 }
 
 export interface Customer {

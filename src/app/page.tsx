@@ -17,6 +17,18 @@ interface DashboardData {
   topSeller: { name: string; total: number } | null;
 }
 
+interface CashSession {
+  id: string;
+  opened_at: string;
+  opening_amount: number;
+  status: string;
+}
+
+interface ClockStatus {
+  clocked_in: boolean;
+  clocked_in_at?: string;
+}
+
 interface StockAlerts {
   slowMoverCount: number;
   negativMarginCount: number;
@@ -43,6 +55,8 @@ export default function DashboardPage() {
     topSeller: null,
   });
   const [stockAlerts, setStockAlerts] = useState<StockAlerts>({ slowMoverCount: 0, negativMarginCount: 0 });
+  const [cashSession, setCashSession] = useState<CashSession | null>(null);
+  const [clockStatus, setClockStatus] = useState<ClockStatus | null>(null);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -52,7 +66,7 @@ export default function DashboardPage() {
     const isInitial = lastRefresh === null;
     if (!isInitial) setIsRefreshing(true);
     await fetchDashboard();
-    await Promise.all([fetchStockAlerts(), fetchActivities()]);
+    await Promise.all([fetchStockAlerts(), fetchActivities(), fetchCashSession(), fetchClockStatus()]);
     setLastRefresh(new Date());
     if (!isInitial) {
       setTimeout(() => setIsRefreshing(false), 600);
@@ -305,6 +319,43 @@ export default function DashboardPage() {
     setActivities(items.slice(0, 5));
   }
 
+  async function fetchCashSession() {
+    try {
+      const res = await fetch('/api/cash/sessions?status=open');
+      if (res.ok) {
+        const data = await res.json();
+        const sessions = Array.isArray(data) ? data : data.sessions || [];
+        setCashSession(sessions.length > 0 ? sessions[0] : null);
+      } else {
+        setCashSession(null);
+      }
+    } catch {
+      setCashSession(null);
+    }
+  }
+
+  async function fetchClockStatus() {
+    try {
+      const res = await fetch('/api/clock');
+      if (res.ok) {
+        const data = await res.json();
+        setClockStatus(data);
+      } else {
+        setClockStatus(null);
+      }
+    } catch {
+      setClockStatus(null);
+    }
+  }
+
+  function formatDuration(isoDate: string): string {
+    const diff = Date.now() - new Date(isoDate).getTime();
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    if (hours > 0) return `${hours}h${minutes > 0 ? minutes.toString().padStart(2, '0') : ''}`;
+    return `${minutes}min`;
+  }
+
   if (loading) {
     return (
       <div className="p-4 space-y-4">
@@ -430,6 +481,57 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Cash Session Widget */}
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
+        <span className="text-sm font-medium text-gray-500 mb-2 block">Caisse</span>
+        {cashSession ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+              <span className="text-sm text-gray-800">
+                Caisse ouverte depuis {formatDuration(cashSession.opened_at)}
+              </span>
+            </div>
+            <span className="text-sm font-medium text-gray-900">{formatPrice(cashSession.opening_amount)}</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              <span className="text-sm text-gray-500">Caisse fermee</span>
+            </div>
+            <a href="/cash" className="text-sm font-medium text-[#2AA8DC] hover:underline">Ouvrir</a>
+          </div>
+        )}
+      </div>
+
+      {/* Clock Status Widget */}
+      <div
+        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        style={{ opacity: isRefreshing ? 0.6 : 1 }}
+      >
+        <span className="text-sm font-medium text-gray-500 mb-2 block">Pointage</span>
+        {clockStatus?.clocked_in && clockStatus.clocked_in_at ? (
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+            <span className="text-sm text-gray-800">
+              Pointe depuis {formatDuration(clockStatus.clocked_in_at)}
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              <span className="text-sm text-gray-500">Non pointe</span>
+            </div>
+            <a href="/employees/clock" className="text-sm font-medium text-[#2AA8DC] hover:underline">Pointer</a>
+          </div>
+        )}
+      </div>
 
       {/* Stock Alerts */}
       {(stockAlerts.slowMoverCount > 0 || stockAlerts.negativMarginCount > 0) && (

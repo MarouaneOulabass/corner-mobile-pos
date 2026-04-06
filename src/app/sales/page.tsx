@@ -254,6 +254,15 @@ export default function SalesPage() {
                       <p className="text-sm text-red-500">Remise: -{formatPrice(sale.discount_amount)}</p>
                     )}
 
+                    {/* Warranty badge */}
+                    {sale.items?.some((item) => item.product && (item.product.warranty_months ?? 0) > 0) && (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="text-xs px-2 py-0.5 bg-green-50 text-green-700 rounded-full font-medium">
+                          Garantie incluse
+                        </span>
+                      </div>
+                    )}
+
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
                       {sale.customer?.phone && (
@@ -270,8 +279,14 @@ export default function SalesPage() {
                         onClick={() => handlePrint(sale)}
                         className="flex-1 py-2 text-center text-sm font-medium bg-gray-100 text-gray-700 rounded-lg"
                       >
-                        Reimprimer
+                        Imprimer
                       </button>
+                      <a
+                        href={`/returns/new?sale_id=${sale.id}`}
+                        className="flex-1 py-2 text-center text-sm font-medium bg-red-50 text-red-600 rounded-lg border border-red-200"
+                      >
+                        Retour
+                      </a>
                     </div>
                   </div>
                 )}

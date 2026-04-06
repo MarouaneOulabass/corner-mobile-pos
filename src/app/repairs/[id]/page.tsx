@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Repair, RepairStatus } from '@/types';
+import { Repair, RepairStatus, ChecklistTemplate, Part, RepairPartUsed } from '@/types';
 import {
   formatPrice,
   formatDate,
@@ -13,6 +13,66 @@ import {
   validRepairTransitions,
   generateWhatsAppLink,
 } from '@/lib/utils';
+import RepairChecklist from '@/components/features/RepairChecklist';
+import PhotoCapture from '@/components/features/PhotoCapture';
+import SignatureCanvas from '@/components/features/SignatureCanvas';
+
+// Collapsible section wrapper
+function CollapsibleSection({
+  title,
+  icon,
+  children,
+  defaultOpen = false,
+  badge,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+  badge?: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          {icon}
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            {title}
+          </h2>
+          {badge}
+        </div>
+        <svg
+          className={`w-4 h-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && <div className="px-4 pb-4">{children}</div>}
+    </div>
+  );
+}
+
+// Status ordering for comparisons
+const STATUS_ORDER: RepairStatus[] = [
+  'received',
+  'diagnosing',
+  'waiting_parts',
+  'in_repair',
+  'ready',
+  'delivered',
+];
+
+function isStatusAtLeast(current: RepairStatus, target: RepairStatus): boolean {
+  return STATUS_ORDER.indexOf(current) >= STATUS_ORDER.indexOf(target);
+}
 
 export default function RepairDetailPage() {
   useAuth();
@@ -30,26 +90,90 @@ export default function RepairDetailPage() {
   const [aiResult, setAiResult] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchRepair();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repairId]);
+  // Checklist state
+  const [checklistTemplate, setChecklistTemplate] = useState<ChecklistTemplate | null>(null);
+  const [preChecklistValues, setPreChecklistValues] = useState<Record<string, string>>({});
+  const [postChecklistValues, setPostChecklistValues] = useState<Record<string, string>>({});
+  const [savingChecklist, setSavingChecklist] = useState(false);
 
-  async function fetchRepair() {
+  // Photos state
+  const [prePhotos, setPrePhotos] = useState<string[]>([]);
+  const [postPhotos, setPostPhotos] = useState<string[]>([]);
+
+  // Signature state
+  const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [signatureUrl, setSignatureUrl] = useState<string | null>(null);
+  const [savingSignature, setSavingSignature] = useState(false);
+
+  // Parts state
+  const [partsUsed, setPartsUsed] = useState<RepairPartUsed[]>([]);
+  const [showAddPart, setShowAddPart] = useState(false);
+  const [partSearch, setPartSearch] = useState('');
+  const [partSearchResults, setPartSearchResults] = useState<Part[]>([]);
+  const [searchingParts, setSearchingParts] = useState(false);
+  const [addingPart, setAddingPart] = useState(false);
+  const [newPartQty, setNewPartQty] = useState('1');
+  const [newPartCost, setNewPartCost] = useState('');
+  const [selectedPart, setSelectedPart] = useState<Part | null>(null);
+
+  const fetchRepair = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/repairs/${repairId}`);
       if (res.ok) {
-        const data = await res.json();
+        const data: Repair = await res.json();
         setRepair(data);
         if (data.final_cost) setFinalCost(String(data.final_cost));
+        // Load checklist values from repair data
+        if (data.pre_checklist) setPreChecklistValues(data.pre_checklist);
+        if (data.post_checklist) setPostChecklistValues(data.post_checklist);
+        // Load photos
+        if (data.pre_photos) setPrePhotos(data.pre_photos);
+        if (data.post_photos) setPostPhotos(data.post_photos);
+        // Load signature
+        if (data.signature_url) setSignatureUrl(data.signature_url);
+        // Load parts
+        if (data.parts_used) setPartsUsed(data.parts_used);
       }
     } catch {
       // silent
     } finally {
       setLoading(false);
     }
-  }
+  }, [repairId]);
+
+  const fetchChecklistTemplate = useCallback(async () => {
+    try {
+      const res = await fetch('/api/checklists/templates');
+      if (res.ok) {
+        const data = await res.json();
+        // Use the first active template
+        const templates: ChecklistTemplate[] = Array.isArray(data) ? data : data.templates || [];
+        const active = templates.find((t) => t.active);
+        if (active) setChecklistTemplate(active);
+      }
+    } catch {
+      // silent
+    }
+  }, []);
+
+  const fetchParts = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/repairs/${repairId}/parts`);
+      if (res.ok) {
+        const data = await res.json();
+        setPartsUsed(Array.isArray(data) ? data : data.parts || []);
+      }
+    } catch {
+      // silent
+    }
+  }, [repairId]);
+
+  useEffect(() => {
+    fetchRepair();
+    fetchChecklistTemplate();
+    fetchParts();
+  }, [fetchRepair, fetchChecklistTemplate, fetchParts]);
 
   async function handleStatusChange(newStatus: RepairStatus) {
     if (!repair) return;
@@ -143,6 +267,149 @@ export default function RepairDetailPage() {
     }
   }
 
+  // Checklist save handler
+  async function handleSaveChecklist(type: 'pre' | 'post') {
+    setSavingChecklist(true);
+    const values = type === 'pre' ? preChecklistValues : postChecklistValues;
+    try {
+      await fetch(`/api/repairs/${repairId}/checklist`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, values }),
+      });
+    } catch {
+      // silent
+    } finally {
+      setSavingChecklist(false);
+    }
+  }
+
+  // Photo handlers
+  async function handlePhotoCapture(type: 'pre' | 'post', dataUrl: string) {
+    try {
+      const res = await fetch(`/api/repairs/${repairId}/photos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, photo: dataUrl }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const url = data.url || dataUrl;
+        if (type === 'pre') {
+          setPrePhotos((prev) => [...prev, url]);
+        } else {
+          setPostPhotos((prev) => [...prev, url]);
+        }
+      }
+    } catch {
+      // Fallback: add locally
+      if (type === 'pre') {
+        setPrePhotos((prev) => [...prev, dataUrl]);
+      } else {
+        setPostPhotos((prev) => [...prev, dataUrl]);
+      }
+    }
+  }
+
+  async function handlePhotoDelete(type: 'pre' | 'post', index: number) {
+    try {
+      await fetch(`/api/repairs/${repairId}/photos?type=${type}&index=${index}`, {
+        method: 'DELETE',
+      });
+    } catch {
+      // silent
+    }
+    if (type === 'pre') {
+      setPrePhotos((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      setPostPhotos((prev) => prev.filter((_, i) => i !== index));
+    }
+  }
+
+  // Signature handler
+  async function handleSignatureSave(dataUrl: string) {
+    setSavingSignature(true);
+    try {
+      const res = await fetch('/api/signatures', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repair_id: repairId, signature: dataUrl }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSignatureUrl(data.url || dataUrl);
+        setShowSignaturePad(false);
+      }
+    } catch {
+      // Fallback: save locally
+      setSignatureUrl(dataUrl);
+      setShowSignaturePad(false);
+    } finally {
+      setSavingSignature(false);
+    }
+  }
+
+  // Parts handlers
+  async function handleSearchParts(query: string) {
+    setPartSearch(query);
+    if (query.length < 2) {
+      setPartSearchResults([]);
+      return;
+    }
+    setSearchingParts(true);
+    try {
+      const res = await fetch(`/api/parts?search=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPartSearchResults(Array.isArray(data) ? data : data.parts || []);
+      }
+    } catch {
+      // silent
+    } finally {
+      setSearchingParts(false);
+    }
+  }
+
+  async function handleAddPart() {
+    if (!selectedPart) return;
+    setAddingPart(true);
+    try {
+      const res = await fetch(`/api/repairs/${repairId}/parts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          part_id: selectedPart.id,
+          quantity: parseInt(newPartQty) || 1,
+          unit_cost: parseFloat(newPartCost) || selectedPart.selling_price,
+        }),
+      });
+      if (res.ok) {
+        await fetchParts();
+        setSelectedPart(null);
+        setPartSearch('');
+        setPartSearchResults([]);
+        setNewPartQty('1');
+        setNewPartCost('');
+        setShowAddPart(false);
+      }
+    } catch {
+      // silent
+    } finally {
+      setAddingPart(false);
+    }
+  }
+
+  async function handleRemovePart(partUsedId: string) {
+    try {
+      await fetch(`/api/repairs/${repairId}/parts?id=${partUsedId}`, {
+        method: 'DELETE',
+      });
+      setPartsUsed((prev) => prev.filter((p) => p.id !== partUsedId));
+    } catch {
+      // silent
+    }
+  }
+
   if (loading) {
     return (
       <div className="p-4 space-y-4">
@@ -172,6 +439,17 @@ export default function RepairDetailPage() {
     new Date(repair.estimated_completion_date) < new Date();
 
   const whatsAppMessage = `Bonjour ${repair.customer?.name}, votre ${repair.device_model} est prêt à être récupéré chez Corner Mobile. À bientôt !`;
+
+  // Checklist editability
+  const preChecklistEditable =
+    repair.status === 'received' || repair.status === 'diagnosing';
+  const postChecklistEditable = repair.status === 'ready';
+
+  // Parts total
+  const partsTotalCost = partsUsed.reduce(
+    (sum, p) => sum + p.quantity * p.unit_cost,
+    0
+  );
 
   return (
     <div className="p-4 space-y-4">
@@ -370,6 +648,392 @@ export default function RepairDetailPage() {
           <p className="text-sm text-gray-400">Aucun historique</p>
         )}
       </div>
+
+      {/* ============================================================ */}
+      {/* PRE-REPAIR: Checklist + Photos                               */}
+      {/* ============================================================ */}
+
+      {/* Pre-repair Checklist */}
+      {checklistTemplate && (
+        <CollapsibleSection
+          title="Checklist avant réparation"
+          icon={
+            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+          }
+          defaultOpen={preChecklistEditable}
+        >
+          <RepairChecklist
+            template={{ ...checklistTemplate, name: 'Inspection avant réparation' }}
+            values={preChecklistValues}
+            onChange={setPreChecklistValues}
+            readOnly={!preChecklistEditable}
+          />
+          {preChecklistEditable && (
+            <button
+              type="button"
+              onClick={() => handleSaveChecklist('pre')}
+              disabled={savingChecklist}
+              className="mt-3 w-full py-2 bg-[#2AA8DC] text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-opacity"
+            >
+              {savingChecklist ? 'Enregistrement...' : 'Enregistrer checklist'}
+            </button>
+          )}
+        </CollapsibleSection>
+      )}
+
+      {/* Pre-repair Photos */}
+      <CollapsibleSection
+        title="Photos avant réparation"
+        icon={
+          <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        }
+        badge={
+          prePhotos.length > 0 ? (
+            <span className="bg-orange-100 text-orange-600 text-xs px-1.5 py-0.5 rounded-full">
+              {prePhotos.length}
+            </span>
+          ) : null
+        }
+        defaultOpen={preChecklistEditable && prePhotos.length === 0}
+      >
+        <PhotoCapture
+          photos={prePhotos}
+          onCapture={(dataUrl) => handlePhotoCapture('pre', dataUrl)}
+          onDelete={(index) => handlePhotoDelete('pre', index)}
+          readOnly={!preChecklistEditable}
+          maxPhotos={5}
+        />
+      </CollapsibleSection>
+
+      {/* ============================================================ */}
+      {/* PARTS USED                                                    */}
+      {/* ============================================================ */}
+
+      <CollapsibleSection
+        title="Pièces utilisées"
+        icon={
+          <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        }
+        badge={
+          partsUsed.length > 0 ? (
+            <span className="bg-emerald-100 text-emerald-600 text-xs px-1.5 py-0.5 rounded-full">
+              {partsUsed.length}
+            </span>
+          ) : null
+        }
+        defaultOpen={partsUsed.length > 0}
+      >
+        {/* Parts list */}
+        {partsUsed.length > 0 ? (
+          <div className="space-y-2">
+            {partsUsed.map((pu) => (
+              <div
+                key={pu.id}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {pu.part?.name || 'Pièce'}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {pu.quantity} x {formatPrice(pu.unit_cost)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-900">
+                    {formatPrice(pu.quantity * pu.unit_cost)}
+                  </span>
+                  {repair.status !== 'delivered' && repair.status !== 'cancelled' && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePart(pu.id)}
+                      className="text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            {/* Total */}
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+              <span className="text-sm font-semibold text-gray-700">Total pièces</span>
+              <span className="text-sm font-bold text-gray-900">{formatPrice(partsTotalCost)}</span>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 text-center py-2">Aucune pièce ajoutée</p>
+        )}
+
+        {/* Add part button */}
+        {repair.status !== 'delivered' && repair.status !== 'cancelled' && (
+          <>
+            {!showAddPart ? (
+              <button
+                type="button"
+                onClick={() => setShowAddPart(true)}
+                className="mt-3 w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg text-sm font-medium hover:border-[#2AA8DC] hover:text-[#2AA8DC] transition-colors"
+              >
+                + Ajouter une pièce
+              </button>
+            ) : (
+              <div className="mt-3 space-y-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                {/* Search input */}
+                <input
+                  type="text"
+                  placeholder="Rechercher une pièce..."
+                  value={partSearch}
+                  onChange={(e) => handleSearchParts(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                />
+
+                {/* Search results */}
+                {searchingParts && (
+                  <p className="text-xs text-gray-500 text-center">Recherche...</p>
+                )}
+                {partSearchResults.length > 0 && !selectedPart && (
+                  <div className="max-h-40 overflow-y-auto space-y-1">
+                    {partSearchResults.map((part) => (
+                      <button
+                        key={part.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPart(part);
+                          setNewPartCost(String(part.selling_price));
+                          setPartSearchResults([]);
+                        }}
+                        className="w-full text-left p-2 bg-white rounded-lg border border-gray-100 hover:border-[#2AA8DC] transition-colors"
+                      >
+                        <p className="text-sm font-medium text-gray-900">{part.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {part.category} - Stock: {part.quantity} - {formatPrice(part.selling_price)}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Selected part form */}
+                {selectedPart && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-[#2AA8DC]">
+                      <span className="text-sm font-medium text-gray-900">{selectedPart.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPart(null)}
+                        className="text-gray-400 hover:text-gray-600 text-xs"
+                      >
+                        Changer
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-xs text-gray-500">Quantité</label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={newPartQty}
+                          onChange={(e) => setNewPartQty(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500">Coût unitaire (MAD)</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={newPartCost}
+                          onChange={(e) => setNewPartCost(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowAddPart(false);
+                          setSelectedPart(null);
+                          setPartSearch('');
+                          setPartSearchResults([]);
+                        }}
+                        className="flex-1 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm font-medium"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleAddPart}
+                        disabled={addingPart}
+                        className="flex-1 py-2 bg-[#2AA8DC] text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                      >
+                        {addingPart ? 'Ajout...' : 'Ajouter'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Cancel if nothing selected */}
+                {!selectedPart && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddPart(false);
+                      setPartSearch('');
+                      setPartSearchResults([]);
+                    }}
+                    className="w-full py-1.5 text-gray-500 text-xs font-medium"
+                  >
+                    Annuler
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </CollapsibleSection>
+
+      {/* ============================================================ */}
+      {/* POST-REPAIR: Checklist + Photos                              */}
+      {/* ============================================================ */}
+
+      {/* Post-repair Checklist */}
+      {checklistTemplate && isStatusAtLeast(repair.status, 'in_repair') && (
+        <CollapsibleSection
+          title="Checklist après réparation"
+          icon={
+            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          }
+          defaultOpen={postChecklistEditable}
+        >
+          <RepairChecklist
+            template={{ ...checklistTemplate, name: 'Inspection après réparation' }}
+            values={postChecklistValues}
+            onChange={setPostChecklistValues}
+            readOnly={!postChecklistEditable}
+          />
+          {postChecklistEditable && (
+            <button
+              type="button"
+              onClick={() => handleSaveChecklist('post')}
+              disabled={savingChecklist}
+              className="mt-3 w-full py-2 bg-[#5BBF3E] text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-opacity"
+            >
+              {savingChecklist ? 'Enregistrement...' : 'Enregistrer checklist'}
+            </button>
+          )}
+        </CollapsibleSection>
+      )}
+
+      {/* Post-repair Photos */}
+      {isStatusAtLeast(repair.status, 'in_repair') && (
+        <CollapsibleSection
+          title="Photos après réparation"
+          icon={
+            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          }
+          badge={
+            postPhotos.length > 0 ? (
+              <span className="bg-green-100 text-green-600 text-xs px-1.5 py-0.5 rounded-full">
+                {postPhotos.length}
+              </span>
+            ) : null
+          }
+        >
+          <PhotoCapture
+            photos={postPhotos}
+            onCapture={(dataUrl) => handlePhotoCapture('post', dataUrl)}
+            onDelete={(index) => handlePhotoDelete('post', index)}
+            readOnly={repair.status === 'delivered' || repair.status === 'cancelled'}
+            maxPhotos={5}
+          />
+        </CollapsibleSection>
+      )}
+
+      {/* ============================================================ */}
+      {/* SIGNATURE (at delivery)                                       */}
+      {/* ============================================================ */}
+
+      {(repair.status === 'ready' || repair.status === 'delivered') && (
+        <CollapsibleSection
+          title="Signature client"
+          icon={
+            <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          }
+          defaultOpen={!signatureUrl && repair.status === 'ready'}
+          badge={
+            signatureUrl ? (
+              <span className="bg-indigo-100 text-indigo-600 text-xs px-1.5 py-0.5 rounded-full">
+                Signé
+              </span>
+            ) : null
+          }
+        >
+          {signatureUrl ? (
+            <div className="space-y-2">
+              <div className="border border-gray-200 rounded-lg overflow-hidden bg-white p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={signatureUrl}
+                  alt="Signature client"
+                  className="w-full h-auto max-h-32 object-contain"
+                />
+              </div>
+              <p className="text-xs text-gray-400 text-center">
+                Signature enregistrée
+              </p>
+              {repair.status === 'ready' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSignatureUrl(null);
+                    setShowSignaturePad(true);
+                  }}
+                  className="w-full py-1.5 text-xs text-[#2AA8DC] font-medium"
+                >
+                  Refaire la signature
+                </button>
+              )}
+            </div>
+          ) : showSignaturePad ? (
+            <div className="space-y-2">
+              <SignatureCanvas onSave={handleSignatureSave} />
+              {savingSignature && (
+                <p className="text-xs text-gray-500 text-center">Enregistrement...</p>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowSignaturePad(true)}
+              className="w-full py-3 border-2 border-dashed border-indigo-300 text-indigo-500 rounded-lg text-sm font-medium hover:border-indigo-400 hover:bg-indigo-50 transition-colors"
+            >
+              Ouvrir le pad de signature
+            </button>
+          )}
+        </CollapsibleSection>
+      )}
+
+      {/* ============================================================ */}
+      {/* EXISTING BOTTOM SECTIONS                                      */}
+      {/* ============================================================ */}
 
       {/* WhatsApp button when ready */}
       {repair.status === 'ready' && repair.customer?.phone && (

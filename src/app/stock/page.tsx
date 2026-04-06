@@ -11,6 +11,7 @@ import {
   statusColors,
 } from '@/lib/utils';
 import LabelTemplate from '@/components/features/LabelTemplate';
+import IMEIBlacklistBadge from '@/components/features/IMEIBlacklistBadge';
 
 const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Oppo', 'Realme', 'Tecno', 'Infinix', 'Nokia', 'Autre'];
 const PAGE_SIZE = 20;
@@ -562,14 +563,34 @@ export default function StockPage() {
                           {p.brand} {p.model}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
                         {p.storage && (
                           <span className="text-xs text-gray-400">{p.storage}</span>
                         )}
                         <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
                           {conditionLabels[p.condition]}
                         </span>
+                        {p.bin_location && (
+                          <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">
+                            {p.bin_location}
+                          </span>
+                        )}
+                        {(p.warranty_months ?? 0) > 0 && (
+                          <span className="text-xs px-1.5 py-0.5 bg-green-50 text-green-600 rounded">
+                            {p.warranty_months} mois
+                          </span>
+                        )}
+                        {p.product_type === 'accessory' && p.quantity != null && p.quantity <= 3 && (
+                          <span className="text-xs px-1.5 py-0.5 bg-red-50 text-red-600 rounded font-medium">
+                            Stock bas
+                          </span>
+                        )}
                       </div>
+                      {p.product_type === 'phone' && p.imei && (
+                        <div className="mt-1">
+                          <IMEIBlacklistBadge imei={p.imei} autoCheck={false} />
+                        </div>
+                      )}
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-sm font-semibold text-gray-900">{formatPrice(p.selling_price)}</p>
@@ -604,6 +625,17 @@ export default function StockPage() {
                     </div>
                     <p className="font-medium text-sm text-gray-900 truncate">{p.brand} {p.model}</p>
                     {p.storage && <p className="text-xs text-gray-400 mt-0.5">{p.storage}</p>}
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {p.bin_location && (
+                        <span className="text-[10px] px-1 py-0.5 bg-blue-50 text-blue-600 rounded">{p.bin_location}</span>
+                      )}
+                      {(p.warranty_months ?? 0) > 0 && (
+                        <span className="text-[10px] px-1 py-0.5 bg-green-50 text-green-600 rounded">{p.warranty_months}m</span>
+                      )}
+                      {p.product_type === 'accessory' && p.quantity != null && p.quantity <= 3 && (
+                        <span className="text-[10px] px-1 py-0.5 bg-red-50 text-red-600 rounded font-medium">Bas</span>
+                      )}
+                    </div>
                     <p className="text-sm font-semibold text-gray-900 mt-2">{formatPrice(p.selling_price)}</p>
                   </button>
                 </div>
@@ -668,7 +700,12 @@ export default function StockPage() {
               {/* Details grid */}
               <div className="grid grid-cols-2 gap-3">
                 {selectedProduct.imei && (
-                  <DetailItem label="IMEI" value={selectedProduct.imei} />
+                  <div className="col-span-2">
+                    <DetailItem label="IMEI" value={selectedProduct.imei} />
+                    <div className="mt-1">
+                      <IMEIBlacklistBadge imei={selectedProduct.imei} autoCheck={true} />
+                    </div>
+                  </div>
                 )}
                 <DetailItem
                   label="Type"
@@ -684,6 +721,15 @@ export default function StockPage() {
                 <DetailItem label="Prix de vente" value={formatPrice(selectedProduct.selling_price)} />
                 {selectedProduct.supplier && (
                   <DetailItem label="Fournisseur" value={selectedProduct.supplier} />
+                )}
+                {selectedProduct.supplier_id && (
+                  <DetailItem label="ID Fournisseur" value={selectedProduct.supplier_id} />
+                )}
+                {selectedProduct.bin_location && (
+                  <DetailItem label="Emplacement" value={selectedProduct.bin_location} />
+                )}
+                {(selectedProduct.warranty_months ?? 0) > 0 && (
+                  <DetailItem label="Garantie" value={`${selectedProduct.warranty_months} mois`} />
                 )}
                 {selectedProduct.store?.name && (
                   <DetailItem label="Magasin" value={selectedProduct.store.name} />

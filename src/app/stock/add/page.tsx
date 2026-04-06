@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProductType, ProductCondition } from '@/types';
@@ -25,6 +25,9 @@ export default function AddProductPage() {
     selling_price: '',
     imei: '',
     supplier: '',
+    supplier_id: '',
+    warranty_months: '',
+    bin_location: '',
     notes: '',
     purchase_date: new Date().toISOString().split('T')[0],
   });
@@ -35,6 +38,21 @@ export default function AddProductPage() {
   const [imeiDuplicate, setImeiDuplicate] = useState(false);
   const [priceSuggestion, setPriceSuggestion] = useState<number | null>(null);
   const [suggestingPrice, setSuggestingPrice] = useState(false);
+  const [imeiBlacklistStatus, setImeiBlacklistStatus] = useState<'clean' | 'blacklisted' | null>(null);
+  const [imeiBlacklistChecking, setImeiBlacklistChecking] = useState(false);
+  const [suppliers, setSuppliers] = useState<{ id: string; name: string }[]>([]);
+  const [showCustomSupplier, setShowCustomSupplier] = useState(false);
+
+  // Fetch suppliers list
+  useEffect(() => {
+    fetch('/api/suppliers')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.suppliers)) setSuppliers(data.suppliers);
+        else if (Array.isArray(data)) setSuppliers(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -46,6 +64,7 @@ export default function AddProductPage() {
     if (field === 'imei') {
       setImeiDuplicate(false);
       setPriceSuggestion(null);
+      setImeiBlacklistStatus(null);
     }
   };
 
@@ -81,6 +100,22 @@ export default function AddProductPage() {
       // ignore
     } finally {
       setImeiChecking(false);
+    }
+
+    // IMEI blacklist check
+    setImeiBlacklistChecking(true);
+    try {
+      const blRes = await fetch(`/api/imei-check?imei=${imei}`);
+      const blData = await blRes.json();
+      if (blData.blacklisted) {
+        setImeiBlacklistStatus('blacklisted');
+      } else {
+        setImeiBlacklistStatus('clean');
+      }
+    } catch {
+      // ignore — blacklist check is advisory
+    } finally {
+      setImeiBlacklistChecking(false);
     }
   };
 
@@ -136,11 +171,14 @@ export default function AddProductPage() {
         ...form,
         purchase_price: Number(form.purchase_price),
         selling_price: Number(form.selling_price),
+        warranty_months: form.warranty_months ? Number(form.warranty_months) : undefined,
         store_id: user.store_id,
         imei: form.imei || undefined,
         storage: form.storage || undefined,
         color: form.color || undefined,
         supplier: form.supplier || undefined,
+        supplier_id: form.supplier_id || undefined,
+        bin_location: form.bin_location || undefined,
         notes: form.notes || undefined,
         purchase_date: form.purchase_date || undefined,
       };
@@ -240,6 +278,21 @@ export default function AddProductPage() {
               <IMEIScanner onScan={(imei) => updateField('imei', imei)} />
             </div>
             {errors.imei && <p className="text-xs text-red-500 mt-1">{errors.imei}</p>}
+            {imeiBlacklistChecking && (
+              <p className="text-xs text-gray-400 mt-1">Verification blacklist...</p>
+            )}
+            {imeiBlacklistStatus === 'clean' && (
+              <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                IMEI clean
+              </p>
+            )}
+            {imeiBlacklistStatus === 'blacklisted' && (
+              <p className="text-xs text-red-600 mt-1 flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+                IMEI blackliste — Attention
+              </p>
+            )}
           </div>
         )}
 
@@ -382,16 +435,78 @@ export default function AddProductPage() {
           )}
         </div>
 
-        {/* Supplier */}
+        {/* Warranty months */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Fournisseur</label>
+          <label className="block text-xs font-medium text-gray-500 mb-1.5">Garantie (mois)</label>
           <input
-            type="text"
-            placeholder="Nom du fournisseur"
-            value={form.supplier}
-            onChange={(e) => updateField('supplier', e.target.value)}
+            type="number"
+            inputMode="numeric"
+            min="0"
+            placeholder="0"
+            value={form.warranty_months}
+            onChange={(e) => updateField('warranty_months', e.target.value)}
             className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
+        </div>
+
+        {/* Bin location */}
+        <div>
+          <label className="block text-xs font-medium text-gray-500 mb-1.5">Emplacement (ex: Etagere A3)</label>
+          <input
+            type="text"
+            placeholder="Ex: A3, Vitrine 2..."
+            value={form.bin_location}
+            onChange={(e) => updateField('bin_location', e.target.value)}
+            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+          />
+        </div>
+
+        {/* Supplier dropdown */}
+        <div>
+          <label className="block text-xs font-medium text-gray-500 mb-1.5">Fournisseur</label>
+          {!showCustomSupplier ? (
+            <select
+              value={form.supplier_id}
+              onChange={(e) => {
+                if (e.target.value === '__other__') {
+                  setShowCustomSupplier(true);
+                  updateField('supplier_id', '');
+                } else {
+                  updateField('supplier_id', e.target.value);
+                  const selected = suppliers.find((s) => s.id === e.target.value);
+                  if (selected) updateField('supplier', selected.name);
+                }
+              }}
+              className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            >
+              <option value="">Selectionner un fournisseur</option>
+              {suppliers.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+              <option value="__other__">Autre (saisie libre)</option>
+            </select>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Nom du fournisseur"
+                value={form.supplier}
+                onChange={(e) => updateField('supplier', e.target.value)}
+                className="flex-1 px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCustomSupplier(false);
+                  updateField('supplier', '');
+                  updateField('supplier_id', '');
+                }}
+                className="px-3 py-2.5 text-xs text-gray-500 border border-gray-200 rounded-xl bg-white"
+              >
+                Liste
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Purchase date */}

@@ -3,8 +3,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Customer } from '@/types';
-import { formatDate, formatPrice } from '@/lib/utils';
+import { formatDate, formatPrice, loyaltyTierLabels, loyaltyTierColors } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+
+const loyaltyTierEmojis: Record<string, string> = {
+  bronze: '\uD83E\uDD49',
+  silver: '\uD83E\uDD48',
+  gold: '\uD83E\uDD47',
+  platinum: '\uD83D\uDC8E',
+};
 
 export default function CustomersPage() {
   useAuth();
@@ -117,8 +124,23 @@ export default function CustomersPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">{c.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-gray-900">{c.name}</p>
+                    {c.loyalty_tier && (
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${loyaltyTierColors[c.loyalty_tier] || ''}`}>
+                        {loyaltyTierEmojis[c.loyalty_tier] || ''} {loyaltyTierLabels[c.loyalty_tier] || c.loyalty_tier}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500">{c.phone}</p>
+                  <div className="flex items-center gap-3 mt-1">
+                    {(c.loyalty_points ?? 0) > 0 && (
+                      <span className="text-xs text-amber-600">{c.loyalty_points} pts</span>
+                    )}
+                    {(c.store_credit ?? 0) > 0 && (
+                      <span className="text-xs text-green-600">{formatPrice(c.store_credit!)}</span>
+                    )}
+                  </div>
                 </div>
                 <p className="text-xs text-gray-400">{formatDate(c.created_at)}</p>
               </div>
@@ -158,6 +180,33 @@ export default function CustomersPage() {
                   <span className="text-gray-900">{formatDate(selectedCustomer.created_at)}</span>
                 </div>
               </div>
+
+              {/* Loyalty Info */}
+              {(selectedCustomer.loyalty_tier || (selectedCustomer.loyalty_points ?? 0) > 0 || (selectedCustomer.store_credit ?? 0) > 0) && (
+                <div className="bg-amber-50 rounded-xl p-3 space-y-2">
+                  <h3 className="text-sm font-medium text-amber-800">Programme de fidelite</h3>
+                  {selectedCustomer.loyalty_tier && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Niveau</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${loyaltyTierColors[selectedCustomer.loyalty_tier] || ''}`}>
+                        {loyaltyTierEmojis[selectedCustomer.loyalty_tier] || ''} {loyaltyTierLabels[selectedCustomer.loyalty_tier] || selectedCustomer.loyalty_tier}
+                      </span>
+                    </div>
+                  )}
+                  {(selectedCustomer.loyalty_points ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Points</span>
+                      <span className="text-amber-700 font-medium">{selectedCustomer.loyalty_points} pts</span>
+                    </div>
+                  )}
+                  {(selectedCustomer.store_credit ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Avoir magasin</span>
+                      <span className="text-green-700 font-medium">{formatPrice(selectedCustomer.store_credit!)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* AI Summary */}
               <div>

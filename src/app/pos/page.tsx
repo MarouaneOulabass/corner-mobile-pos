@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { formatPrice, conditionLabels, generateWhatsAppLink, formatDateTime } from '@/lib/utils';
 import type { Product, CartItem, Customer, PaymentMethod, Sale } from '@/types';
 import IMEIScanner from '@/components/features/IMEIScanner';
+import GiftCardInput from '@/components/features/GiftCardInput';
+import ThermalPrintButton from '@/components/features/ThermalPrintButton';
+import ReceiptPreview from '@/components/features/ReceiptPreview';
+import { buildReceiptHTML, buildReceiptESCPOS } from '@/lib/receipt-builder';
 
 const OFFLINE_QUEUE_KEY = 'corner_pos_offline_queue';
 
@@ -62,6 +66,23 @@ export default function POSPage() {
   const [isOffline, setIsOffline] = useState(false);
   const [offlineCount, setOfflineCount] = useState(0);
 
+  // --- Gift card state ---
+  const [giftCardCode, setGiftCardCode] = useState('');
+  const [giftCardBalance, setGiftCardBalance] = useState(0);
+  const [giftCardAmount, setGiftCardAmount] = useState(0);
+
+  // --- Loyalty state ---
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [loyaltyRedeemAmount, setLoyaltyRedeemAmount] = useState(0);
+  const [loyaltyRedemptionRate, setLoyaltyRedemptionRate] = useState(0);
+
+  // --- Store credit state ---
+  const [customerStoreCredit, setCustomerStoreCredit] = useState(0);
+  const [storeCreditAmount, setStoreCreditAmount] = useState(0);
+
+  // --- Receipt preview state ---
+  const [showReceiptPreview, setShowReceiptPreview] = useState(false);
+
   // --- Offline detection & sync ---
   const syncOfflineQueue = useCallback(async () => {
     const queue = getOfflineQueue();
@@ -102,6 +123,35 @@ export default function POSPage() {
       window.removeEventListener('offline', goOffline);
     };
   }, [syncOfflineQueue]);
+
+  // --- Fetch loyalty points when customer selected ---
+  useEffect(() => {
+    if (!selectedCustomer) {
+      setLoyaltyPoints(0);
+      setLoyaltyRedeemAmount(0);
+      setLoyaltyRedemptionRate(0);
+      setCustomerStoreCredit(0);
+      setStoreCreditAmount(0);
+      return;
+    }
+
+    // Fetch loyalty
+    (async () => {
+      try {
+        const res = await fetch(`/api/loyalty?customer_id=${selectedCustomer.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setLoyaltyPoints(data.points || 0);
+          setLoyaltyRedemptionRate(data.redemption_rate || 0);
+        }
+      } catch {
+        // silent
+      }
+    })();
+
+    // Fetch store credit from customer record
+    setCustomerStoreCredit(selectedCustomer.store_credit || 0);
+  }, [selectedCustomer]);
 
   // --- Product search ---
   const searchProducts = useCallback(
@@ -243,17 +293,92 @@ export default function POSPage() {
   const removeFromCart = (index: number) =>
     setCart(cart.filter((_, i) => i !== index));
 
+  // --- Gift card handler ---
+  const handleGiftCardRedeem = (code: string, balance: number) => {
+    setGiftCardCode(code);
+    setGiftCardBalance(balance);
+    // Auto-set the gift card amount to min(balance, remaining total)
+    const remainingAfterDiscounts = Math.max(0, subtotalCalc - discountAmountCalc - loyaltyRedeemAmount);
+    setGiftCardAmount(Math.min(balance, remainingAfterDiscounts));
+  };
+
+  // --- Loyalty redeem handler ---
+  const handleLoyaltyRedeem = async () => {
+    if (!selectedCustomer || loyaltyPoints <= 0 || loyaltyRedemptionRate <= 0) return;
+    try {
+      const res = await fetch('/api/loyalty/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_id: selectedCustomer.id,
+          points: loyaltyPoints,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const redeemValue = data.discount || (loyaltyPoints * loyaltyRedemptionRate);
+        setLoyaltyRedeemAmount(redeemValue);
+      }
+    } catch {
+      // silent
+    }
+  };
+
   // --- Calculations ---
-  const subtotal = cart.reduce((s, i) => s + i.unit_price * i.quantity, 0);
+  const subtotalCalc = cart.reduce((s, i) => s + i.unit_price * i.quantity, 0);
+  const subtotal = subtotalCalc;
   const discountNum = parseFloat(discountValue) || 0;
-  const discountAmount =
+  const discountAmountCalc =
     discountType === 'percentage'
       ? Math.round((subtotal * discountNum) / 100)
       : discountNum;
-  const total = Math.max(0, subtotal - discountAmount);
+  const discountAmount = discountAmountCalc;
+
+  // Total after all deductions
+  const totalBeforeExtras = Math.max(0, subtotal - discountAmount);
+  const totalAfterLoyalty = Math.max(0, totalBeforeExtras - loyaltyRedeemAmount);
+  const totalAfterGiftCard = Math.max(0, totalAfterLoyalty - giftCardAmount);
+  const total = paymentMethod === 'store_credit'
+    ? Math.max(0, totalAfterGiftCard - storeCreditAmount)
+    : totalAfterGiftCard;
+
   const hasPriceBelowCost = cart.some(
     (i) => i.unit_price < i.product.purchase_price && i.product.purchase_price > 0
   );
+
+  // --- Receipt data for thermal printing (memoized) ---
+  const receiptESCPOS = useMemo(() => {
+    if (!completedSale) return null;
+    try {
+      const store = { id: user?.store_id || '', name: 'Corner Mobile', location: '', created_at: '' };
+      return buildReceiptESCPOS(completedSale, store);
+    } catch {
+      return null;
+    }
+  }, [completedSale, user?.store_id]);
+
+  const receiptHTML = useMemo(() => {
+    if (!completedSale) return '';
+    try {
+      const store = { id: user?.store_id || '', name: 'Corner Mobile', location: '', created_at: '' };
+      const template = {
+        id: 'default',
+        store_id: user?.store_id || '',
+        header_text: 'Corner Mobile',
+        footer_text: '',
+        show_logo: false,
+        show_store_address: true,
+        show_seller_name: true,
+        show_qr_code: false,
+        paper_width: '58mm' as const,
+        font_size: 'medium' as const,
+        updated_at: '',
+      };
+      return buildReceiptHTML(completedSale, template, store);
+    } catch {
+      return '';
+    }
+  }, [completedSale, user?.store_id]);
 
   // --- Submit sale ---
   const handleSubmit = async () => {
@@ -277,6 +402,11 @@ export default function POSPage() {
         paymentMethod === 'mixte'
           ? { cash: parseFloat(mixteAmounts.cash) || 0, card: parseFloat(mixteAmounts.card) || 0 }
           : null,
+      // Optional new payment data
+      gift_card_code: giftCardAmount > 0 ? giftCardCode : null,
+      gift_card_amount: giftCardAmount > 0 ? giftCardAmount : null,
+      loyalty_redeem_amount: loyaltyRedeemAmount > 0 ? loyaltyRedeemAmount : null,
+      store_credit_amount: paymentMethod === 'store_credit' && storeCreditAmount > 0 ? storeCreditAmount : null,
     };
 
     try {
@@ -315,6 +445,15 @@ export default function POSPage() {
     setPaymentMethod('cash');
     setMixteAmounts({ cash: '', card: '' });
     setCompletedSale(null);
+    setGiftCardCode('');
+    setGiftCardBalance(0);
+    setGiftCardAmount(0);
+    setLoyaltyPoints(0);
+    setLoyaltyRedeemAmount(0);
+    setLoyaltyRedemptionRate(0);
+    setCustomerStoreCredit(0);
+    setStoreCreditAmount(0);
+    setShowReceiptPreview(false);
   };
 
   // --- WhatsApp receipt ---
@@ -324,6 +463,8 @@ export default function POSPage() {
       card: 'Carte',
       virement: 'Virement',
       mixte: 'Mixte',
+      gift_card: 'Carte cadeau',
+      store_credit: 'Avoir',
     };
     let msg = '*Corner Mobile - Re\u00e7u*\n';
     msg += `Date: ${formatDateTime(sale.created_at)}\n`;
@@ -413,6 +554,26 @@ export default function POSPage() {
 
           {/* Actions */}
           <div className="space-y-3">
+            {/* Thermal print button */}
+            <ThermalPrintButton
+              receiptData={receiptESCPOS}
+              fallbackHTML={receiptHTML}
+              label="Imprimer le re\u00e7u"
+            />
+
+            {/* Receipt preview button */}
+            <button
+              onClick={() => setShowReceiptPreview(true)}
+              className="w-full flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-xl transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Aper&ccedil;u re&ccedil;u
+            </button>
+
+            {/* WhatsApp share */}
             {custPhone && (
               <a
                 href={generateWhatsAppLink(custPhone, receiptMsg)}
@@ -436,6 +597,24 @@ export default function POSPage() {
             </button>
           </div>
         </div>
+
+        {/* Receipt preview modal */}
+        {showReceiptPreview && receiptHTML && (
+          <ReceiptPreview
+            html={receiptHTML}
+            onPrintBrowser={() => {
+              const printWindow = window.open('', '_blank');
+              if (printWindow) {
+                printWindow.document.write(receiptHTML);
+                printWindow.document.close();
+                printWindow.print();
+              }
+            }}
+            onShare={custPhone ? () => {
+              window.open(generateWhatsAppLink(custPhone, receiptMsg), '_blank');
+            } : undefined}
+          />
+        )}
       </div>
     );
   }
@@ -510,10 +689,17 @@ export default function POSPage() {
                         {product.brand} {product.model}
                         {product.storage ? ` ${product.storage}` : ''}
                       </p>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        {conditionLabels[product.condition] || product.condition}
-                        {product.imei ? ` \u2014 IMEI: ${product.imei}` : ''}
-                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-xs text-slate-400">
+                          {conditionLabels[product.condition] || product.condition}
+                          {product.imei ? ` \u2014 IMEI: ${product.imei}` : ''}
+                        </p>
+                        {product.bin_location && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-medium">
+                            <span>{'\uD83D\uDCCD'}</span> {product.bin_location}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <p className="text-sm font-semibold text-[#2AA8DC]">
                       {formatPrice(product.selling_price)}
@@ -700,17 +886,71 @@ export default function POSPage() {
             <p className="text-xs font-semibold text-slate-400 mb-2">CLIENT</p>
 
             {selectedCustomer ? (
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm font-medium">{selectedCustomer.name}</p>
-                  <p className="text-xs text-slate-400">{selectedCustomer.phone}</p>
+              <div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <p className="text-sm font-medium">{selectedCustomer.name}</p>
+                      <p className="text-xs text-slate-400">{selectedCustomer.phone}</p>
+                    </div>
+                    {/* Loyalty points badge */}
+                    {loyaltyPoints > 0 && (
+                      <span className="inline-flex items-center gap-1 text-xs bg-yellow-900/50 text-yellow-300 border border-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                        {'\u2B50'} {loyaltyPoints} pts
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}
+                    className="text-xs text-red-400 hover:text-red-300"
+                  >
+                    Retirer
+                  </button>
                 </div>
-                <button
-                  onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}
-                  className="text-xs text-red-400 hover:text-red-300"
-                >
-                  Retirer
-                </button>
+
+                {/* Loyalty redeem section */}
+                {loyaltyPoints > 0 && loyaltyRedemptionRate > 0 && loyaltyRedeemAmount === 0 && (
+                  <div className="mt-2 pt-2 border-t border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-slate-400">
+                        {loyaltyPoints} pts = {formatPrice(loyaltyPoints * loyaltyRedemptionRate)}
+                      </p>
+                      <button
+                        onClick={handleLoyaltyRedeem}
+                        className="text-xs bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg font-medium transition-colors"
+                      >
+                        Utiliser points
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {loyaltyRedeemAmount > 0 && (
+                  <div className="mt-2 pt-2 border-t border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-green-400 font-medium">
+                        Points utilis&eacute;s : -{formatPrice(loyaltyRedeemAmount)}
+                      </p>
+                      <button
+                        onClick={() => setLoyaltyRedeemAmount(0)}
+                        className="text-xs text-slate-400 hover:text-slate-300"
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Store credit display */}
+                {customerStoreCredit > 0 && (
+                  <div className="mt-2 pt-2 border-t border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-slate-400">
+                        Avoir disponible : {formatPrice(customerStoreCredit)}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <>
@@ -773,17 +1013,30 @@ export default function POSPage() {
         {cart.length > 0 && (
           <div className="bg-slate-800 rounded-xl p-3 mb-4">
             <p className="text-xs font-semibold text-slate-400 mb-2">PAIEMENT</p>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="flex flex-wrap gap-2">
               {([
-                { key: 'cash' as const, label: 'Esp\u00e8ces' },
-                { key: 'card' as const, label: 'Carte' },
-                { key: 'virement' as const, label: 'Virement' },
-                { key: 'mixte' as const, label: 'Mixte' },
+                { key: 'cash' as PaymentMethod, label: 'Esp\u00e8ces' },
+                { key: 'card' as PaymentMethod, label: 'Carte' },
+                { key: 'virement' as PaymentMethod, label: 'Virement' },
+                { key: 'mixte' as PaymentMethod, label: 'Mixte' },
+                { key: 'gift_card' as PaymentMethod, label: 'Carte cadeau' },
+                ...(selectedCustomer && customerStoreCredit > 0
+                  ? [{ key: 'store_credit' as PaymentMethod, label: 'Avoir' }]
+                  : []),
               ]).map(({ key, label }) => (
                 <button
                   key={key}
-                  onClick={() => setPaymentMethod(key)}
-                  className={`py-2 rounded-lg text-xs font-medium transition-colors ${
+                  onClick={() => {
+                    setPaymentMethod(key);
+                    // Auto-fill store credit amount when selecting Avoir
+                    if (key === 'store_credit') {
+                      const remaining = Math.max(0, totalAfterGiftCard);
+                      setStoreCreditAmount(Math.min(customerStoreCredit, remaining));
+                    } else {
+                      setStoreCreditAmount(0);
+                    }
+                  }}
+                  className={`py-2 px-3 rounded-lg text-xs font-medium transition-colors min-w-[70px] ${
                     paymentMethod === key
                       ? 'bg-[#2AA8DC] text-white'
                       : 'bg-slate-900 text-slate-400 hover:bg-slate-700'
@@ -794,6 +1047,7 @@ export default function POSPage() {
               ))}
             </div>
 
+            {/* Mixte payment fields */}
             {paymentMethod === 'mixte' && (
               <div className="grid grid-cols-2 gap-2 mt-3">
                 <div>
@@ -820,6 +1074,60 @@ export default function POSPage() {
                 </div>
               </div>
             )}
+
+            {/* Gift card input */}
+            {paymentMethod === 'gift_card' && (
+              <div className="mt-3 pt-3 border-t border-slate-700">
+                <GiftCardInput onRedeem={handleGiftCardRedeem} />
+                {giftCardAmount > 0 && (
+                  <div className="flex items-center justify-between mt-2 bg-green-900/30 border border-green-800 rounded-lg px-3 py-2">
+                    <p className="text-xs text-green-400 font-medium">
+                      Carte cadeau : -{formatPrice(giftCardAmount)}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setGiftCardCode('');
+                        setGiftCardBalance(0);
+                        setGiftCardAmount(0);
+                      }}
+                      className="text-xs text-slate-400 hover:text-slate-300"
+                    >
+                      Retirer
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Store credit (Avoir) details */}
+            {paymentMethod === 'store_credit' && selectedCustomer && customerStoreCredit > 0 && (
+              <div className="mt-3 pt-3 border-t border-slate-700">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-slate-400">
+                    Avoir disponible : {formatPrice(customerStoreCredit)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={storeCreditAmount || ''}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setStoreCreditAmount(Math.min(val, customerStoreCredit, totalAfterGiftCard));
+                    }}
+                    placeholder="Montant"
+                    className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-[#2AA8DC]"
+                  />
+                  <span className="text-xs text-slate-400">MAD</span>
+                </div>
+                {storeCreditAmount > 0 && totalAfterGiftCard - storeCreditAmount > 0 && (
+                  <p className="text-xs text-slate-400 mt-1">
+                    Reste &agrave; payer : {formatPrice(totalAfterGiftCard - storeCreditAmount)}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -836,6 +1144,24 @@ export default function POSPage() {
               <div className="flex justify-between items-center text-sm mb-1 text-yellow-400">
                 <span>Remise{discountType === 'percentage' ? ` (${discountNum}%)` : ''}</span>
                 <span>-{formatPrice(discountAmount)}</span>
+              </div>
+            )}
+            {loyaltyRedeemAmount > 0 && (
+              <div className="flex justify-between items-center text-sm mb-1 text-yellow-300">
+                <span>Points fid&eacute;lit&eacute;</span>
+                <span>-{formatPrice(loyaltyRedeemAmount)}</span>
+              </div>
+            )}
+            {giftCardAmount > 0 && (
+              <div className="flex justify-between items-center text-sm mb-1 text-green-400">
+                <span>Carte cadeau</span>
+                <span>-{formatPrice(giftCardAmount)}</span>
+              </div>
+            )}
+            {paymentMethod === 'store_credit' && storeCreditAmount > 0 && (
+              <div className="flex justify-between items-center text-sm mb-1 text-purple-400">
+                <span>Avoir</span>
+                <span>-{formatPrice(storeCreditAmount)}</span>
               </div>
             )}
             <div className="flex justify-between items-center text-lg font-bold mb-3">

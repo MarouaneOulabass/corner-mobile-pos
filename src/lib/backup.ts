@@ -24,12 +24,51 @@ export type EventType =
   | 'customer_created'
   | 'customer_updated'
   | 'user_login'
-  | 'stock_imported';
+  | 'stock_imported'
+  // New feature events
+  | 'return_created'
+  | 'return_item_restocked'
+  | 'trade_in_created'
+  | 'trade_in_accepted'
+  | 'trade_in_rejected'
+  | 'trade_in_status_changed'
+  | 'cash_session_opened'
+  | 'cash_session_closed'
+  | 'cash_movement_created'
+  | 'installment_plan_created'
+  | 'installment_payment_received'
+  | 'installment_completed'
+  | 'gift_card_created'
+  | 'gift_card_redeemed'
+  | 'gift_card_refunded'
+  | 'loyalty_earned'
+  | 'loyalty_redeemed'
+  | 'loyalty_adjusted'
+  | 'commission_created'
+  | 'commission_paid'
+  | 'clock_in'
+  | 'clock_out'
+  | 'supplier_created'
+  | 'supplier_updated'
+  | 'purchase_order_created'
+  | 'purchase_order_received'
+  | 'part_created'
+  | 'part_updated'
+  | 'part_used_in_repair'
+  | 'checklist_completed'
+  | 'signature_captured'
+  | 'whatsapp_sent';
+
+export type EntityType =
+  | 'product' | 'sale' | 'repair' | 'transfer' | 'customer' | 'user'
+  | 'return' | 'trade_in' | 'cash_session' | 'cash_movement'
+  | 'installment' | 'gift_card' | 'loyalty' | 'commission'
+  | 'clock' | 'supplier' | 'purchase_order' | 'part' | 'checklist';
 
 interface JournalEntry {
   event_type: EventType;
   entity_id: string;
-  entity_type: 'product' | 'sale' | 'repair' | 'transfer' | 'customer' | 'user';
+  entity_type: EntityType;
   user_id: string;
   store_id?: string;
   data: Record<string, unknown>;
@@ -103,7 +142,17 @@ export async function journalExport(fromDate?: string): Promise<Record<string, u
 export async function fullSnapshot(): Promise<Record<string, unknown>> {
   const supabase = createServiceClient();
 
-  const [stores, users, products, customers, sales, saleItems, repairs, repairLogs, transfers] = await Promise.all([
+  const [
+    stores, users, products, customers, sales, saleItems,
+    repairs, repairLogs, transfers,
+    // New tables
+    returns, returnItems, tradeIns, partsInventory, repairPartsUsed,
+    cashSessions, cashMovements, installmentPlans, installmentPayments,
+    giftCards, giftCardTx, loyaltySettings, loyaltyTx,
+    signatures, commissionRules, commissions, clockRecords,
+    suppliers, purchaseOrders, poItems, stockAlertRules,
+    checklistTemplates, receiptTemplates,
+  ] = await Promise.all([
     supabase.from('stores').select('*'),
     supabase.from('users').select('id, email, name, role, store_id, created_at'),
     supabase.from('products').select('*'),
@@ -113,11 +162,35 @@ export async function fullSnapshot(): Promise<Record<string, unknown>> {
     supabase.from('repairs').select('*'),
     supabase.from('repair_status_log').select('*'),
     supabase.from('transfers').select('*'),
+    // New tables
+    supabase.from('returns').select('*'),
+    supabase.from('return_items').select('*'),
+    supabase.from('trade_ins').select('*'),
+    supabase.from('parts_inventory').select('*'),
+    supabase.from('repair_parts_used').select('*'),
+    supabase.from('cash_sessions').select('*'),
+    supabase.from('cash_movements').select('*'),
+    supabase.from('installment_plans').select('*'),
+    supabase.from('installment_payments').select('*'),
+    supabase.from('gift_cards').select('*'),
+    supabase.from('gift_card_transactions').select('*'),
+    supabase.from('loyalty_settings').select('*'),
+    supabase.from('loyalty_transactions').select('*'),
+    supabase.from('signatures').select('*'),
+    supabase.from('commission_rules').select('*'),
+    supabase.from('commissions').select('*'),
+    supabase.from('clock_records').select('*'),
+    supabase.from('suppliers').select('*'),
+    supabase.from('purchase_orders').select('*'),
+    supabase.from('po_items').select('*'),
+    supabase.from('stock_alert_rules').select('*'),
+    supabase.from('checklist_templates').select('*'),
+    supabase.from('receipt_templates').select('*'),
   ]);
 
   return {
     exported_at: new Date().toISOString(),
-    version: '1.0',
+    version: '2.0',
     stores: stores.data || [],
     users: users.data || [],
     products: products.data || [],
@@ -127,5 +200,29 @@ export async function fullSnapshot(): Promise<Record<string, unknown>> {
     repairs: repairs.data || [],
     repair_status_log: repairLogs.data || [],
     transfers: transfers.data || [],
+    // New tables
+    returns: returns.data || [],
+    return_items: returnItems.data || [],
+    trade_ins: tradeIns.data || [],
+    parts_inventory: partsInventory.data || [],
+    repair_parts_used: repairPartsUsed.data || [],
+    cash_sessions: cashSessions.data || [],
+    cash_movements: cashMovements.data || [],
+    installment_plans: installmentPlans.data || [],
+    installment_payments: installmentPayments.data || [],
+    gift_cards: giftCards.data || [],
+    gift_card_transactions: giftCardTx.data || [],
+    loyalty_settings: loyaltySettings.data || [],
+    loyalty_transactions: loyaltyTx.data || [],
+    signatures: signatures.data || [],
+    commission_rules: commissionRules.data || [],
+    commissions: commissions.data || [],
+    clock_records: clockRecords.data || [],
+    suppliers: suppliers.data || [],
+    purchase_orders: purchaseOrders.data || [],
+    po_items: poItems.data || [],
+    stock_alert_rules: stockAlertRules.data || [],
+    checklist_templates: checklistTemplates.data || [],
+    receipt_templates: receiptTemplates.data || [],
   };
 }

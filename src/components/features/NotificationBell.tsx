@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Notification } from '@/types';
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime, notificationTypeIcons } from '@/lib/utils';
 
 export default function NotificationBell() {
   const { user } = useAuth();
@@ -77,9 +77,16 @@ export default function NotificationBell() {
                     !n.read ? 'bg-blue-50/50' : ''
                   }`}
                 >
-                  <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
-                  <p className="text-xs text-gray-400 mt-1">{formatDateTime(n.created_at)}</p>
+                  <div className="flex items-start gap-2">
+                    <span className="text-base flex-shrink-0 mt-0.5" role="img" aria-label={n.type}>
+                      {notificationTypeIcons[n.type] || '🔔'}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900">{n.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+                      <p className="text-xs text-gray-400 mt-1">{formatDateTime(n.created_at)}</p>
+                    </div>
+                  </div>
                 </div>
               ))
             )}

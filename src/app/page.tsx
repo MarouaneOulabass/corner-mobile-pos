@@ -62,6 +62,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const fetchAll = useCallback(async () => {
     if (!user) return;
     const isInitial = lastRefresh === null;
@@ -82,6 +83,14 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, fetchAll]);
+
+  // Guided tour on first visit
+  useEffect(() => {
+    if (!loading && user) {
+      const done = localStorage.getItem('corner_tour_done');
+      if (!done) setTimeout(() => setShowTour(true), 1500);
+    }
+  }, [loading, user]);
 
   async function fetchDashboard() {
     setLoading(true);
@@ -372,14 +381,6 @@ export default function DashboardPage() {
 
   const greeting = getGreeting();
   const totalOpenRepairs = Object.values(data.repairsByStatus).reduce((a, b) => a + b, 0);
-
-  const [showTour, setShowTour] = useState(false);
-  useEffect(() => {
-    const done = localStorage.getItem('corner_tour_done');
-    if (!done && !loading && user) {
-      setTimeout(() => setShowTour(true), 1500);
-    }
-  }, [loading, user]);
 
   return (
     <div className="p-4 space-y-4">

@@ -6,10 +6,7 @@ import { Sale } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { formatPrice, formatDateTime, generateWhatsAppLink } from '@/lib/utils';
 
-const STORES = [
-  { id: 'a0000000-0000-0000-0000-000000000001', name: 'M1' },
-  { id: 'a0000000-0000-0000-0000-000000000002', name: 'M2' },
-];
+// Stores loaded dynamically
 
 const paymentLabels: Record<string, string> = {
   cash: 'Especes',
@@ -25,6 +22,7 @@ function todayString() {
 
 export default function SalesPage() {
   const { user } = useAuth();
+  const [stores, setStores] = useState<{id: string, name: string}[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -67,6 +65,9 @@ export default function SalesPage() {
 
   useEffect(() => {
     fetchSales();
+    fetch('/api/stores').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setStores(data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+    }).catch(() => {});
   }, [fetchSales]);
 
   const buildReceiptText = (sale: Sale): string => {
@@ -157,7 +158,7 @@ export default function SalesPage() {
             className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Tous les magasins</option>
-            {STORES.map((s) => (
+            {stores.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>

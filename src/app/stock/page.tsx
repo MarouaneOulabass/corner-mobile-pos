@@ -16,10 +16,7 @@ import IMEIBlacklistBadge from '@/components/features/IMEIBlacklistBadge';
 const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Oppo', 'Realme', 'Tecno', 'Infinix', 'Nokia', 'Autre'];
 const PAGE_SIZE = 20;
 
-const STORES = [
-  { id: 'a0000000-0000-0000-0000-000000000001', name: 'M1' },
-  { id: 'a0000000-0000-0000-0000-000000000002', name: 'M2' },
-];
+// Stores loaded dynamically
 
 const TARGET_FIELDS = ['brand', 'model', 'imei', 'storage', 'color', 'condition', 'purchase_price', 'selling_price', 'supplier'] as const;
 type TargetField = typeof TARGET_FIELDS[number] | '';
@@ -62,6 +59,7 @@ export default function StockPage() {
   const { user } = useAuth();
   const router = useRouter();
 
+  const [stores, setStores] = useState<{id: string, name: string}[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -150,6 +148,10 @@ export default function StockPage() {
   useEffect(() => {
     setPage(1);
     fetchProducts(1);
+    // Fetch stores dynamically
+    fetch('/api/stores').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setStores(data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+    }).catch(() => {});
   }, [fetchProducts]);
 
   // Infinite scroll observer
@@ -303,8 +305,8 @@ export default function StockPage() {
 
   // --- Transfer handler ---
   const getTransferDestination = (currentStoreId: string) => {
-    const other = STORES.find(s => s.id !== currentStoreId);
-    return other || STORES[1];
+    const other = stores.find(s => s.id !== currentStoreId);
+    return other || stores[0] || { id: '', name: 'Autre magasin' };
   };
 
   const handleTransfer = async () => {

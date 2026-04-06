@@ -2,20 +2,191 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   DESIGN TOKENS — Light Mode (default)
+   ============================================================ */
 :root {
   --primary: #2AA8DC;
+  --primary-dark: #2596c4;
   --accent: #5BBF3E;
-  --background: #ffffff;
-  --foreground: #171717;
+  --accent-dark: #4ea832;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  /* Surface hierarchy */
+  --surface-1: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  /* Borders */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
+/* ============================================================
+   DESIGN TOKENS — Dark Mode
+   ============================================================ */
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+
+  --surface-1: #1e293b;
+  --surface-2: #1a2332;
+  --surface-3: #334155;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border: #334155;
+  --border-light: #1e293b;
+
+  --glass-bg: rgba(15, 23, 42, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 body {
   color: var(--foreground);
   background: var(--background);
   -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Print styles for labels */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================================
+   GLASSMORPHISM UTILITIES
+   ============================================================ */
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-subtle {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
+  }
+}
+
+/* ============================================================
+   SKELETON SHIMMER
+   ============================================================ */
+@layer utilities {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 25%,
+      var(--surface-3) 37%,
+      var(--surface-2) 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 0.5rem;
+  }
+}
+
+/* ============================================================
+   INTERACTIVE FEEDBACK
+   ============================================================ */
+@layer utilities {
+  .press {
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-interactive {
+    transition: all 0.2s ease;
+  }
+  .card-interactive:hover {
+    box-shadow: 0 4px 12px -2px rgba(42, 168, 220, 0.15);
+    border-color: rgba(42, 168, 220, 0.3);
+  }
+  .card-interactive:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ============================================================
+   GRADIENT UTILITIES
+   ============================================================ */
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, #2AA8DC 0%, #5BBF3E 100%);
+  }
+  .gradient-primary-subtle {
+    background: linear-gradient(135deg, rgba(42, 168, 220, 0.08) 0%, rgba(91, 191, 62, 0.08) 100%);
+  }
+  .gradient-dark {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom thin scrollbar for desktop */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface-3);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}
+
+/* ============================================================
+   SAFE AREA
+   ============================================================ */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
 @media print {
   body * {
     visibility: hidden;
@@ -34,16 +205,22 @@ body {
   }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+/* ============================================================
+   FOCUS STYLES
+   ============================================================ */
+@layer base {
+  *:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
 }
 
-/* Hide scrollbar but keep scrolling */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+/* ============================================================
+   TRANSITIONS
+   ============================================================ */
+@layer utilities {
+  .transition-default {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

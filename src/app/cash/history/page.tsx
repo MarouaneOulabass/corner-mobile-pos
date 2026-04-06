@@ -59,12 +59,12 @@ export default function CashHistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24">
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-800 border-b px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/cash" className="text-gray-500">&larr;</Link>
-          <h1 className="text-lg font-bold text-gray-900">Historique Caisse</h1>
+          <Link href="/cash" className="text-gray-500 dark:text-gray-400">&larr;</Link>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white">Historique Caisse</h1>
         </div>
       </div>
 
@@ -76,10 +76,10 @@ export default function CashHistoryPage() {
         )}
 
         {/* Date filters */}
-        <div className="bg-white rounded-xl shadow-sm p-3">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Du</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Du</label>
               <input
                 type="date"
                 value={dateFrom}
@@ -88,7 +88,7 @@ export default function CashHistoryPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Au</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Au</label>
               <input
                 type="date"
                 value={dateTo}
@@ -101,28 +101,28 @@ export default function CashHistoryPage() {
 
         {/* Detail modal */}
         {selectedSession && (
-          <div className="bg-white rounded-xl shadow-sm p-4 border-2 border-[#2AA8DC] space-y-3">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 border-2 border-[#2AA8DC] space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="font-semibold text-gray-900 dark:text-white">
                 Session du {formatDate(selectedSession.opened_at)}
               </h3>
               <button onClick={() => setSelectedSession(null)} className="text-gray-400 text-lg">&times;</button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
-                <p className="text-gray-500">Ouverture</p>
+                <p className="text-gray-500 dark:text-gray-400">Ouverture</p>
                 <p className="font-medium">{formatPrice(selectedSession.opening_amount)}</p>
               </div>
               <div>
-                <p className="text-gray-500">Fermeture</p>
+                <p className="text-gray-500 dark:text-gray-400">Fermeture</p>
                 <p className="font-medium">{formatPrice(selectedSession.closing_amount || 0)}</p>
               </div>
               <div>
-                <p className="text-gray-500">Attendu</p>
+                <p className="text-gray-500 dark:text-gray-400">Attendu</p>
                 <p className="font-medium">{formatPrice(selectedSession.expected_amount || 0)}</p>
               </div>
               <div>
-                <p className="text-gray-500">Difference</p>
+                <p className="text-gray-500 dark:text-gray-400">Difference</p>
                 <p className={`font-semibold ${(selectedSession.difference || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatPrice(selectedSession.difference || 0)}
                 </p>
@@ -133,7 +133,7 @@ export default function CashHistoryPage() {
               <div className="text-center text-sm text-gray-400">Chargement...</div>
             ) : (
               <>
-                <h4 className="text-sm font-medium text-gray-700 mt-2">Mouvements</h4>
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-200 mt-2">Mouvements</h4>
                 {(!selectedSession.movements || selectedSession.movements.length === 0) ? (
                   <p className="text-sm text-gray-400 text-center">Aucun mouvement</p>
                 ) : (
@@ -142,9 +142,9 @@ export default function CashHistoryPage() {
                       <div key={m.id} className="py-2 flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium">{cashMovementLabels[m.type] || m.type}</p>
-                          <p className="text-xs text-gray-500">{m.reason || '-'}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{m.reason || '-'}</p>
                         </div>
-                        <span className={`text-sm font-semibold ${cashMovementColors[m.type] || 'text-gray-600'}`}>
+                        <span className={`text-sm font-semibold ${cashMovementColors[m.type] || 'text-gray-600 dark:text-gray-300'}`}>
                           {m.type === 'expense' || m.type === 'withdrawal' || m.type === 'return' ? '-' : '+'}
                           {formatPrice(m.amount)}
                         </span>
@@ -172,32 +172,32 @@ export default function CashHistoryPage() {
               <button
                 key={s.id}
                 onClick={() => handleViewDetail(s.id)}
-                className="w-full bg-white rounded-xl shadow-sm p-4 text-left"
+                className="w-full bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 text-left"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {formatDate(s.opened_at)}
                   </span>
-                  <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+                  <span className="bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-medium px-2 py-1 rounded-full">
                     Fermee
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div>
-                    <p className="text-gray-500">Ouvert par</p>
+                    <p className="text-gray-500 dark:text-gray-400">Ouvert par</p>
                     <p className="font-medium">{s.opener?.name || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Ouverture</p>
+                    <p className="text-gray-500 dark:text-gray-400">Ouverture</p>
                     <p className="font-medium">{formatPrice(s.opening_amount)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Fermeture</p>
+                    <p className="text-gray-500 dark:text-gray-400">Fermeture</p>
                     <p className="font-medium">{formatPrice(s.closing_amount || 0)}</p>
                   </div>
                 </div>
                 <div className="mt-2 text-right">
-                  <span className="text-xs text-gray-500">Diff: </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Diff: </span>
                   <span className={`text-xs font-semibold ${(s.difference || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {(s.difference || 0) >= 0 ? '+' : ''}{formatPrice(s.difference || 0)}
                   </span>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:corner-mobile-pos.vercel.app)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

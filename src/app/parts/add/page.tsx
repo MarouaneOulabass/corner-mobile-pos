@@ -156,26 +156,26 @@ export default function AddPartPage() {
 
   if (loadingEdit) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2AA8DC]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="bg-white dark:bg-slate-800 border-b sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-lg font-bold text-gray-900">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white">
             {editId ? 'Modifier la pièce' : 'Ajouter une pièce'}
           </h1>
         </div>
@@ -185,7 +185,7 @@ export default function AddPartPage() {
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto px-4 py-4 space-y-4">
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Nom de la pièce *
           </label>
           <input
@@ -202,13 +202,13 @@ export default function AddPartPage() {
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Catégorie *
           </label>
           <select
             value={form.category}
             onChange={(e) => updateField('category', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent outline-none bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent outline-none bg-white dark:bg-slate-800"
           >
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
@@ -220,7 +220,7 @@ export default function AddPartPage() {
 
         {/* Compatible Brands */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Marques compatibles
           </label>
           <div className="flex gap-2">
@@ -241,7 +241,7 @@ export default function AddPartPage() {
             <button
               type="button"
               onClick={addBrand}
-              className="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm hover:bg-gray-200"
+              className="px-3 py-2 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-200 dark:bg-slate-600"
             >
               +
             </button>
@@ -265,7 +265,7 @@ export default function AddPartPage() {
 
         {/* Compatible Models */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Modèles compatibles
           </label>
           <div className="flex gap-2">
@@ -280,7 +280,7 @@ export default function AddPartPage() {
             <button
               type="button"
               onClick={addModel}
-              className="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm hover:bg-gray-200"
+              className="px-3 py-2 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-200 dark:bg-slate-600"
             >
               +
             </button>
@@ -304,7 +304,7 @@ export default function AddPartPage() {
 
         {/* SKU */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             SKU
           </label>
           <input
@@ -319,7 +319,7 @@ export default function AddPartPage() {
         {/* Quantity + Min Quantity */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Quantité *
             </label>
             <input
@@ -334,7 +334,7 @@ export default function AddPartPage() {
             {errors.quantity && <p className="text-xs text-red-500 mt-1">{errors.quantity}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Quantité min.
             </label>
             <input
@@ -350,7 +350,7 @@ export default function AddPartPage() {
         {/* Prices */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Prix d&apos;achat (MAD) *
             </label>
             <input
@@ -366,7 +366,7 @@ export default function AddPartPage() {
             {errors.purchase_price && <p className="text-xs text-red-500 mt-1">{errors.purchase_price}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Prix de vente (MAD)
             </label>
             <input
@@ -394,13 +394,13 @@ export default function AddPartPage() {
 
         {/* Supplier */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Fournisseur
           </label>
           <select
             value={form.supplier_id}
             onChange={(e) => updateField('supplier_id', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent outline-none bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent outline-none bg-white dark:bg-slate-800"
           >
             <option value="">— Aucun —</option>
             {suppliers.map((s) => (
@@ -413,7 +413,7 @@ export default function AddPartPage() {
 
         {/* Bin Location */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Emplacement (bac/étagère)
           </label>
           <input
@@ -427,7 +427,7 @@ export default function AddPartPage() {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Notes
           </label>
           <textarea

@@ -125,27 +125,27 @@ export default function SalesPage() {
 
   return (
     <div className="p-4 pb-24">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Historique des ventes</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Historique des ventes</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-100 p-3 mb-4 space-y-3">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 mb-4 space-y-3">
         <div className="flex gap-2">
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Du</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Du</label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
           </div>
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Au</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Au</label>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function SalesPage() {
           <select
             value={storeFilter}
             onChange={(e) => setStoreFilter(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Tous les magasins</option>
             {STORES.map((s) => (
@@ -169,11 +169,11 @@ export default function SalesPage() {
         <div className="flex gap-2 mb-4">
           <div className="flex-1 bg-[#2AA8DC]/10 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-[#2AA8DC]">{sales.length}</p>
-            <p className="text-xs text-gray-500">Ventes</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Ventes</p>
           </div>
           <div className="flex-1 bg-green-50 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-green-600">{formatPrice(sales.reduce((s, v) => s + v.total, 0))}</p>
-            <p className="text-xs text-gray-500">Total</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
           </div>
         </div>
       )}
@@ -192,7 +192,7 @@ export default function SalesPage() {
             const itemsCount = sale.items?.reduce((s, i) => s + i.quantity, 0) || 0;
 
             return (
-              <div key={sale.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <div key={sale.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
                 {/* Sale header — tap to expand */}
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : sale.id)}
@@ -200,10 +200,10 @@ export default function SalesPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {formatDateTime(sale.created_at)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {itemsCount} article{itemsCount > 1 ? 's' : ''} &middot; {paymentLabels[sale.payment_method] || sale.payment_method}
                       </p>
                       {sale.customer?.name && (
@@ -214,7 +214,7 @@ export default function SalesPage() {
                       )}
                     </div>
                     <div className="text-right flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-900">{formatPrice(sale.total)}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">{formatPrice(sale.total)}</span>
                       <svg
                         className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                         fill="none"
@@ -229,7 +229,7 @@ export default function SalesPage() {
 
                 {/* Expanded details */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 p-3 space-y-2">
+                  <div className="border-t border-gray-100 dark:border-slate-700 p-3 space-y-2">
                     {/* Items */}
                     <div className="space-y-1">
                       {sale.items?.map((item) => {
@@ -239,7 +239,7 @@ export default function SalesPage() {
                         return (
                           <div key={item.id} className="flex items-center justify-between text-sm">
                             <div>
-                              <p className="text-gray-800">{name} <span className="text-gray-400">x{item.quantity}</span></p>
+                              <p className="text-gray-800 dark:text-gray-100">{name} <span className="text-gray-400">x{item.quantity}</span></p>
                               {item.original_price > item.unit_price && (
                                 <p className="text-xs text-red-400 line-through">{formatPrice(item.original_price)}</p>
                               )}
@@ -277,7 +277,7 @@ export default function SalesPage() {
                       )}
                       <button
                         onClick={() => handlePrint(sale)}
-                        className="flex-1 py-2 text-center text-sm font-medium bg-gray-100 text-gray-700 rounded-lg"
+                        className="flex-1 py-2 text-center text-sm font-medium bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-lg"
                       >
                         Imprimer
                       </button>

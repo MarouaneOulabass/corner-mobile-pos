@@ -59,7 +59,7 @@ export default function ReturnsPage() {
   return (
     <div className="p-4 pb-24">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Retours</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Retours</h1>
         <button
           onClick={() => router.push('/returns/new')}
           className="px-4 py-2 bg-[#2AA8DC] text-white text-sm font-medium rounded-xl"
@@ -69,24 +69,24 @@ export default function ReturnsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-100 p-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 mb-4">
         <div className="flex gap-2">
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Du</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Du</label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
           </div>
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Au</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Au</label>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
           </div>
         </div>
@@ -97,11 +97,11 @@ export default function ReturnsPage() {
         <div className="flex gap-2 mb-4">
           <div className="flex-1 bg-red-50 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-red-600">{returns.length}</p>
-            <p className="text-xs text-gray-500">Retours</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Retours</p>
           </div>
           <div className="flex-1 bg-orange-50 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-orange-600">{formatPrice(totalRefunds)}</p>
-            <p className="text-xs text-gray-500">Remboursements</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Remboursements</p>
           </div>
         </div>
       )}
@@ -118,17 +118,17 @@ export default function ReturnsPage() {
           {returns.map((ret) => {
             const isExpanded = expandedId === ret.id;
             return (
-              <div key={ret.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <div key={ret.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : ret.id)}
                   className="w-full p-3 text-left"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {formatDateTime(ret.created_at)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {returnTypeLabels[ret.return_type] || ret.return_type}
                         {' · '}
                         {refundMethodLabels[ret.refund_method] || ret.refund_method}
@@ -155,12 +155,12 @@ export default function ReturnsPage() {
                 </button>
 
                 {isExpanded && (
-                  <div className="border-t border-gray-100 p-3 space-y-2">
-                    <p className="text-sm text-gray-600">
+                  <div className="border-t border-gray-100 dark:border-slate-700 p-3 space-y-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       <span className="font-medium">Raison:</span> {ret.reason}
                     </p>
                     {ret.notes && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         <span className="font-medium">Notes:</span> {ret.notes}
                       </p>
                     )}
@@ -168,10 +168,10 @@ export default function ReturnsPage() {
                     {/* Items */}
                     {ret.items && ret.items.length > 0 && (
                       <div className="space-y-1 pt-1">
-                        <p className="text-xs font-medium text-gray-500 uppercase">Articles retournes</p>
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Articles retournes</p>
                         {ret.items.map((item) => (
                           <div key={item.id} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-800">
+                            <span className="text-gray-800 dark:text-gray-100">
                               {item.product ? `${item.product.brand} ${item.product.model}` : 'Produit'}
                               {' '}
                               <span className="text-gray-400">x{item.quantity}</span>

@@ -85,7 +85,7 @@ export default function PurchaseOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <p className="text-gray-400">Chargement...</p>
       </div>
     );
@@ -93,7 +93,7 @@ export default function PurchaseOrderDetailPage() {
 
   if (!po) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <p className="text-gray-400">Bon de commande introuvable</p>
       </div>
     );
@@ -104,7 +104,7 @@ export default function PurchaseOrderDetailPage() {
   const canCancel = po.status !== 'received' && po.status !== 'cancelled';
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto">
@@ -113,7 +113,7 @@ export default function PurchaseOrderDetailPage() {
           </button>
           <div className="flex items-center justify-between mt-1">
             <h1 className="text-xl font-bold">{po.po_number}</h1>
-            <span className={`text-xs px-3 py-1 rounded-full text-white ${poStatusColors[po.status as POStatus] || 'bg-gray-500'}`}>
+            <span className={`text-xs px-3 py-1 rounded-full text-white ${poStatusColors[po.status as POStatus] || 'bg-gray-50 dark:bg-slate-9000'}`}>
               {poStatusLabels[po.status as POStatus] || po.status}
             </span>
           </div>
@@ -122,29 +122,29 @@ export default function PurchaseOrderDetailPage() {
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* PO Info */}
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-2">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Fournisseur</span>
+            <span className="text-gray-500 dark:text-gray-400">Fournisseur</span>
             <span className="font-medium">{po.supplier?.name || '--'}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Date</span>
+            <span className="text-gray-500 dark:text-gray-400">Date</span>
             <span>{formatDate(po.created_at)}</span>
           </div>
           {po.expected_date && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Date prevue</span>
+              <span className="text-gray-500 dark:text-gray-400">Date prevue</span>
               <span>{formatDate(po.expected_date)}</span>
             </div>
           )}
           {po.received_at && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Recu le</span>
+              <span className="text-gray-500 dark:text-gray-400">Recu le</span>
               <span>{formatDate(po.received_at)}</span>
             </div>
           )}
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Cree par</span>
+            <span className="text-gray-500 dark:text-gray-400">Cree par</span>
             <span>{po.creator?.name || '--'}</span>
           </div>
           <div className="flex justify-between text-sm font-medium border-t pt-2">
@@ -152,12 +152,12 @@ export default function PurchaseOrderDetailPage() {
             <span className="text-[#2AA8DC]">{formatPrice(po.total_amount)}</span>
           </div>
           {po.notes && (
-            <p className="text-xs text-gray-500 border-t pt-2">{po.notes}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 border-t pt-2">{po.notes}</p>
           )}
         </div>
 
         {/* Items */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
           <h3 className="font-medium text-sm mb-3">Articles</h3>
           <div className="space-y-3">
             {(po.items || []).map((item: POItem) => {
@@ -167,7 +167,7 @@ export default function PurchaseOrderDetailPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <p className="font-medium text-sm">{item.description}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {item.brand && `${item.brand} `}
                         {item.model && `${item.model} `}
                         — {formatPrice(item.unit_cost)}/u
@@ -176,19 +176,19 @@ export default function PurchaseOrderDetailPage() {
                     <p className="font-bold text-sm">{formatPrice(item.total_cost)}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-1">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div className="flex-1 bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                       <div
                         className="bg-[#5BBF3E] h-2 rounded-full transition-all"
                         style={{ width: `${(item.quantity_received / item.quantity_ordered) * 100}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {item.quantity_received}/{item.quantity_ordered}
                     </span>
                   </div>
                   {showReceive && remaining > 0 && (
                     <div className="mt-2 flex items-center gap-2">
-                      <label className="text-xs text-gray-500">Recevoir:</label>
+                      <label className="text-xs text-gray-500 dark:text-gray-400">Recevoir:</label>
                       <input
                         type="number"
                         min="0"
@@ -213,7 +213,7 @@ export default function PurchaseOrderDetailPage() {
 
         {/* Receive Form */}
         {showReceive && (
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"

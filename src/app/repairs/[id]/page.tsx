@@ -33,15 +33,15 @@ function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
       >
         <div className="flex items-center gap-2">
           {icon}
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
             {title}
           </h2>
           {badge}
@@ -414,9 +414,9 @@ export default function RepairDetailPage() {
     return (
       <div className="p-4 space-y-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
-            <div className="h-3 bg-gray-200 rounded w-1/2" />
+          <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-4 animate-pulse">
+            <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-2/3 mb-2" />
+            <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded w-1/2" />
           </div>
         ))}
       </div>
@@ -457,17 +457,17 @@ export default function RepairDetailPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-bold text-gray-900 truncate">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
             {repair.device_brand} {repair.device_model}
           </h1>
-          <p className="text-xs text-gray-500">{repair.customer?.name}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{repair.customer?.name}</p>
         </div>
         <span
           className={`shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white ${
@@ -488,81 +488,81 @@ export default function RepairDetailPage() {
       )}
 
       {/* Device info */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-2">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Appareil</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-2">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Appareil</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <span className="text-gray-400 text-xs">Marque</span>
-            <p className="text-gray-900">{repair.device_brand}</p>
+            <p className="text-gray-900 dark:text-white">{repair.device_brand}</p>
           </div>
           <div>
             <span className="text-gray-400 text-xs">Modèle</span>
-            <p className="text-gray-900">{repair.device_model}</p>
+            <p className="text-gray-900 dark:text-white">{repair.device_model}</p>
           </div>
           {repair.imei && (
             <div className="col-span-2">
               <span className="text-gray-400 text-xs">IMEI</span>
-              <p className="text-gray-900 font-mono text-xs">{repair.imei}</p>
+              <p className="text-gray-900 dark:text-white font-mono text-xs">{repair.imei}</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Customer */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-2">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Client</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-2">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Client</h2>
         <div className="text-sm">
-          <p className="text-gray-900 font-medium">{repair.customer?.name}</p>
-          <p className="text-gray-500">{repair.customer?.phone}</p>
+          <p className="text-gray-900 dark:text-white font-medium">{repair.customer?.name}</p>
+          <p className="text-gray-500 dark:text-gray-400">{repair.customer?.phone}</p>
         </div>
       </div>
 
       {/* Problem */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-2">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Problème</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-2">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Problème</h2>
         {repair.problem_categories && repair.problem_categories.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {repair.problem_categories.map((cat) => (
               <span
                 key={cat}
-                className="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full"
+                className="bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 text-xs px-2 py-0.5 rounded-full"
               >
                 {cat}
               </span>
             ))}
           </div>
         )}
-        <p className="text-sm text-gray-700">{repair.problem}</p>
+        <p className="text-sm text-gray-700 dark:text-gray-200">{repair.problem}</p>
         {repair.condition_on_arrival && (
           <div className="mt-2">
             <span className="text-gray-400 text-xs">État à l&apos;arrivée</span>
-            <p className="text-sm text-gray-700">{repair.condition_on_arrival}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-200">{repair.condition_on_arrival}</p>
           </div>
         )}
       </div>
 
       {/* Costs */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-2">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Coûts</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-2">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Coûts</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <span className="text-gray-400 text-xs">Coût estimé</span>
-            <p className="text-gray-900 font-medium">{formatPrice(repair.estimated_cost)}</p>
+            <p className="text-gray-900 dark:text-white font-medium">{formatPrice(repair.estimated_cost)}</p>
           </div>
           <div>
             <span className="text-gray-400 text-xs">Acompte</span>
-            <p className="text-gray-900 font-medium">{formatPrice(repair.deposit)}</p>
+            <p className="text-gray-900 dark:text-white font-medium">{formatPrice(repair.deposit)}</p>
           </div>
           {repair.final_cost != null && (
             <div>
               <span className="text-gray-400 text-xs">Coût final</span>
-              <p className="text-gray-900 font-semibold">{formatPrice(repair.final_cost)}</p>
+              <p className="text-gray-900 dark:text-white font-semibold">{formatPrice(repair.final_cost)}</p>
             </div>
           )}
           {repair.estimated_completion_date && (
             <div>
               <span className="text-gray-400 text-xs">Date estimée</span>
-              <p className={`${isOverdue ? 'text-red-500 font-medium' : 'text-gray-900'}`}>
+              <p className={`${isOverdue ? 'text-red-500 font-medium' : 'text-gray-900 dark:text-white'}`}>
                 {formatDate(repair.estimated_completion_date)}
               </p>
             </div>
@@ -571,7 +571,7 @@ export default function RepairDetailPage() {
         {repair.technician && (
           <div className="mt-1">
             <span className="text-gray-400 text-xs">Technicien</span>
-            <p className="text-sm text-gray-900">{repair.technician.name}</p>
+            <p className="text-sm text-gray-900 dark:text-white">{repair.technician.name}</p>
           </div>
         )}
 
@@ -594,7 +594,7 @@ export default function RepairDetailPage() {
               placeholder="Coût final (MAD)"
               value={finalCost}
               onChange={(e) => setFinalCost(e.target.value)}
-              className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+              className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
             />
             <button
               type="button"
@@ -609,13 +609,13 @@ export default function RepairDetailPage() {
       </div>
 
       {/* Status Timeline */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-3">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
           Historique
         </h2>
         {repair.status_logs && repair.status_logs.length > 0 ? (
           <div className="relative">
-            <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gray-200" />
+            <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-slate-600" />
             <div className="space-y-4">
               {repair.status_logs.map((log, index) => (
                 <div key={log.id} className="flex gap-3 relative">
@@ -628,14 +628,14 @@ export default function RepairDetailPage() {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {repairStatusLabels[log.status] || log.status}
                       </span>
                       <span className="text-[10px] text-gray-400 shrink-0">
                         {formatDateTime(log.changed_at)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {log.user?.name || 'Système'}
                       {log.notes ? ` - ${log.notes}` : ''}
                     </p>
@@ -737,18 +737,18 @@ export default function RepairDetailPage() {
             {partsUsed.map((pu) => (
               <div
                 key={pu.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-100 dark:border-slate-700"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                     {pu.part?.name || 'Pièce'}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {pu.quantity} x {formatPrice(pu.unit_cost)}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
                     {formatPrice(pu.quantity * pu.unit_cost)}
                   </span>
                   {repair.status !== 'delivered' && repair.status !== 'cancelled' && (
@@ -766,9 +766,9 @@ export default function RepairDetailPage() {
               </div>
             ))}
             {/* Total */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-              <span className="text-sm font-semibold text-gray-700">Total pièces</span>
-              <span className="text-sm font-bold text-gray-900">{formatPrice(partsTotalCost)}</span>
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-slate-600">
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">Total pièces</span>
+              <span className="text-sm font-bold text-gray-900 dark:text-white">{formatPrice(partsTotalCost)}</span>
             </div>
           </div>
         ) : (
@@ -782,7 +782,7 @@ export default function RepairDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowAddPart(true)}
-                className="mt-3 w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg text-sm font-medium hover:border-[#2AA8DC] hover:text-[#2AA8DC] transition-colors"
+                className="mt-3 w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 dark:text-gray-400 rounded-lg text-sm font-medium hover:border-[#2AA8DC] hover:text-[#2AA8DC] transition-colors"
               >
                 + Ajouter une pièce
               </button>
@@ -794,12 +794,12 @@ export default function RepairDetailPage() {
                   placeholder="Rechercher une pièce..."
                   value={partSearch}
                   onChange={(e) => handleSearchParts(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
                 />
 
                 {/* Search results */}
                 {searchingParts && (
-                  <p className="text-xs text-gray-500 text-center">Recherche...</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">Recherche...</p>
                 )}
                 {partSearchResults.length > 0 && !selectedPart && (
                   <div className="max-h-40 overflow-y-auto space-y-1">
@@ -812,10 +812,10 @@ export default function RepairDetailPage() {
                           setNewPartCost(String(part.selling_price));
                           setPartSearchResults([]);
                         }}
-                        className="w-full text-left p-2 bg-white rounded-lg border border-gray-100 hover:border-[#2AA8DC] transition-colors"
+                        className="w-full text-left p-2 bg-white dark:bg-slate-800 rounded-lg border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC] transition-colors"
                       >
-                        <p className="text-sm font-medium text-gray-900">{part.name}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{part.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {part.category} - Stock: {part.quantity} - {formatPrice(part.selling_price)}
                         </p>
                       </button>
@@ -826,35 +826,35 @@ export default function RepairDetailPage() {
                 {/* Selected part form */}
                 {selectedPart && (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-[#2AA8DC]">
-                      <span className="text-sm font-medium text-gray-900">{selectedPart.name}</span>
+                    <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-2 rounded-lg border border-[#2AA8DC]">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">{selectedPart.name}</span>
                       <button
                         type="button"
                         onClick={() => setSelectedPart(null)}
-                        className="text-gray-400 hover:text-gray-600 text-xs"
+                        className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-xs"
                       >
                         Changer
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-xs text-gray-500">Quantité</label>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Quantité</label>
                         <input
                           type="number"
                           min="1"
                           value={newPartQty}
                           onChange={(e) => setNewPartQty(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Coût unitaire (MAD)</label>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Coût unitaire (MAD)</label>
                         <input
                           type="number"
                           min="0"
                           value={newPartCost}
                           onChange={(e) => setNewPartCost(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
                         />
                       </div>
                     </div>
@@ -867,7 +867,7 @@ export default function RepairDetailPage() {
                           setPartSearch('');
                           setPartSearchResults([]);
                         }}
-                        className="flex-1 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm font-medium"
+                        className="flex-1 py-2 border border-gray-300 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium"
                       >
                         Annuler
                       </button>
@@ -892,7 +892,7 @@ export default function RepairDetailPage() {
                       setPartSearch('');
                       setPartSearchResults([]);
                     }}
-                    className="w-full py-1.5 text-gray-500 text-xs font-medium"
+                    className="w-full py-1.5 text-gray-500 dark:text-gray-400 text-xs font-medium"
                   >
                     Annuler
                   </button>
@@ -988,7 +988,7 @@ export default function RepairDetailPage() {
         >
           {signatureUrl ? (
             <div className="space-y-2">
-              <div className="border border-gray-200 rounded-lg overflow-hidden bg-white p-2">
+              <div className="border border-gray-200 dark:border-slate-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800 p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={signatureUrl}
@@ -1016,7 +1016,7 @@ export default function RepairDetailPage() {
             <div className="space-y-2">
               <SignatureCanvas onSave={handleSignatureSave} />
               {savingSignature && (
-                <p className="text-xs text-gray-500 text-center">Enregistrement...</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">Enregistrement...</p>
               )}
             </div>
           ) : (
@@ -1052,8 +1052,8 @@ export default function RepairDetailPage() {
 
       {/* Status transition buttons */}
       {nextStatuses.length > 0 && (
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-3">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
             Changer le statut
           </h2>
           <input
@@ -1061,7 +1061,7 @@ export default function RepairDetailPage() {
             placeholder="Note (optionnel)"
             value={statusNote}
             onChange={(e) => setStatusNote(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
           <div className="flex flex-wrap gap-2">
             {nextStatuses.map((status) => (
@@ -1072,7 +1072,7 @@ export default function RepairDetailPage() {
                 className={`px-4 py-2 rounded-xl text-xs font-semibold text-white transition-all active:scale-95 disabled:opacity-50 ${
                   status === 'cancelled'
                     ? 'bg-red-500 hover:bg-red-600'
-                    : repairStatusColors[status] || 'bg-gray-500'
+                    : repairStatusColors[status] || 'bg-gray-50 dark:bg-slate-9000'
                 } hover:opacity-90`}
               >
                 {repairStatusLabels[status] || status}
@@ -1084,7 +1084,7 @@ export default function RepairDetailPage() {
 
       {/* AI Diagnosis */}
       {repair.status !== 'delivered' && repair.status !== 'cancelled' && (
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-3">
           <button
             onClick={handleAiDiagnosis}
             disabled={aiLoading}
@@ -1095,7 +1095,7 @@ export default function RepairDetailPage() {
           {aiResult && (
             <div className="bg-purple-50 border border-purple-200 rounded-xl p-3">
               <p className="text-xs font-semibold text-purple-700 mb-1">Diagnostic IA</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{aiResult}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">{aiResult}</p>
             </div>
           )}
         </div>

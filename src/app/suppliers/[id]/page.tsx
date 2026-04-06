@@ -72,7 +72,7 @@ export default function SupplierDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <p className="text-gray-400">Chargement...</p>
       </div>
     );
@@ -80,14 +80,14 @@ export default function SupplierDetailPage() {
 
   if (!supplier) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <p className="text-gray-400">Fournisseur introuvable</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
@@ -98,7 +98,7 @@ export default function SupplierDetailPage() {
           {!editing && (user.role === 'superadmin' || user.role === 'manager') && (
             <button
               onClick={() => setEditing(true)}
-              className="bg-white text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
+              className="bg-white dark:bg-slate-800 text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
             >
               Modifier
             </button>
@@ -109,7 +109,7 @@ export default function SupplierDetailPage() {
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Supplier Info */}
         {editing ? (
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
             <input
               type="text"
               placeholder="Nom *"
@@ -171,39 +171,39 @@ export default function SupplierDetailPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-2">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-2">
             {supplier.contact_name && (
-              <p className="text-sm"><span className="text-gray-500">Contact:</span> {supplier.contact_name}</p>
+              <p className="text-sm"><span className="text-gray-500 dark:text-gray-400">Contact:</span> {supplier.contact_name}</p>
             )}
             {supplier.phone && (
-              <p className="text-sm"><span className="text-gray-500">Tel:</span> {supplier.phone}</p>
+              <p className="text-sm"><span className="text-gray-500 dark:text-gray-400">Tel:</span> {supplier.phone}</p>
             )}
             {supplier.email && (
-              <p className="text-sm"><span className="text-gray-500">Email:</span> {supplier.email}</p>
+              <p className="text-sm"><span className="text-gray-500 dark:text-gray-400">Email:</span> {supplier.email}</p>
             )}
             {supplier.address && (
-              <p className="text-sm"><span className="text-gray-500">Adresse:</span> {supplier.address}</p>
+              <p className="text-sm"><span className="text-gray-500 dark:text-gray-400">Adresse:</span> {supplier.address}</p>
             )}
             {supplier.notes && (
-              <p className="text-sm text-gray-500 mt-2">{supplier.notes}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{supplier.notes}</p>
             )}
           </div>
         )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Bons de commande</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Bons de commande</p>
             <p className="text-lg font-bold">{orders.length}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Total depense</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total depense</p>
             <p className="text-lg font-bold text-[#2AA8DC]">{formatPrice(totalSpent)}</p>
           </div>
         </div>
 
         {/* Purchase Orders */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
           <h3 className="font-medium text-sm mb-3">Bons de commande</h3>
           {orders.length === 0 ? (
             <p className="text-gray-400 text-sm">Aucun bon de commande</p>
@@ -218,11 +218,11 @@ export default function SupplierDetailPage() {
                   <div className="flex items-center justify-between text-sm">
                     <div>
                       <p className="font-medium">{po.po_number}</p>
-                      <p className="text-xs text-gray-500">{formatDate(po.created_at)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(po.created_at)}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold">{formatPrice(po.total_amount)}</p>
-                      <span className={`text-xs px-2 py-0.5 rounded-full text-white ${poStatusColors[po.status] || 'bg-gray-500'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full text-white ${poStatusColors[po.status] || 'bg-gray-50 dark:bg-slate-9000'}`}>
                         {poStatusLabels[po.status] || po.status}
                       </span>
                     </div>

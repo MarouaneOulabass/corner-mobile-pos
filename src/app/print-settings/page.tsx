@@ -180,9 +180,9 @@ export default function PrintSettingsPage() {
     return (
       <div className="p-4 max-w-lg mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-48" />
-          <div className="h-40 bg-gray-200 rounded-xl" />
-          <div className="h-40 bg-gray-200 rounded-xl" />
+          <div className="h-8 bg-gray-200 dark:bg-slate-600 rounded w-48" />
+          <div className="h-40 bg-gray-200 dark:bg-slate-600 rounded-xl" />
+          <div className="h-40 bg-gray-200 dark:bg-slate-600 rounded-xl" />
         </div>
       </div>
     );
@@ -192,21 +192,21 @@ export default function PrintSettingsPage() {
     <div className="p-4 max-w-lg mx-auto pb-24 space-y-6">
       {/* Page title */}
       <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-500 hover:text-gray-700">
+        <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-xl font-bold text-gray-900">Parametres d&apos;impression</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Parametres d&apos;impression</h1>
       </div>
 
       {/* Receipt Template Section */}
-      <section className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-        <h2 className="text-base font-semibold text-gray-800">Modele de recu</h2>
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4 space-y-4">
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">Modele de recu</h2>
 
         {/* Header text */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">En-tete</label>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">En-tete</label>
           <input
             type="text"
             value={template.header_text}
@@ -218,7 +218,7 @@ export default function PrintSettingsPage() {
 
         {/* Footer text */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Pied de page</label>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Pied de page</label>
           <input
             type="text"
             value={template.footer_text}
@@ -230,7 +230,7 @@ export default function PrintSettingsPage() {
 
         {/* Paper width */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Largeur papier</label>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Largeur papier</label>
           <div className="flex gap-2">
             {(['58mm', '80mm'] as const).map((w) => (
               <button
@@ -239,7 +239,7 @@ export default function PrintSettingsPage() {
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   template.paper_width === w
                     ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
                 }`}
               >
                 {w}
@@ -250,7 +250,7 @@ export default function PrintSettingsPage() {
 
         {/* Font size */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Taille police</label>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Taille police</label>
           <div className="flex gap-2">
             {([
               { value: 'small', label: 'Petit' },
@@ -263,7 +263,7 @@ export default function PrintSettingsPage() {
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   template.font_size === opt.value
                     ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
                 }`}
               >
                 {opt.label}
@@ -298,14 +298,14 @@ export default function PrintSettingsPage() {
       </section>
 
       {/* Printer Configuration */}
-      <section className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-        <h2 className="text-base font-semibold text-gray-800">Imprimante Brother</h2>
-        <p className="text-xs text-gray-500">
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4 space-y-4">
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">Imprimante Brother</h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           Configurez l&apos;adresse IP de votre imprimante Brother QL-820NWBc pour l&apos;impression
           directe des etiquettes. Laissez vide pour utiliser l&apos;impression navigateur.
         </p>
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Adresse IP</label>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Adresse IP</label>
           <input
             type="text"
             value={brotherIp}
@@ -317,12 +317,12 @@ export default function PrintSettingsPage() {
       </section>
 
       {/* Live Preview */}
-      <section className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-        <h2 className="text-base font-semibold text-gray-800">Apercu en direct</h2>
-        <div className="overflow-auto border border-gray-100 rounded-lg bg-gray-50 p-4">
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4 space-y-4">
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">Apercu en direct</h2>
+        <div className="overflow-auto border border-gray-100 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-900 p-4">
           <div className="flex justify-center">
             <div
-              className="bg-white shadow-sm"
+              className="bg-white dark:bg-slate-800 shadow-sm"
               dangerouslySetInnerHTML={{ __html: previewHtml }}
             />
           </div>
@@ -366,7 +366,7 @@ function ToggleOption({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-gray-700">{label}</span>
+      <span className="text-sm text-gray-700 dark:text-gray-200">{label}</span>
       <button
         role="switch"
         aria-checked={checked}
@@ -376,7 +376,7 @@ function ToggleOption({
         }`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-slate-800 rounded-full shadow transition-transform duration-200 ${
             checked ? 'translate-x-5' : 'translate-x-0'
           }`}
         />

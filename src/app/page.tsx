@@ -360,9 +360,9 @@ export default function DashboardPage() {
     return (
       <div className="p-4 space-y-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl p-5 animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
-            <div className="h-8 bg-gray-200 rounded w-1/2" />
+          <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-5 animate-pulse">
+            <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-1/3 mb-3" />
+            <div className="h-8 bg-gray-200 dark:bg-slate-600 rounded w-1/2" />
           </div>
         ))}
       </div>
@@ -377,16 +377,16 @@ export default function DashboardPage() {
       {/* Welcome */}
       <div className="mb-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
             {greeting}, {user?.name?.split(' ')[0]}
           </h1>
           {lastRefresh && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               Dernière maj: {lastRefresh.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {new Date().toLocaleDateString('fr-FR', {
             weekday: 'long',
             day: 'numeric',
@@ -398,24 +398,24 @@ export default function DashboardPage() {
 
       {/* Sales Today */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
         <div className="flex items-center justify-between mb-1">
-          <span className="text-sm font-medium text-gray-500">Ventes aujourd&apos;hui</span>
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Ventes aujourd&apos;hui</span>
           <span className="text-xs bg-[#2AA8DC]/10 text-[#2AA8DC] px-2 py-0.5 rounded-full font-medium">
             {data.transactionCount} transaction{data.transactionCount !== 1 ? 's' : ''}
           </span>
         </div>
-        <p className="text-2xl font-bold text-gray-900">{formatPrice(data.salesToday)}</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatPrice(data.salesToday)}</p>
       </div>
 
       {/* Margin */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
-        <span className="text-sm font-medium text-gray-500">Marge du jour</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Marge du jour</span>
         <div className="flex items-end gap-3 mt-1">
           <p className="text-2xl font-bold text-[#5BBF3E]">{formatPrice(data.marginToday)}</p>
           <span className="text-sm font-medium text-[#5BBF3E] mb-1">
@@ -426,45 +426,45 @@ export default function DashboardPage() {
 
       {/* Stock Summary */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
-        <span className="text-sm font-medium text-gray-500 mb-3 block">Stock</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 block">Stock</span>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-2xl font-bold text-gray-900">{data.inStockCount}</p>
-            <p className="text-xs text-gray-500">En stock</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{data.inStockCount}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">En stock</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-900">{data.soldThisWeek}</p>
-            <p className="text-xs text-gray-500">Vendus cette semaine</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{data.soldThisWeek}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Vendus cette semaine</p>
           </div>
         </div>
       </div>
 
       {/* Open Repairs */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium text-gray-500">Réparations en cours</span>
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Réparations en cours</span>
           <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
             {totalOpenRepairs}
           </span>
         </div>
         {totalOpenRepairs === 0 ? (
-          <p className="text-sm text-gray-400">Aucune réparation en cours</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Aucune réparation en cours</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {Object.entries(data.repairsByStatus).map(([status, count]) => (
               <div
                 key={status}
-                className="flex items-center gap-1.5 text-xs bg-gray-50 rounded-full px-3 py-1.5"
+                className="flex items-center gap-1.5 text-xs bg-gray-50 dark:bg-slate-900 rounded-full px-3 py-1.5"
               >
                 <span className={`w-2 h-2 rounded-full ${repairStatusColors[status] || 'bg-gray-400'}`} />
-                <span className="text-gray-700">{repairStatusLabels[status] || status}</span>
-                <span className="font-semibold text-gray-900">{count}</span>
+                <span className="text-gray-700 dark:text-gray-200">{repairStatusLabels[status] || status}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{count}</span>
               </div>
             ))}
           </div>
@@ -484,25 +484,25 @@ export default function DashboardPage() {
 
       {/* Cash Session Widget */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
-        <span className="text-sm font-medium text-gray-500 mb-2 block">Caisse</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Caisse</span>
         {cashSession ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-              <span className="text-sm text-gray-800">
+              <span className="text-sm text-gray-800 dark:text-gray-100">
                 Caisse ouverte depuis {formatDuration(cashSession.opened_at)}
               </span>
             </div>
-            <span className="text-sm font-medium text-gray-900">{formatPrice(cashSession.opening_amount)}</span>
+            <span className="text-sm font-medium text-gray-900 dark:text-white">{formatPrice(cashSession.opening_amount)}</span>
           </div>
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-              <span className="text-sm text-gray-500">Caisse fermee</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Caisse fermee</span>
             </div>
             <a href="/cash" className="text-sm font-medium text-[#2AA8DC] hover:underline">Ouvrir</a>
           </div>
@@ -511,14 +511,14 @@ export default function DashboardPage() {
 
       {/* Clock Status Widget */}
       <div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-opacity duration-500"
+        className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 transition-opacity duration-500"
         style={{ opacity: isRefreshing ? 0.6 : 1 }}
       >
-        <span className="text-sm font-medium text-gray-500 mb-2 block">Pointage</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Pointage</span>
         {clockStatus?.clocked_in && clockStatus.clocked_in_at ? (
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-            <span className="text-sm text-gray-800">
+            <span className="text-sm text-gray-800 dark:text-gray-100">
               Pointe depuis {formatDuration(clockStatus.clocked_in_at)}
             </span>
           </div>
@@ -526,7 +526,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-              <span className="text-sm text-gray-500">Non pointe</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Non pointe</span>
             </div>
             <a href="/employees/clock" className="text-sm font-medium text-[#2AA8DC] hover:underline">Pointer</a>
           </div>
@@ -563,8 +563,8 @@ export default function DashboardPage() {
 
       {/* Activity Feed */}
       {activities.length > 0 && (
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <span className="text-sm font-medium text-gray-500 mb-3 block">Activité récente</span>
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-slate-700">
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 block">Activité récente</span>
           <div className="space-y-3">
             {activities.map((activity) => (
               <div key={activity.id} className="flex items-start gap-3">
@@ -580,10 +580,10 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-800 truncate">{activity.label}</p>
+                  <p className="text-sm text-gray-800 dark:text-gray-100 truncate">{activity.label}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-500">{activity.detail}</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{activity.detail}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(activity.created_at).toLocaleTimeString('fr-FR', {
                         hour: '2-digit',
                         minute: '2-digit',

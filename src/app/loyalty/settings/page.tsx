@@ -129,7 +129,7 @@ export default function LoyaltySettingsPage() {
 
         <form onSubmit={handleSave} className="space-y-4">
           {/* Enable Toggle */}
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Programme actif</p>
@@ -143,7 +143,7 @@ export default function LoyaltySettingsPage() {
                 }`}
               >
                 <span
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-slate-800 rounded-full transition-transform ${
                     form.enabled ? 'translate-x-6' : ''
                   }`}
                 />
@@ -152,11 +152,11 @@ export default function LoyaltySettingsPage() {
           </div>
 
           {/* Rates */}
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-4">
             <h3 className="font-semibold">Taux de conversion</h3>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
                 Points gagnes par MAD depense
               </label>
               <input
@@ -173,7 +173,7 @@ export default function LoyaltySettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
                 Valeur de 1 point (en MAD)
               </label>
               <input
@@ -191,13 +191,13 @@ export default function LoyaltySettingsPage() {
           </div>
 
           {/* Tier Thresholds */}
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-4">
             <h3 className="font-semibold">Seuils des niveaux</h3>
             <p className="text-xs text-gray-400">Total de points gagnes necessaires pour atteindre chaque niveau</p>
 
             {[
               { key: 'bronze_threshold' as const, label: 'Bronze', color: 'text-amber-700' },
-              { key: 'silver_threshold' as const, label: 'Argent', color: 'text-gray-600' },
+              { key: 'silver_threshold' as const, label: 'Argent', color: 'text-gray-600 dark:text-gray-300' },
               { key: 'gold_threshold' as const, label: 'Or', color: 'text-yellow-700' },
               { key: 'platinum_threshold' as const, label: 'Platine', color: 'text-purple-700' },
             ].map(tier => (

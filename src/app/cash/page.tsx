@@ -183,17 +183,17 @@ export default function CashPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2AA8DC]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24">
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Caisse</h1>
+      <div className="bg-white dark:bg-slate-800 border-b px-4 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white">Caisse</h1>
         <Link href="/cash/history" className="text-sm text-[#2AA8DC] font-medium">
           Historique
         </Link>
@@ -208,15 +208,15 @@ export default function CashPage() {
 
         {!session ? (
           /* No open session — show open form */
-          <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6 space-y-4">
             <div className="text-center">
               <div className="text-4xl mb-2">&#x1f4b0;</div>
-              <h2 className="text-lg font-semibold text-gray-900">Pas de caisse ouverte</h2>
-              <p className="text-sm text-gray-500 mt-1">Ouvrez la caisse pour commencer la journee</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Pas de caisse ouverte</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ouvrez la caisse pour commencer la journee</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Montant d&apos;ouverture (MAD)
               </label>
               <input
@@ -242,28 +242,28 @@ export default function CashPage() {
           /* Open session — show session info, movements, close */
           <>
             {/* Session info */}
-            <div className="bg-white rounded-xl shadow-sm p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-gray-500">Session ouverte</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Session ouverte</span>
                 <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">
                   Active
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-gray-500">Ouvert par</p>
+                  <p className="text-gray-500 dark:text-gray-400">Ouvert par</p>
                   <p className="font-medium">{session.opener?.name || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Ouverture</p>
+                  <p className="text-gray-500 dark:text-gray-400">Ouverture</p>
                   <p className="font-medium">{formatPrice(session.opening_amount)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Heure</p>
+                  <p className="text-gray-500 dark:text-gray-400">Heure</p>
                   <p className="font-medium">{formatDateTime(session.opened_at)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Total actuel</p>
+                  <p className="text-gray-500 dark:text-gray-400">Total actuel</p>
                   <p className="font-semibold text-[#2AA8DC]">{formatPrice(calculateCurrentTotal())}</p>
                 </div>
               </div>
@@ -273,32 +273,32 @@ export default function CashPage() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => { setMovementType('expense'); setShowMovementForm(true); }}
-                className="bg-white rounded-xl shadow-sm p-3 text-center"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-3 text-center"
               >
                 <div className="text-red-500 text-xl mb-1">-</div>
-                <div className="text-xs font-medium text-gray-700">Depense</div>
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-200">Depense</div>
               </button>
               <button
                 onClick={() => { setMovementType('deposit'); setShowMovementForm(true); }}
-                className="bg-white rounded-xl shadow-sm p-3 text-center"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-3 text-center"
               >
                 <div className="text-blue-500 text-xl mb-1">+</div>
-                <div className="text-xs font-medium text-gray-700">Depot</div>
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-200">Depot</div>
               </button>
               <button
                 onClick={() => { setMovementType('withdrawal'); setShowMovementForm(true); }}
-                className="bg-white rounded-xl shadow-sm p-3 text-center"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-3 text-center"
               >
                 <div className="text-orange-500 text-xl mb-1">-</div>
-                <div className="text-xs font-medium text-gray-700">Retrait</div>
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-200">Retrait</div>
               </button>
             </div>
 
             {/* Movement form modal */}
             {showMovementForm && (
-              <div className="bg-white rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
+              <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
                     {cashMovementLabels[movementType] || movementType}
                   </h3>
                   <button onClick={() => setShowMovementForm(false)} className="text-gray-400 text-lg">
@@ -307,7 +307,7 @@ export default function CashPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Type</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Type</label>
                   <select
                     value={movementType}
                     onChange={(e) => setMovementType(e.target.value as CashMovementType)}
@@ -321,7 +321,7 @@ export default function CashPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Montant (MAD)</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Montant (MAD)</label>
                   <input
                     type="number"
                     value={movementAmount}
@@ -334,7 +334,7 @@ export default function CashPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Raison</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Raison</label>
                   <input
                     type="text"
                     value={movementReason}
@@ -355,9 +355,9 @@ export default function CashPage() {
             )}
 
             {/* Recent movements */}
-            <div className="bg-white rounded-xl shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm">
               <div className="px-4 py-3 border-b">
-                <h3 className="font-semibold text-gray-900">Mouvements recents</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Mouvements recents</h3>
               </div>
               {(!session.movements || session.movements.length === 0) ? (
                 <div className="p-4 text-center text-sm text-gray-400">
@@ -368,13 +368,13 @@ export default function CashPage() {
                   {session.movements.map((m) => (
                     <div key={m.id} className="px-4 py-3 flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {cashMovementLabels[m.type] || m.type}
                         </p>
-                        <p className="text-xs text-gray-500">{m.reason || '-'}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{m.reason || '-'}</p>
                         <p className="text-xs text-gray-400">{formatDateTime(m.created_at)}</p>
                       </div>
-                      <span className={`font-semibold text-sm ${cashMovementColors[m.type] || 'text-gray-600'}`}>
+                      <span className={`font-semibold text-sm ${cashMovementColors[m.type] || 'text-gray-600 dark:text-gray-300'}`}>
                         {m.type === 'expense' || m.type === 'withdrawal' || m.type === 'return' ? '-' : '+'}
                         {formatPrice(m.amount)}
                       </span>
@@ -393,14 +393,14 @@ export default function CashPage() {
                 Fermer la caisse
               </button>
             ) : (
-              <div className="bg-white rounded-xl shadow-sm p-4 space-y-3 border-2 border-red-300">
-                <h3 className="font-semibold text-gray-900">Fermeture de caisse</h3>
-                <div className="bg-gray-50 rounded-lg p-3 text-sm">
-                  <p className="text-gray-500">Montant attendu</p>
-                  <p className="font-bold text-lg text-gray-900">{formatPrice(calculateCurrentTotal())}</p>
+              <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 space-y-3 border-2 border-red-300">
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fermeture de caisse</h3>
+                <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-3 text-sm">
+                  <p className="text-gray-500 dark:text-gray-400">Montant attendu</p>
+                  <p className="font-bold text-lg text-gray-900 dark:text-white">{formatPrice(calculateCurrentTotal())}</p>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Montant reel compte (MAD)</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Montant reel compte (MAD)</label>
                   <input
                     type="number"
                     value={closingAmount}
@@ -413,7 +413,7 @@ export default function CashPage() {
                 </div>
                 {closingAmount && (
                   <div className="text-sm text-center">
-                    <span className="text-gray-500">Difference: </span>
+                    <span className="text-gray-500 dark:text-gray-400">Difference: </span>
                     <span className={
                       parseFloat(closingAmount) - calculateCurrentTotal() >= 0
                         ? 'text-green-600 font-semibold'
@@ -426,7 +426,7 @@ export default function CashPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowCloseForm(false)}
-                    className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg font-medium"
+                    className="flex-1 border border-gray-300 text-gray-700 dark:text-gray-200 py-3 rounded-lg font-medium"
                   >
                     Annuler
                   </button>

@@ -55,14 +55,14 @@ export default function SuppliersPage() {
 
   if (!user || (user.role !== 'superadmin' && user.role !== 'manager')) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
         Acces reserve aux managers
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
@@ -72,7 +72,7 @@ export default function SuppliersPage() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="bg-white text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
+            className="bg-white dark:bg-slate-800 text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
           >
             + Ajouter
           </button>
@@ -91,7 +91,7 @@ export default function SuppliersPage() {
 
         {/* Add Form */}
         {showForm && (
-          <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
             <h3 className="font-medium text-sm">Nouveau fournisseur</h3>
             <input
               type="text"
@@ -166,18 +166,18 @@ export default function SuppliersPage() {
               <Link
                 key={s.id}
                 href={`/suppliers/${s.id}`}
-                className="block bg-white rounded-xl p-4 shadow-sm"
+                className="block bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">{s.name}</p>
                     {s.contact_name && (
-                      <p className="text-xs text-gray-500">{s.contact_name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{s.contact_name}</p>
                     )}
                   </div>
                   <span className="text-gray-400 text-lg">&rsaquo;</span>
                 </div>
-                <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                <div className="flex gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                   {s.phone && <span>{s.phone}</span>}
                   {s.email && <span>{s.email}</span>}
                 </div>

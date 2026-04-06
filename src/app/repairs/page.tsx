@@ -69,7 +69,7 @@ export default function RepairsPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold text-gray-900">Réparations</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white">Réparations</h1>
 
       {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error} <button onClick={() => { setError(null); fetchRepairs(); }} className="ml-2 underline">Réessayer</button></div>}
 
@@ -79,7 +79,7 @@ export default function RepairsPage() {
         placeholder="Rechercher client, téléphone, appareil..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+        className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
       />
 
       {/* Status tabs */}
@@ -91,7 +91,7 @@ export default function RepairsPage() {
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               activeTab === tab.key
                 ? 'bg-[#2AA8DC] text-white'
-                : 'bg-gray-100 text-gray-600'
+                : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300'
             }`}
           >
             {tab.label}
@@ -111,10 +111,10 @@ export default function RepairsPage() {
       {loading ? (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
-              <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
-              <div className="h-3 bg-gray-200 rounded w-1/3" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-4 animate-pulse">
+              <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-2/3 mb-2" />
+              <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded w-1/2 mb-2" />
+              <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded w-1/3" />
             </div>
           ))}
         </div>
@@ -128,18 +128,18 @@ export default function RepairsPage() {
             <button
               key={repair.id}
               onClick={() => router.push(`/repairs/${repair.id}`)}
-              className={`w-full text-left bg-white rounded-xl p-4 shadow-sm border transition-colors ${
+              className={`w-full text-left bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border transition-colors ${
                 isOverdue(repair)
                   ? 'border-red-300 bg-red-50/50'
-                  : 'border-gray-100'
+                  : 'border-gray-100 dark:border-slate-700'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-900 text-sm truncate">
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
                     {repair.device_brand} {repair.device_model}
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
                     {repair.customer?.name || 'Client inconnu'}
                     {repair.customer?.phone ? ` - ${repair.customer.phone}` : ''}
                   </p>

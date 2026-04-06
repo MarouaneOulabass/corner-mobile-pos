@@ -211,12 +211,12 @@ export default function AddProductPage() {
     <div className="px-4 pt-4 pb-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-1 text-gray-500">
+        <button onClick={() => router.back()} className="p-1 text-gray-500 dark:text-gray-400">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-lg font-bold text-gray-900">Ajouter un produit</h1>
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white">Ajouter un produit</h1>
       </div>
 
       {errors._form && (
@@ -228,7 +228,7 @@ export default function AddProductPage() {
       <div className="space-y-4">
         {/* Product type */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Type de produit</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Type de produit</label>
           <div className="flex gap-2">
             {([
               { value: 'phone', label: 'Téléphone' },
@@ -242,7 +242,7 @@ export default function AddProductPage() {
                 className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium border transition-colors ${
                   form.product_type === opt.value
                     ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                    : 'bg-white text-gray-600 border-gray-200'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-slate-600'
                 }`}
               >
                 {opt.label}
@@ -254,7 +254,7 @@ export default function AddProductPage() {
         {/* IMEI */}
         {form.product_type === 'phone' && (
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">IMEI</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">IMEI</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
@@ -265,8 +265,8 @@ export default function AddProductPage() {
                   value={form.imei}
                   onChange={(e) => updateField('imei', e.target.value.replace(/\D/g, ''))}
                   onBlur={handleImeiBlur}
-                  className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-                    errors.imei ? 'border-red-400' : 'border-gray-200'
+                  className={`w-full px-3 py-2.5 bg-white dark:bg-slate-800 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+                    errors.imei ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'
                   }`}
                 />
               {imeiChecking && (
@@ -298,12 +298,12 @@ export default function AddProductPage() {
 
         {/* Brand */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Marque *</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Marque *</label>
           <select
             value={form.brand}
             onChange={(e) => updateField('brand', e.target.value)}
-            className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-              errors.brand ? 'border-red-400' : 'border-gray-200'
+            className={`w-full px-3 py-2.5 bg-white dark:bg-slate-800 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+              errors.brand ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'
             }`}
           >
             <option value="">Sélectionner une marque</option>
@@ -316,14 +316,14 @@ export default function AddProductPage() {
 
         {/* Model */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Modèle *</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Modèle *</label>
           <input
             type="text"
             placeholder="Ex: Galaxy A54, iPhone 15..."
             value={form.model}
             onChange={(e) => updateField('model', e.target.value)}
-            className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-              errors.model ? 'border-red-400' : 'border-gray-200'
+            className={`w-full px-3 py-2.5 bg-white dark:bg-slate-800 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+              errors.model ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'
             }`}
           />
           {errors.model && <p className="text-xs text-red-500 mt-1">{errors.model}</p>}
@@ -331,11 +331,11 @@ export default function AddProductPage() {
 
         {/* Storage */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Stockage</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Stockage</label>
           <select
             value={form.storage}
             onChange={(e) => updateField('storage', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           >
             <option value="">Non spécifié</option>
             {STORAGES.map((s) => (
@@ -346,19 +346,19 @@ export default function AddProductPage() {
 
         {/* Color */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Couleur</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Couleur</label>
           <input
             type="text"
             placeholder="Ex: Noir, Bleu..."
             value={form.color}
             onChange={(e) => updateField('color', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
         </div>
 
         {/* Condition */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">État *</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">État *</label>
           <div className="flex flex-wrap gap-2">
             {(['new', 'like_new', 'good', 'fair', 'poor'] as ProductCondition[]).map((c) => (
               <button
@@ -368,7 +368,7 @@ export default function AddProductPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                   form.condition === c
                     ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                    : 'bg-white text-gray-600 border-gray-200'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-slate-600'
                 }`}
               >
                 {conditionLabels[c]}
@@ -379,15 +379,15 @@ export default function AddProductPage() {
 
         {/* Purchase price */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Prix d&apos;achat (MAD) *</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Prix d&apos;achat (MAD) *</label>
           <input
             type="number"
             inputMode="decimal"
             placeholder="0"
             value={form.purchase_price}
             onChange={(e) => updateField('purchase_price', e.target.value)}
-            className={`w-full px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-              errors.purchase_price ? 'border-red-400' : 'border-gray-200'
+            className={`w-full px-3 py-2.5 bg-white dark:bg-slate-800 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+              errors.purchase_price ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'
             }`}
           />
           {errors.purchase_price && <p className="text-xs text-red-500 mt-1">{errors.purchase_price}</p>}
@@ -395,7 +395,7 @@ export default function AddProductPage() {
 
         {/* Selling price */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Prix de vente (MAD) *</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Prix de vente (MAD) *</label>
           <div className="flex gap-2">
             <input
               type="number"
@@ -403,8 +403,8 @@ export default function AddProductPage() {
               placeholder="0"
               value={form.selling_price}
               onChange={(e) => updateField('selling_price', e.target.value)}
-              className={`flex-1 px-3 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
-                errors.selling_price ? 'border-red-400' : 'border-gray-200'
+              className={`flex-1 px-3 py-2.5 bg-white dark:bg-slate-800 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 ${
+                errors.selling_price ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'
               }`}
             />
             <button
@@ -437,7 +437,7 @@ export default function AddProductPage() {
 
         {/* Warranty months */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Garantie (mois)</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Garantie (mois)</label>
           <input
             type="number"
             inputMode="numeric"
@@ -445,25 +445,25 @@ export default function AddProductPage() {
             placeholder="0"
             value={form.warranty_months}
             onChange={(e) => updateField('warranty_months', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
         </div>
 
         {/* Bin location */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Emplacement (ex: Etagere A3)</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Emplacement (ex: Etagere A3)</label>
           <input
             type="text"
             placeholder="Ex: A3, Vitrine 2..."
             value={form.bin_location}
             onChange={(e) => updateField('bin_location', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
         </div>
 
         {/* Supplier dropdown */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Fournisseur</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Fournisseur</label>
           {!showCustomSupplier ? (
             <select
               value={form.supplier_id}
@@ -477,7 +477,7 @@ export default function AddProductPage() {
                   if (selected) updateField('supplier', selected.name);
                 }
               }}
-              className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+              className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
             >
               <option value="">Selectionner un fournisseur</option>
               {suppliers.map((s) => (
@@ -492,7 +492,7 @@ export default function AddProductPage() {
                 placeholder="Nom du fournisseur"
                 value={form.supplier}
                 onChange={(e) => updateField('supplier', e.target.value)}
-                className="flex-1 px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                className="flex-1 px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
               />
               <button
                 type="button"
@@ -501,7 +501,7 @@ export default function AddProductPage() {
                   updateField('supplier', '');
                   updateField('supplier_id', '');
                 }}
-                className="px-3 py-2.5 text-xs text-gray-500 border border-gray-200 rounded-xl bg-white"
+                className="px-3 py-2.5 text-xs text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800"
               >
                 Liste
               </button>
@@ -511,24 +511,24 @@ export default function AddProductPage() {
 
         {/* Purchase date */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Date d&apos;achat</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Date d&apos;achat</label>
           <input
             type="date"
             value={form.purchase_date}
             onChange={(e) => updateField('purchase_date', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
           />
         </div>
 
         {/* Notes */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Notes</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Notes</label>
           <textarea
             rows={3}
             placeholder="Notes supplémentaires..."
             value={form.notes}
             onChange={(e) => updateField('notes', e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 resize-none"
+            className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 resize-none"
           />
         </div>
 

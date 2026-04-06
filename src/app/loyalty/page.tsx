@@ -174,8 +174,8 @@ export default function LoyaltyPage() {
         <h1 className="text-xl font-bold mb-4">Programme de Fidelite</h1>
 
         {/* Search */}
-        <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Rechercher un client
           </label>
           <div className="flex gap-2">
@@ -208,11 +208,11 @@ export default function LoyaltyPage() {
         {customer && (
           <>
             {/* Customer Card */}
-            <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm mb-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h2 className="font-semibold text-lg">{customer.name}</h2>
-                  <p className="text-sm text-gray-500">{customer.phone}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{customer.phone}</p>
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${loyaltyTierColors[customer.tier]}`}
@@ -221,21 +221,21 @@ export default function LoyaltyPage() {
                 </span>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-3 mb-3">
+              <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-3 mb-3">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-[#2AA8DC]">{customer.points}</p>
-                  <p className="text-sm text-gray-500">Points disponibles</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Points disponibles</p>
                 </div>
               </div>
 
               {/* Tier Progress */}
               {tierProgress && (
                 <div>
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                     <span>{loyaltyTierLabels[customer.tier]}</span>
                     <span>{tierProgress.label}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                     <div
                       className="bg-[#2AA8DC] h-2 rounded-full transition-all"
                       style={{ width: `${tierProgress.percent}%` }}
@@ -246,7 +246,7 @@ export default function LoyaltyPage() {
             </div>
 
             {/* Manual Adjustment */}
-            <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm mb-4">
               <h3 className="font-semibold mb-3">Ajustement manuel</h3>
               <form onSubmit={handleAdjust} className="space-y-3">
                 <div className="flex gap-2">
@@ -256,7 +256,7 @@ export default function LoyaltyPage() {
                     className={`flex-1 py-2 rounded-lg text-sm font-medium border ${
                       adjType === 'bonus'
                         ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                        : 'bg-white text-gray-600 border-gray-300'
+                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-300'
                     }`}
                   >
                     Bonus
@@ -267,7 +267,7 @@ export default function LoyaltyPage() {
                     className={`flex-1 py-2 rounded-lg text-sm font-medium border ${
                       adjType === 'adjustment'
                         ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-                        : 'bg-white text-gray-600 border-gray-300'
+                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-300'
                     }`}
                   >
                     Ajustement
@@ -302,7 +302,7 @@ export default function LoyaltyPage() {
             </div>
 
             {/* Recent Transactions */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
               <h3 className="font-semibold mb-3">Transactions recentes</h3>
               {transactions.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-4">Aucune transaction</p>

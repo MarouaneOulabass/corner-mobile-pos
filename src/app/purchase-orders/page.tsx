@@ -42,14 +42,14 @@ export default function PurchaseOrdersPage() {
 
   if (!user || (user.role !== 'superadmin' && user.role !== 'manager')) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
         Acces reserve aux managers
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
@@ -59,7 +59,7 @@ export default function PurchaseOrdersPage() {
           </div>
           <Link
             href="/purchase-orders/new"
-            className="bg-white text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
+            className="bg-white dark:bg-slate-800 text-[#2AA8DC] px-4 py-2 rounded-xl text-sm font-medium"
           >
             + Nouveau
           </Link>
@@ -76,7 +76,7 @@ export default function PurchaseOrdersPage() {
               className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'bg-[#2AA8DC] text-white'
-                  : 'bg-white text-gray-600 border'
+                  : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border'
               }`}
             >
               {tab.label}
@@ -95,18 +95,18 @@ export default function PurchaseOrdersPage() {
               <Link
                 key={po.id}
                 href={`/purchase-orders/${po.id}`}
-                className="block bg-white rounded-xl p-4 shadow-sm"
+                className="block bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">{po.po_number}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {po.supplier?.name || 'Fournisseur'} — {formatDate(po.created_at)}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-[#2AA8DC]">{formatPrice(po.total_amount)}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full text-white ${poStatusColors[po.status as POStatus] || 'bg-gray-500'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full text-white ${poStatusColors[po.status as POStatus] || 'bg-gray-50 dark:bg-slate-9000'}`}>
                       {poStatusLabels[po.status as POStatus] || po.status}
                     </span>
                   </div>

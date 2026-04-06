@@ -56,12 +56,12 @@ export default function PartsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="bg-white dark:bg-slate-800 border-b sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold text-gray-900">Pièces détachées</h1>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white">Pièces détachées</h1>
             <button
               onClick={() => router.push('/parts/add')}
               className="px-3 py-1.5 bg-[#2AA8DC] text-white text-sm font-medium rounded-lg hover:bg-[#2490c0] transition-colors"
@@ -90,7 +90,7 @@ export default function PartsPage() {
                 className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                   category === cat
                     ? 'bg-[#2AA8DC] text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:bg-slate-600'
                 }`}
               >
                 {cat === 'all' ? 'Toutes' : partCategoryLabels[cat] || cat}
@@ -107,7 +107,7 @@ export default function PartsPage() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2AA8DC]" />
           </div>
         ) : parts.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <p className="text-4xl mb-2">🔩</p>
             <p className="font-medium">Aucune pièce trouvée</p>
             <p className="text-sm mt-1">
@@ -116,7 +116,7 @@ export default function PartsPage() {
           </div>
         ) : (
           <>
-            <p className="text-xs text-gray-500 mb-3">{total} pièce{total !== 1 ? 's' : ''}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{total} pièce{total !== 1 ? 's' : ''}</p>
             <div className="space-y-2">
               {parts.map((part) => {
                 const isLowStock = part.quantity < part.min_quantity;
@@ -124,12 +124,12 @@ export default function PartsPage() {
                   <button
                     key={part.id}
                     onClick={() => router.push(`/parts/add?edit=${part.id}`)}
-                    className="w-full bg-white rounded-xl p-3 border border-gray-100 hover:border-[#2AA8DC] transition-colors text-left"
+                    className="w-full bg-white dark:bg-slate-800 rounded-xl p-3 border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC] transition-colors text-left"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-gray-900 text-sm truncate">
+                          <h3 className="font-medium text-gray-900 dark:text-white text-sm truncate">
                             {part.name}
                           </h3>
                           {isLowStock && (
@@ -139,7 +139,7 @@ export default function PartsPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {partCategoryLabels[part.category] || part.category}
                           </span>
                           {part.sku && (
@@ -160,13 +160,13 @@ export default function PartsPage() {
                         )}
                       </div>
                       <div className="text-right ml-3 flex-shrink-0">
-                        <div className={`text-sm font-bold ${isLowStock ? 'text-red-600' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-bold ${isLowStock ? 'text-red-600' : 'text-gray-900 dark:text-white'}`}>
                           {part.quantity}
                           <span className="text-xs font-normal text-gray-400">
                             /{part.min_quantity}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                           {formatPrice(part.purchase_price)}
                         </div>
                       </div>

@@ -114,14 +114,14 @@ export default function NewPurchaseOrderPage() {
 
   if (!user || (user.role !== 'superadmin' && user.role !== 'manager')) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
         Acces reserve aux managers
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto">
@@ -136,8 +136,8 @@ export default function NewPurchaseOrderPage() {
         )}
 
         {/* Supplier Selection */}
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
-          <label className="block text-sm font-medium text-gray-700">Fournisseur *</label>
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Fournisseur *</label>
           <select
             value={supplierId}
             onChange={(e) => setSupplierId(e.target.value)}
@@ -149,7 +149,7 @@ export default function NewPurchaseOrderPage() {
             ))}
           </select>
 
-          <label className="block text-sm font-medium text-gray-700">Date prevue</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Date prevue</label>
           <input
             type="date"
             value={expectedDate}
@@ -159,7 +159,7 @@ export default function NewPurchaseOrderPage() {
         </div>
 
         {/* Items */}
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-4">
           <h3 className="font-medium text-sm">Articles</h3>
           {items.map((item, idx) => (
             <div key={idx} className="border rounded-lg p-3 space-y-2 relative">
@@ -205,7 +205,7 @@ export default function NewPurchaseOrderPage() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500">Quantite</label>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Quantite</label>
                   <input
                     type="number"
                     min="1"
@@ -215,7 +215,7 @@ export default function NewPurchaseOrderPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">Cout unitaire (MAD)</label>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Cout unitaire (MAD)</label>
                   <input
                     type="number"
                     min="0"
@@ -226,22 +226,22 @@ export default function NewPurchaseOrderPage() {
                   />
                 </div>
               </div>
-              <p className="text-xs text-right text-gray-500">
+              <p className="text-xs text-right text-gray-500 dark:text-gray-400">
                 Sous-total: {formatPrice(item.quantity_ordered * item.unit_cost)}
               </p>
             </div>
           ))}
           <button
             onClick={addItem}
-            className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500"
+            className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 dark:text-gray-400"
           >
             + Ajouter un article
           </button>
         </div>
 
         {/* Notes */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -252,7 +252,7 @@ export default function NewPurchaseOrderPage() {
         </div>
 
         {/* Total & Actions */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <span className="font-medium">Total</span>
             <span className="text-xl font-bold text-[#2AA8DC]">{formatPrice(total)}</span>

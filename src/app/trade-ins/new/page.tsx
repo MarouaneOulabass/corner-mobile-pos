@@ -179,15 +179,15 @@ export default function NewTradeInPage() {
 
   return (
     <div className="p-4 pb-24 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Nouveau rachat</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Nouveau rachat</h1>
 
       {/* Device info */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4 space-y-3">
-        <h2 className="text-sm font-medium text-gray-700">Appareil</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 mb-4 space-y-3">
+        <h2 className="text-sm font-medium text-gray-700 dark:text-gray-200">Appareil</h2>
 
         {/* Brand */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Marque *</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Marque *</label>
           <div className="flex flex-wrap gap-2">
             {BRANDS.map((b) => (
               <button
@@ -196,7 +196,7 @@ export default function NewTradeInPage() {
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border ${
                   deviceBrand === b
                     ? 'border-[#2AA8DC] bg-[#2AA8DC]/10 text-[#2AA8DC]'
-                    : 'border-gray-200 text-gray-600'
+                    : 'border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300'
                 }`}
               >
                 {b}
@@ -209,26 +209,26 @@ export default function NewTradeInPage() {
               value={customBrand}
               onChange={(e) => setCustomBrand(e.target.value)}
               placeholder="Nom de la marque"
-              className="w-full mt-2 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full mt-2 px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
           )}
         </div>
 
         {/* Model */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Modele *</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Modele *</label>
           <input
             type="text"
             value={deviceModel}
             onChange={(e) => setDeviceModel(e.target.value)}
             placeholder="ex: iPhone 13, Galaxy A54..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           />
         </div>
 
         {/* Storage */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Stockage</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Stockage</label>
           <div className="flex flex-wrap gap-2">
             {STORAGE_OPTIONS.map((s) => (
               <button
@@ -237,7 +237,7 @@ export default function NewTradeInPage() {
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border ${
                   storage === s
                     ? 'border-[#2AA8DC] bg-[#2AA8DC]/10 text-[#2AA8DC]'
-                    : 'border-gray-200 text-gray-600'
+                    : 'border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300'
                 }`}
               >
                 {s}
@@ -248,26 +248,26 @@ export default function NewTradeInPage() {
 
         {/* Color */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Couleur</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Couleur</label>
           <input
             type="text"
             value={color}
             onChange={(e) => setColor(e.target.value)}
             placeholder="ex: Noir, Bleu..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           />
         </div>
 
         {/* IMEI */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">IMEI</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">IMEI</label>
           <input
             type="text"
             value={imei}
             onChange={(e) => setImei(e.target.value.replace(/\D/g, '').slice(0, 15))}
             placeholder="15 chiffres"
             maxLength={15}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm font-mono"
           />
           {imei.length === 15 && !validateIMEI(imei) && (
             <p className="text-xs text-red-500 mt-1">IMEI invalide</p>
@@ -279,7 +279,7 @@ export default function NewTradeInPage() {
 
         {/* Condition */}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Etat *</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Etat *</label>
           <div className="grid grid-cols-2 gap-2">
             {CONDITIONS.map((c) => (
               <button
@@ -288,7 +288,7 @@ export default function NewTradeInPage() {
                 className={`py-2 text-xs font-medium rounded-lg border ${
                   condition === c.key
                     ? 'border-[#2AA8DC] bg-[#2AA8DC]/10 text-[#2AA8DC]'
-                    : 'border-gray-200 text-gray-600'
+                    : 'border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300'
                 }`}
               >
                 {c.label}
@@ -299,14 +299,14 @@ export default function NewTradeInPage() {
       </div>
 
       {/* Customer */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4 space-y-3">
-        <h2 className="text-sm font-medium text-gray-700">Client</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 mb-4 space-y-3">
+        <h2 className="text-sm font-medium text-gray-700 dark:text-gray-200">Client</h2>
 
         {selectedCustomer ? (
           <div className="flex items-center justify-between bg-green-50 rounded-lg p-3">
             <div>
-              <p className="text-sm font-medium text-gray-900">{selectedCustomer.name}</p>
-              <p className="text-xs text-gray-500">{selectedCustomer.phone}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedCustomer.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{selectedCustomer.phone}</p>
             </div>
             <button
               onClick={() => setSelectedCustomer(null)}
@@ -322,18 +322,18 @@ export default function NewTradeInPage() {
               value={newCustomerName}
               onChange={(e) => setNewCustomerName(e.target.value)}
               placeholder="Nom du client"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
             <input
               type="tel"
               value={newCustomerPhone}
               onChange={(e) => setNewCustomerPhone(e.target.value)}
               placeholder="Telephone"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
             <button
               onClick={() => setShowNewCustomer(false)}
-              className="text-xs text-gray-500"
+              className="text-xs text-gray-500 dark:text-gray-400"
             >
               Annuler
             </button>
@@ -348,13 +348,13 @@ export default function NewTradeInPage() {
                 searchCustomers(e.target.value);
               }}
               placeholder="Rechercher par nom ou telephone..."
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
             />
             {searchingCustomers && (
               <p className="text-xs text-gray-400">Recherche...</p>
             )}
             {customers.length > 0 && (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="border border-gray-200 dark:border-slate-600 rounded-lg overflow-hidden">
                 {customers.map((c) => (
                   <button
                     key={c.id}
@@ -363,7 +363,7 @@ export default function NewTradeInPage() {
                       setCustomerSearch('');
                       setCustomers([]);
                     }}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-0"
                   >
                     <span className="font-medium">{c.name}</span>
                     <span className="text-gray-400 ml-2">{c.phone}</span>
@@ -382,8 +382,8 @@ export default function NewTradeInPage() {
       </div>
 
       {/* Price */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4 space-y-3">
-        <h2 className="text-sm font-medium text-gray-700">Prix</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 mb-4 space-y-3">
+        <h2 className="text-sm font-medium text-gray-700 dark:text-gray-200">Prix</h2>
 
         {/* AI suggestion */}
         <button
@@ -396,33 +396,33 @@ export default function NewTradeInPage() {
 
         {aiSuggestedPrice !== null && (
           <div className="bg-blue-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-gray-500">Prix suggere par l&apos;IA</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Prix suggere par l&apos;IA</p>
             <p className="text-lg font-bold text-[#2AA8DC]">{formatPrice(aiSuggestedPrice)}</p>
           </div>
         )}
 
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Prix propose au client (MAD) *</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Prix propose au client (MAD) *</label>
           <input
             type="number"
             value={offeredPrice}
             onChange={(e) => setOfferedPrice(e.target.value)}
             placeholder="0"
             min={0}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-lg font-bold"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm text-lg font-bold"
           />
         </div>
       </div>
 
       {/* Notes */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
-        <label className="text-xs text-gray-500 mb-1 block">Notes</label>
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 mb-4">
+        <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Notes</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Notes supplementaires..."
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none"
+          className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm resize-none"
         />
       </div>
 

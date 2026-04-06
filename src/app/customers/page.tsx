@@ -85,7 +85,7 @@ export default function CustomersPage() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Clients</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Clients</h1>
       </div>
 
       {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-4">{error} <button onClick={() => { setError(null); fetchCustomers(); }} className="ml-2 underline">Réessayer</button></div>}
@@ -96,7 +96,7 @@ export default function CustomersPage() {
         placeholder="Rechercher par nom ou téléphone..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:border-[#2AA8DC] mb-4"
+        className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-sm focus:outline-none focus:border-[#2AA8DC] mb-4"
       />
 
       {/* Refresh button */}
@@ -120,19 +120,19 @@ export default function CustomersPage() {
             <button
               key={c.id}
               onClick={() => openCustomer(c)}
-              className="w-full text-left p-4 bg-white rounded-xl border border-gray-100 hover:border-[#2AA8DC]/30 transition"
+              className="w-full text-left p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC]/30 transition"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">{c.name}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{c.name}</p>
                     {c.loyalty_tier && (
                       <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${loyaltyTierColors[c.loyalty_tier] || ''}`}>
                         {loyaltyTierEmojis[c.loyalty_tier] || ''} {loyaltyTierLabels[c.loyalty_tier] || c.loyalty_tier}
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">{c.phone}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{c.phone}</p>
                   <div className="flex items-center gap-3 mt-1">
                     {(c.loyalty_points ?? 0) > 0 && (
                       <span className="text-xs text-amber-600">{c.loyalty_points} pts</span>
@@ -153,10 +153,10 @@ export default function CustomersPage() {
       {selectedCustomer && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
           <div className="fixed inset-0 bg-black/40" onClick={() => setSelectedCustomer(null)} />
-          <div className="relative w-full max-w-lg bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between rounded-t-2xl">
-              <h2 className="font-semibold text-gray-900">{selectedCustomer.name}</h2>
-              <button onClick={() => setSelectedCustomer(null)} className="text-gray-400 hover:text-gray-600">
+          <div className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-t-2xl max-h-[85vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between rounded-t-2xl">
+              <h2 className="font-semibold text-gray-900 dark:text-white">{selectedCustomer.name}</h2>
+              <button onClick={() => setSelectedCustomer(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -166,18 +166,18 @@ export default function CustomersPage() {
               {/* Info */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Téléphone</span>
-                  <span className="text-gray-900">{selectedCustomer.phone}</span>
+                  <span className="text-gray-500 dark:text-gray-400">Téléphone</span>
+                  <span className="text-gray-900 dark:text-white">{selectedCustomer.phone}</span>
                 </div>
                 {selectedCustomer.email && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Email</span>
-                    <span className="text-gray-900">{selectedCustomer.email}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Email</span>
+                    <span className="text-gray-900 dark:text-white">{selectedCustomer.email}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Client depuis</span>
-                  <span className="text-gray-900">{formatDate(selectedCustomer.created_at)}</span>
+                  <span className="text-gray-500 dark:text-gray-400">Client depuis</span>
+                  <span className="text-gray-900 dark:text-white">{formatDate(selectedCustomer.created_at)}</span>
                 </div>
               </div>
 
@@ -187,7 +187,7 @@ export default function CustomersPage() {
                   <h3 className="text-sm font-medium text-amber-800">Programme de fidelite</h3>
                   {selectedCustomer.loyalty_tier && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Niveau</span>
+                      <span className="text-gray-500 dark:text-gray-400">Niveau</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${loyaltyTierColors[selectedCustomer.loyalty_tier] || ''}`}>
                         {loyaltyTierEmojis[selectedCustomer.loyalty_tier] || ''} {loyaltyTierLabels[selectedCustomer.loyalty_tier] || selectedCustomer.loyalty_tier}
                       </span>
@@ -195,13 +195,13 @@ export default function CustomersPage() {
                   )}
                   {(selectedCustomer.loyalty_points ?? 0) > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Points</span>
+                      <span className="text-gray-500 dark:text-gray-400">Points</span>
                       <span className="text-amber-700 font-medium">{selectedCustomer.loyalty_points} pts</span>
                     </div>
                   )}
                   {(selectedCustomer.store_credit ?? 0) > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Avoir magasin</span>
+                      <span className="text-gray-500 dark:text-gray-400">Avoir magasin</span>
                       <span className="text-green-700 font-medium">{formatPrice(selectedCustomer.store_credit!)}</span>
                     </div>
                   )}
@@ -218,7 +218,7 @@ export default function CustomersPage() {
                   {aiLoading ? 'IA en cours...' : 'Analyser avec l\'IA'}
                 </button>
                 {aiSummary && (
-                  <div className="mt-3 p-3 bg-blue-50 rounded-xl text-sm text-gray-700 leading-relaxed">
+                  <div className="mt-3 p-3 bg-blue-50 rounded-xl text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {aiSummary}
                   </div>
                 )}
@@ -226,16 +226,16 @@ export default function CustomersPage() {
 
               {/* Purchase History */}
               <div>
-                <h3 className="font-medium text-gray-900 mb-2">Historique d&apos;achats</h3>
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">Historique d&apos;achats</h3>
                 {customerSales.length === 0 ? (
                   <p className="text-sm text-gray-400">Aucun achat</p>
                 ) : (
                   <div className="space-y-2">
                     {customerSales.map((sale: Record<string, unknown>) => (
-                      <div key={sale.id as string} className="p-3 bg-gray-50 rounded-lg text-sm">
+                      <div key={sale.id as string} className="p-3 bg-gray-50 dark:bg-slate-900 rounded-lg text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">{formatDate(sale.created_at as string)}</span>
-                          <span className="font-medium text-gray-900">{formatPrice(sale.total as number)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">{formatDate(sale.created_at as string)}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{formatPrice(sale.total as number)}</span>
                         </div>
                       </div>
                     ))}

@@ -97,10 +97,10 @@ export default function InstallmentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24">
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3">
-        <h1 className="text-lg font-bold text-gray-900">Paiements echelonnes</h1>
+      <div className="bg-white dark:bg-slate-800 border-b px-4 py-3">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white">Paiements echelonnes</h1>
       </div>
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
@@ -120,7 +120,7 @@ export default function InstallmentsPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
                 statusFilter === tab.value
                   ? 'bg-[#2AA8DC] text-white'
-                  : 'bg-white text-gray-600 border border-gray-200'
+                  : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-slate-600'
               }`}
             >
               {tab.label}
@@ -130,19 +130,19 @@ export default function InstallmentsPage() {
 
         {/* Payment modal */}
         {payingPlan && (
-          <div className="bg-white rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Enregistrer un paiement</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Enregistrer un paiement</h3>
               <button onClick={() => setPayingPlan(null)} className="text-gray-400 text-lg">&times;</button>
             </div>
-            <div className="bg-gray-50 rounded-lg p-3 text-sm">
-              <p className="text-gray-500">Client: <span className="font-medium text-gray-900">{payingPlan.customer?.name || '-'}</span></p>
-              <p className="text-gray-500">Restant: <span className="font-medium text-gray-900">{formatPrice(payingPlan.remaining_amount)}</span></p>
-              <p className="text-gray-500">Echeance: <span className="font-medium text-gray-900">{formatPrice(payingPlan.installment_amount)}</span></p>
+            <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-3 text-sm">
+              <p className="text-gray-500 dark:text-gray-400">Client: <span className="font-medium text-gray-900 dark:text-white">{payingPlan.customer?.name || '-'}</span></p>
+              <p className="text-gray-500 dark:text-gray-400">Restant: <span className="font-medium text-gray-900 dark:text-white">{formatPrice(payingPlan.remaining_amount)}</span></p>
+              <p className="text-gray-500 dark:text-gray-400">Echeance: <span className="font-medium text-gray-900 dark:text-white">{formatPrice(payingPlan.installment_amount)}</span></p>
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Montant (MAD)</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Montant (MAD)</label>
               <input
                 type="number"
                 value={paymentAmount}
@@ -155,7 +155,7 @@ export default function InstallmentsPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Methode</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Methode</label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as 'cash' | 'card' | 'virement')}
@@ -191,41 +191,41 @@ export default function InstallmentsPage() {
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className={`bg-white rounded-xl shadow-sm p-4 ${isOverdue(plan) ? 'border-l-4 border-red-500' : ''}`}
+                className={`bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 ${isOverdue(plan) ? 'border-l-4 border-red-500' : ''}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <p className="font-medium text-gray-900">{plan.customer?.name || 'Client'}</p>
-                    <p className="text-xs text-gray-500">{plan.customer?.phone || ''}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{plan.customer?.name || 'Client'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{plan.customer?.phone || ''}</p>
                   </div>
-                  <span className={`${installmentStatusColors[plan.status as InstallmentStatus] || 'bg-gray-500'} text-white text-xs font-medium px-2 py-1 rounded-full`}>
+                  <span className={`${installmentStatusColors[plan.status as InstallmentStatus] || 'bg-gray-50 dark:bg-slate-9000'} text-white text-xs font-medium px-2 py-1 rounded-full`}>
                     {installmentStatusLabels[plan.status] || plan.status}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-xs mb-3">
                   <div>
-                    <p className="text-gray-500">Total</p>
+                    <p className="text-gray-500 dark:text-gray-400">Total</p>
                     <p className="font-medium">{formatPrice(plan.total_amount)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Paye</p>
+                    <p className="text-gray-500 dark:text-gray-400">Paye</p>
                     <p className="font-medium text-green-600">{formatPrice(plan.total_amount - plan.remaining_amount)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Restant</p>
+                    <p className="text-gray-500 dark:text-gray-400">Restant</p>
                     <p className="font-medium text-orange-600">{formatPrice(plan.remaining_amount)}</p>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2 mb-2">
                   <div
                     className="bg-[#2AA8DC] h-2 rounded-full transition-all"
                     style={{ width: `${paidPercentage(plan)}%` }}
                   ></div>
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
                   <span>{paidPercentage(plan)}% paye</span>
                   {plan.next_due_date && plan.status === 'active' && (
                     <span className={isOverdue(plan) ? 'text-red-600 font-semibold' : ''}>

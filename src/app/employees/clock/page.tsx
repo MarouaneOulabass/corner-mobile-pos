@@ -132,7 +132,7 @@ export default function ClockPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto">
@@ -143,17 +143,17 @@ export default function ClockPage() {
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Clock In/Out Button */}
-        <div className="bg-white rounded-xl p-6 shadow-sm text-center">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm text-center">
           {clockedIn ? (
             <>
               <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
                 <span className="text-3xl">&#128994;</span>
               </div>
-              <p className="text-sm text-gray-500 mb-1">Pointe depuis</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Pointe depuis</p>
               <p className="text-3xl font-bold text-green-600 mb-4">{elapsed || '...'}</p>
 
               <div className="mb-4">
-                <label className="text-sm text-gray-500">Pause (minutes)</label>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Pause (minutes)</label>
                 <input
                   type="number"
                   min="0"
@@ -173,10 +173,10 @@ export default function ClockPage() {
             </>
           ) : (
             <>
-              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+              <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center mx-auto mb-3">
                 <span className="text-3xl">&#9898;</span>
               </div>
-              <p className="text-lg text-gray-500 mb-4">Non pointe</p>
+              <p className="text-lg text-gray-500 dark:text-gray-400 mb-4">Non pointe</p>
               <button
                 onClick={handleClockIn}
                 disabled={acting}
@@ -189,7 +189,7 @@ export default function ClockPage() {
         </div>
 
         {/* Today's Records */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
           <h3 className="font-medium text-sm mb-3">Aujourd&apos;hui</h3>
           {loading ? (
             <p className="text-gray-400 text-sm">Chargement...</p>
@@ -221,7 +221,7 @@ export default function ClockPage() {
 
         {/* Manager: All Employees Status */}
         {user.role !== 'seller' && allStatus.length > 0 && (
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
             <h3 className="font-medium text-sm mb-3">Statut equipe</h3>
             <div className="space-y-2">
               {allStatus.map((s) => (
@@ -230,7 +230,7 @@ export default function ClockPage() {
                     <span className={`w-2 h-2 rounded-full ${s.record ? 'bg-green-500' : 'bg-gray-300'}`} />
                     <span className="font-medium">{s.user.name}</span>
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {s.record
                       ? `Depuis ${new Date(s.record.clock_in).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
                       : 'Non pointe'}

@@ -232,37 +232,37 @@ export default function ReportsPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold text-gray-900">Rapports</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white">Rapports</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Date début</label>
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">Date début</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Date fin</label>
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">Date fin</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             />
           </div>
         </div>
         {user?.role === 'superadmin' && stores.length > 0 && (
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Magasin</label>
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">Magasin</label>
             <select
               value={storeFilter}
               onChange={(e) => setStoreFilter(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             >
               <option value="">Tous les magasins</option>
               {stores.map((s) => (
@@ -276,9 +276,9 @@ export default function ReportsPage() {
       {loading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-5 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
-              <div className="h-8 bg-gray-200 rounded w-1/2" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-5 animate-pulse">
+              <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-1/3 mb-3" />
+              <div className="h-8 bg-gray-200 dark:bg-slate-600 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -286,28 +286,28 @@ export default function ReportsPage() {
         <>
           {/* KPI Cards */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <span className="text-xs font-medium text-gray-500">Chiffre d&apos;affaires</span>
-              <p className="text-lg font-bold text-gray-900 mt-1">{formatPrice(report.revenue)}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Chiffre d&apos;affaires</span>
+              <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{formatPrice(report.revenue)}</p>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <span className="text-xs font-medium text-gray-500">Marge</span>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Marge</span>
               <p className="text-lg font-bold text-[#5BBF3E] mt-1">{formatPrice(report.margin)}</p>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <span className="text-xs font-medium text-gray-500">Panier moyen</span>
-              <p className="text-lg font-bold text-gray-900 mt-1">{formatPrice(report.avgBasket)}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Panier moyen</span>
+              <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{formatPrice(report.avgBasket)}</p>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <span className="text-xs font-medium text-gray-500">Transactions</span>
-              <p className="text-lg font-bold text-gray-900 mt-1">{report.transactionCount}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Transactions</span>
+              <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{report.transactionCount}</p>
             </div>
           </div>
 
           {/* Revenue Trend Chart */}
           {trend.length > 1 && (
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Tendance du chiffre d&apos;affaires</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Tendance du chiffre d&apos;affaires</h2>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={trend}>
@@ -341,14 +341,14 @@ export default function ReportsPage() {
 
           {/* Best Selling Models */}
           {bestSellers.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-4 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-700">Modèles les plus vendus</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
+              <div className="p-4 border-b border-gray-100 dark:border-slate-700">
+                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Modèles les plus vendus</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50 text-gray-500">
+                    <tr className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-gray-400">
                       <th className="text-left px-4 py-2 font-medium">Modèle</th>
                       <th className="text-right px-4 py-2 font-medium">Qté</th>
                       <th className="text-right px-4 py-2 font-medium">CA</th>
@@ -357,9 +357,9 @@ export default function ReportsPage() {
                   <tbody>
                     {bestSellers.map((item, idx) => (
                       <tr key={idx} className="border-t border-gray-50">
-                        <td className="px-4 py-2.5 text-gray-900">{item.model}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700">{item.count}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 whitespace-nowrap">{formatPrice(item.revenue)}</td>
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-white">{item.model}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{item.count}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(item.revenue)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -370,18 +370,18 @@ export default function ReportsPage() {
 
           {/* Payment Methods */}
           {payments.length > 0 && (
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Répartition par mode de paiement</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Répartition par mode de paiement</h2>
               <div className="space-y-2">
                 {payments.map((p) => {
                   const pct = report.revenue > 0 ? (p.total / report.revenue) * 100 : 0;
                   return (
                     <div key={p.method}>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-700">{p.method} <span className="text-gray-400">({p.count})</span></span>
-                        <span className="font-medium text-gray-900">{formatPrice(p.total)}</span>
+                        <span className="text-gray-700 dark:text-gray-200">{p.method} <span className="text-gray-400">({p.count})</span></span>
+                        <span className="font-medium text-gray-900 dark:text-white">{formatPrice(p.total)}</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-[#2AA8DC] rounded-full"
                           style={{ width: `${pct}%` }}
@@ -396,14 +396,14 @@ export default function ReportsPage() {
 
           {/* Seller Performance */}
           {sellers.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-4 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-700">Performance vendeurs</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
+              <div className="p-4 border-b border-gray-100 dark:border-slate-700">
+                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Performance vendeurs</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50 text-gray-500">
+                    <tr className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-gray-400">
                       <th className="text-left px-4 py-2 font-medium">Vendeur</th>
                       <th className="text-right px-4 py-2 font-medium">Ventes</th>
                       <th className="text-right px-4 py-2 font-medium">CA</th>
@@ -414,11 +414,11 @@ export default function ReportsPage() {
                   <tbody>
                     {sellers.map((s, idx) => (
                       <tr key={idx} className="border-t border-gray-50">
-                        <td className="px-4 py-2.5 text-gray-900 whitespace-nowrap">{s.name}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700">{s.salesCount}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 whitespace-nowrap">{formatPrice(s.revenue)}</td>
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-white whitespace-nowrap">{s.name}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{s.salesCount}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.revenue)}</td>
                         <td className="px-4 py-2.5 text-right text-[#5BBF3E] whitespace-nowrap">{formatPrice(s.margin)}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 whitespace-nowrap">{formatPrice(s.avgDiscount)}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.avgDiscount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -455,7 +455,7 @@ export default function ReportsPage() {
                   <svg className="w-5 h-5 text-[#2AA8DC] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{aiInsight}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-line">{aiInsight}</p>
                 </div>
               </div>
             )}

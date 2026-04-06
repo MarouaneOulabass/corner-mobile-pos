@@ -71,7 +71,7 @@ export default function CommissionsPage() {
 
   if (!user || (user.role !== 'superadmin' && user.role !== 'manager')) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
         Acces reserve aux managers
       </div>
     );
@@ -121,7 +121,7 @@ export default function CommissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto">
@@ -133,22 +133,22 @@ export default function CommissionsPage() {
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Summary Cards */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">En attente</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">En attente</p>
             <p className="text-lg font-bold text-yellow-600">{formatPrice(totalPending)}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Approuvees</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Approuvees</p>
             <p className="text-lg font-bold text-blue-600">{formatPrice(totalApproved)}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Payees</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Payees</p>
             <p className="text-lg font-bold text-green-600">{formatPrice(totalPaid)}</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <select
               value={filterUser}
@@ -190,8 +190,8 @@ export default function CommissionsPage() {
 
         {/* Bulk Actions */}
         {selected.size > 0 && (
-          <div className="bg-white rounded-xl p-3 shadow-sm flex items-center justify-between">
-            <span className="text-sm text-gray-600">{selected.size} selectionne(s)</span>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-300">{selected.size} selectionne(s)</span>
             <div className="flex gap-2">
               <button
                 onClick={() => bulkAction('approved')}
@@ -219,7 +219,7 @@ export default function CommissionsPage() {
             {commissions.map((c) => (
               <div
                 key={c.id}
-                className="bg-white rounded-xl p-4 shadow-sm"
+                className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm"
               >
                 <div className="flex items-start gap-3">
                   <input
@@ -235,7 +235,7 @@ export default function CommissionsPage() {
                         {commissionStatusLabels[c.status] || c.status}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {c.type === 'sale' ? 'Vente' : 'Reparation'} — Base: {formatPrice(c.base_amount)}
                     </p>
                     <div className="flex items-center justify-between mt-1">
@@ -254,7 +254,7 @@ export default function CommissionsPage() {
 
         {/* Per-Employee Summary */}
         {employeeSummary.size > 0 && (
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
             <h3 className="font-medium text-sm mb-3">Resume par employe</h3>
             <div className="space-y-2">
               {Array.from(employeeSummary.entries()).map(([uid, s]) => (

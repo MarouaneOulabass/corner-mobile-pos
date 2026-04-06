@@ -32,7 +32,7 @@ const STATUS_COLORS: Record<string, string> = {
   rejected: 'bg-red-100 text-red-800',
   in_refurbishment: 'bg-purple-100 text-purple-800',
   listed: 'bg-green-100 text-green-800',
-  sold: 'bg-gray-100 text-gray-800',
+  sold: 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-100',
 };
 
 export default function TradeInDetailPage() {
@@ -169,7 +169,7 @@ export default function TradeInDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2AA8DC]" />
       </div>
     );
@@ -177,9 +177,9 @@ export default function TradeInDetailPage() {
 
   if (!tradeIn) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4">
         <div className="max-w-lg mx-auto text-center py-12">
-          <p className="text-gray-500">{error || 'Rachat introuvable'}</p>
+          <p className="text-gray-500 dark:text-gray-400">{error || 'Rachat introuvable'}</p>
           <button
             onClick={() => router.back()}
             className="mt-4 text-[#2AA8DC] font-medium text-sm"
@@ -196,23 +196,23 @@ export default function TradeInDetailPage() {
   const isReadOnly = tradeIn.status === 'sold' || tradeIn.status === 'rejected';
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-600 px-4 py-3 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
           >
             &larr;
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-gray-900 text-base truncate">
+            <h1 className="font-bold text-gray-900 dark:text-white text-base truncate">
               {tradeIn.device_brand} {tradeIn.device_model}
             </h1>
-            <p className="text-xs text-gray-500">Rachat #{id.slice(0, 8)}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Rachat #{id.slice(0, 8)}</p>
           </div>
-          <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[tradeIn.status] || 'bg-gray-100 text-gray-600'}`}>
+          <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[tradeIn.status] || 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300'}`}>
             {STATUS_LABELS[tradeIn.status] || tradeIn.status}
           </span>
         </div>
@@ -227,37 +227,37 @@ export default function TradeInDetailPage() {
         )}
 
         {/* Device info */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-3">Appareil</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-3">Appareil</h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p className="text-gray-500 text-xs">Marque</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">Marque</p>
               <p className="font-medium">{tradeIn.device_brand}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs">Modele</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">Modele</p>
               <p className="font-medium">{tradeIn.device_model}</p>
             </div>
             {tradeIn.imei && (
               <div>
-                <p className="text-gray-500 text-xs">IMEI</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs">IMEI</p>
                 <p className="font-mono text-xs">{tradeIn.imei}</p>
               </div>
             )}
             {tradeIn.storage && (
               <div>
-                <p className="text-gray-500 text-xs">Stockage</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs">Stockage</p>
                 <p className="font-medium">{tradeIn.storage}</p>
               </div>
             )}
             {tradeIn.color && (
               <div>
-                <p className="text-gray-500 text-xs">Couleur</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs">Couleur</p>
                 <p className="font-medium">{tradeIn.color}</p>
               </div>
             )}
             <div>
-              <p className="text-gray-500 text-xs">Etat</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">Etat</p>
               <p className="font-medium">{CONDITION_LABELS[tradeIn.condition] || tradeIn.condition}</p>
             </div>
           </div>
@@ -265,25 +265,25 @@ export default function TradeInDetailPage() {
 
         {/* Customer info */}
         {tradeIn.customer && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-900 text-sm mb-2">Client</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">Client</h2>
             <p className="text-sm font-medium">{tradeIn.customer.name}</p>
-            <p className="text-sm text-gray-500">{tradeIn.customer.phone}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{tradeIn.customer.phone}</p>
           </div>
         )}
 
         {/* Price */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-2">Prix</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">Prix</h2>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-500">Prix propose</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Prix propose</p>
               <p className="text-xl font-bold text-[#2AA8DC]">{formatPrice(tradeIn.offered_price)}</p>
             </div>
             {tradeIn.ai_suggested_price != null && (
               <div className="text-right">
-                <p className="text-xs text-gray-500">Suggestion IA</p>
-                <p className="text-sm font-medium text-gray-600">{formatPrice(tradeIn.ai_suggested_price)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Suggestion IA</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{formatPrice(tradeIn.ai_suggested_price)}</p>
               </div>
             )}
           </div>
@@ -291,8 +291,8 @@ export default function TradeInDetailPage() {
 
         {/* Pending actions */}
         {isPending && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            <h2 className="font-semibold text-gray-900 text-sm">Actions</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4 space-y-3">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm">Actions</h2>
             <div className="flex gap-3">
               <button
                 type="button"
@@ -327,7 +327,7 @@ export default function TradeInDetailPage() {
         {selectedTemplate && (
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-semibold text-gray-900 text-sm">Checklist etat appareil</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-white text-sm">Checklist etat appareil</h2>
               {templates.length > 1 && (
                 <select
                   value={selectedTemplate.id}
@@ -335,7 +335,7 @@ export default function TradeInDetailPage() {
                     const t = templates.find((tpl) => tpl.id === e.target.value);
                     if (t) setSelectedTemplate(t);
                   }}
-                  className="text-xs border border-gray-200 rounded-lg px-2 py-1"
+                  className="text-xs border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1"
                 >
                   {templates.map((t) => (
                     <option key={t.id} value={t.id}>{t.name}</option>
@@ -353,8 +353,8 @@ export default function TradeInDetailPage() {
         )}
 
         {/* Photos: before refurbishment */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-3">Photos avant remise en etat</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-3">Photos avant remise en etat</h2>
           <PhotoCapture
             photos={prePhotos}
             onCapture={handlePhotoCapture('pre')}
@@ -366,8 +366,8 @@ export default function TradeInDetailPage() {
 
         {/* Photos: after refurbishment */}
         {showPipeline && tradeIn.status !== 'accepted' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-900 text-sm mb-3">Photos apres remise en etat</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-3">Photos apres remise en etat</h2>
             <PhotoCapture
               photos={postPhotos}
               onCapture={handlePhotoCapture('post')}
@@ -380,13 +380,13 @@ export default function TradeInDetailPage() {
 
         {/* Linked product */}
         {tradeIn.product && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-900 text-sm mb-2">Produit en stock</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">Produit en stock</h2>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">{tradeIn.product.brand} {tradeIn.product.model}</p>
                 {tradeIn.product.imei && (
-                  <p className="text-xs text-gray-500 font-mono">{tradeIn.product.imei}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">{tradeIn.product.imei}</p>
                 )}
               </div>
               <div className="text-right">
@@ -395,7 +395,7 @@ export default function TradeInDetailPage() {
                 </p>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
                   tradeIn.product.status === 'in_stock' ? 'bg-green-100 text-green-800' :
-                  tradeIn.product.status === 'sold' ? 'bg-gray-100 text-gray-600' :
+                  tradeIn.product.status === 'sold' ? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300' :
                   'bg-blue-100 text-blue-800'
                 }`}>
                   {tradeIn.product.status === 'in_stock' ? 'En stock' :
@@ -407,8 +407,8 @@ export default function TradeInDetailPage() {
         )}
 
         {/* Notes */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-2">Notes</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">Notes</h2>
           <textarea
             value={notes}
             onChange={(e) => {
@@ -418,7 +418,7 @@ export default function TradeInDetailPage() {
             disabled={isReadOnly}
             rows={3}
             placeholder="Ajouter des notes..."
-            className="w-full text-sm border border-gray-200 rounded-lg p-2 resize-none disabled:opacity-60 disabled:bg-gray-50"
+            className="w-full text-sm border border-gray-200 dark:border-slate-600 rounded-lg p-2 resize-none disabled:opacity-60 disabled:bg-gray-50 dark:bg-slate-900"
           />
           {!isReadOnly && (
             <div className="flex items-center justify-between mt-2">

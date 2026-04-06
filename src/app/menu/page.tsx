@@ -155,12 +155,12 @@ export default function MenuPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold text-gray-900 mb-6">Menu</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Menu</h1>
 
       {/* User Card */}
       <div className="p-4 bg-gradient-to-r from-[#2AA8DC] to-[#2AA8DC]/80 rounded-2xl text-white mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold">
+          <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-800/20 flex items-center justify-center text-lg font-bold">
             {user.name.charAt(0)}
           </div>
           <div>
@@ -186,12 +186,12 @@ export default function MenuPage() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-100 hover:border-[#2AA8DC]/30 transition"
+                    className="flex items-center gap-4 p-3 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC]/30 transition"
                   >
                     <span className="text-xl w-8 text-center">{item.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm">{item.title}</p>
-                      <p className="text-xs text-gray-500 truncate">{item.description}</p>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{item.title}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.description}</p>
                     </div>
                     <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

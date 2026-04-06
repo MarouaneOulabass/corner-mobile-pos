@@ -169,25 +169,25 @@ export default function NewRepairPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => router.back()}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-xl font-bold text-gray-900">Nouvelle réparation</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Nouvelle réparation</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Customer Section */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Client</h2>
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Client</h2>
 
           {selectedCustomer ? (
             <div className="bg-[#2AA8DC]/5 border border-[#2AA8DC]/20 rounded-xl p-3 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-gray-900">{selectedCustomer.name}</p>
-                <p className="text-xs text-gray-500">{selectedCustomer.phone}</p>
+                <p className="font-medium text-sm text-gray-900 dark:text-white">{selectedCustomer.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{selectedCustomer.phone}</p>
               </div>
               <button
                 type="button"
@@ -210,7 +210,7 @@ export default function NewRepairPage() {
                   setCustomerSearch(e.target.value);
                   setShowNewCustomer(false);
                 }}
-                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
               />
 
               {searchingCustomers && (
@@ -218,7 +218,7 @@ export default function NewRepairPage() {
               )}
 
               {customers.length > 0 && (
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl overflow-hidden">
                   {customers.map((c) => (
                     <button
                       key={c.id}
@@ -228,10 +228,10 @@ export default function NewRepairPage() {
                         setCustomerSearch('');
                         setCustomers([]);
                       }}
-                      className="w-full text-left px-4 py-2.5 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                      className="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-b-0"
                     >
-                      <p className="text-sm font-medium text-gray-900">{c.name}</p>
-                      <p className="text-xs text-gray-500">{c.phone}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{c.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{c.phone}</p>
                     </button>
                   ))}
                 </div>
@@ -251,20 +251,20 @@ export default function NewRepairPage() {
               )}
 
               {showNewCustomer && (
-                <div className="bg-gray-50 rounded-xl p-3 space-y-2">
+                <div className="bg-gray-50 dark:bg-slate-900 rounded-xl p-3 space-y-2">
                   <input
                     type="text"
                     placeholder="Nom du client"
                     value={newCustomerName}
                     onChange={(e) => setNewCustomerName(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
                   />
                   <input
                     type="tel"
                     placeholder="Téléphone"
                     value={newCustomerPhone}
                     onChange={(e) => setNewCustomerPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30"
                   />
                 </div>
               )}
@@ -274,14 +274,14 @@ export default function NewRepairPage() {
 
         {/* Device Section */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Appareil</h2>
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Appareil</h2>
           <input
             type="text"
             placeholder="Marque (ex: Samsung, Apple)"
             value={deviceBrand}
             onChange={(e) => setDeviceBrand(e.target.value)}
             required
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+            className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
           />
           <input
             type="text"
@@ -289,7 +289,7 @@ export default function NewRepairPage() {
             value={deviceModel}
             onChange={(e) => setDeviceModel(e.target.value)}
             required
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+            className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
           />
           <div className="flex gap-2">
             <input
@@ -297,7 +297,7 @@ export default function NewRepairPage() {
               placeholder="IMEI (optionnel)"
               value={imei}
               onChange={(e) => setImei(e.target.value)}
-              className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             />
             <IMEIScanner onScan={(value) => setImei(value)} />
           </div>
@@ -305,7 +305,7 @@ export default function NewRepairPage() {
 
         {/* Problem Section */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Problème</h2>
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Problème</h2>
           <div className="flex flex-wrap gap-2">
             {commonProblems.map((problem) => (
               <button
@@ -315,7 +315,7 @@ export default function NewRepairPage() {
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   selectedProblems.includes(problem)
                     ? 'bg-[#2AA8DC] text-white'
-                    : 'bg-gray-100 text-gray-600'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300'
                 }`}
               >
                 {problem}
@@ -328,13 +328,13 @@ export default function NewRepairPage() {
             onChange={(e) => setProblemText(e.target.value)}
             required
             rows={3}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC] resize-none"
+            className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC] resize-none"
           />
         </section>
 
         {/* Condition */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
             État à l&apos;arrivée
           </h2>
           <textarea
@@ -342,16 +342,16 @@ export default function NewRepairPage() {
             value={conditionOnArrival}
             onChange={(e) => setConditionOnArrival(e.target.value)}
             rows={2}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC] resize-none"
+            className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC] resize-none"
           />
         </section>
 
         {/* Cost & Date */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Détails</h2>
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Détails</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Coût estimé (MAD)</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Coût estimé (MAD)</label>
               <input
                 type="number"
                 placeholder="0"
@@ -359,36 +359,36 @@ export default function NewRepairPage() {
                 onChange={(e) => setEstimatedCost(e.target.value)}
                 required
                 min="0"
-                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Acompte (MAD)</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Acompte (MAD)</label>
               <input
                 type="number"
                 placeholder="0"
                 value={deposit}
                 onChange={(e) => setDeposit(e.target.value)}
                 min="0"
-                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Date de fin estimée</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Date de fin estimée</label>
             <input
               type="date"
               value={estimatedDate}
               onChange={(e) => setEstimatedDate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Technicien</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Technicien</label>
             <select
               value={technicianId}
               onChange={(e) => setTechnicianId(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+              className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
             >
               <option value="">Sélectionner un technicien</option>
               {technicians.map((t) => (

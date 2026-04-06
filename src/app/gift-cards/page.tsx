@@ -121,18 +121,18 @@ export default function GiftCardsPage() {
   const statusBadgeColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-700';
-      case 'used': return 'bg-gray-100 text-gray-600';
+      case 'used': return 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300';
       case 'expired': return 'bg-red-100 text-red-700';
-      case 'cancelled': return 'bg-gray-100 text-gray-500';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'cancelled': return 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400';
+      default: return 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24">
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Cartes cadeau</h1>
+      <div className="bg-white dark:bg-slate-800 border-b px-4 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white">Cartes cadeau</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="bg-[#2AA8DC] text-white px-3 py-1.5 rounded-lg text-sm font-medium"
@@ -151,11 +151,11 @@ export default function GiftCardsPage() {
 
         {/* Create form */}
         {showCreateForm && (
-          <div className="bg-white rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
-            <h3 className="font-semibold text-gray-900">Nouvelle carte cadeau</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 space-y-3 border-2 border-[#2AA8DC]">
+            <h3 className="font-semibold text-gray-900 dark:text-white">Nouvelle carte cadeau</h3>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Montant (MAD)</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Montant (MAD)</label>
               <input
                 type="number"
                 value={createAmount}
@@ -168,7 +168,7 @@ export default function GiftCardsPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Date d&apos;expiration (optionnel)</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Date d&apos;expiration (optionnel)</label>
               <input
                 type="date"
                 value={createExpiry}
@@ -180,7 +180,7 @@ export default function GiftCardsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg text-sm font-medium"
+                className="flex-1 border border-gray-300 text-gray-700 dark:text-gray-200 py-2 rounded-lg text-sm font-medium"
               >
                 Annuler
               </button>
@@ -196,8 +196,8 @@ export default function GiftCardsPage() {
         )}
 
         {/* Balance check */}
-        <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
-          <h3 className="font-semibold text-gray-900 text-sm">Verifier le solde</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 space-y-3">
+          <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Verifier le solde</h3>
           <div className="flex gap-2">
             <input
               type="text"
@@ -216,9 +216,9 @@ export default function GiftCardsPage() {
             </button>
           </div>
           {checkResult && (
-            <div className="bg-gray-50 rounded-lg p-3 text-sm">
+            <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Code: <strong>{checkResult.code}</strong></span>
+                <span className="text-gray-600 dark:text-gray-300">Code: <strong>{checkResult.code}</strong></span>
                 <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusBadgeColor(checkResult.status)}`}>
                   {giftCardStatusLabels[checkResult.status] || checkResult.status}
                 </span>
@@ -227,7 +227,7 @@ export default function GiftCardsPage() {
                 Solde: {formatPrice(checkResult.current_balance)}
               </p>
               {checkResult.expires_at && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Expire le {formatDate(checkResult.expires_at)}
                 </p>
               )}
@@ -237,18 +237,18 @@ export default function GiftCardsPage() {
 
         {/* Detail modal */}
         {selectedCard && (
-          <div className="bg-white rounded-xl shadow-sm p-4 border-2 border-[#2AA8DC] space-y-3">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 border-2 border-[#2AA8DC] space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Carte {selectedCard.code}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Carte {selectedCard.code}</h3>
               <button onClick={() => setSelectedCard(null)} className="text-gray-400 text-lg">&times;</button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
-                <p className="text-gray-500">Montant initial</p>
+                <p className="text-gray-500 dark:text-gray-400">Montant initial</p>
                 <p className="font-medium">{formatPrice(selectedCard.initial_amount)}</p>
               </div>
               <div>
-                <p className="text-gray-500">Solde actuel</p>
+                <p className="text-gray-500 dark:text-gray-400">Solde actuel</p>
                 <p className="font-bold text-[#2AA8DC]">{formatPrice(selectedCard.current_balance)}</p>
               </div>
             </div>
@@ -257,7 +257,7 @@ export default function GiftCardsPage() {
               <div className="text-center text-sm text-gray-400">Chargement...</div>
             ) : (
               <>
-                <h4 className="text-sm font-medium text-gray-700">Transactions</h4>
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-200">Transactions</h4>
                 {(!selectedCard.transactions || selectedCard.transactions.length === 0) ? (
                   <p className="text-sm text-gray-400 text-center">Aucune transaction</p>
                 ) : (
@@ -268,7 +268,7 @@ export default function GiftCardsPage() {
                           <p className="text-sm font-medium">
                             {tx.type === 'purchase' ? 'Achat' : tx.type === 'redemption' ? 'Utilisation' : 'Remboursement'}
                           </p>
-                          <p className="text-xs text-gray-500">{formatDateTime(tx.created_at)}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{formatDateTime(tx.created_at)}</p>
                         </div>
                         <span className={`text-sm font-semibold ${tx.type === 'redemption' ? 'text-red-600' : 'text-green-600'}`}>
                           {tx.type === 'redemption' ? '-' : '+'}{formatPrice(tx.amount)}
@@ -297,10 +297,10 @@ export default function GiftCardsPage() {
               <button
                 key={card.id}
                 onClick={() => handleViewDetail(card.id)}
-                className="w-full bg-white rounded-xl shadow-sm p-4 text-left"
+                className="w-full bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 text-left"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-sm font-bold text-gray-900 tracking-wider">
+                  <span className="font-mono text-sm font-bold text-gray-900 dark:text-white tracking-wider">
                     {maskCode(card.code)}
                   </span>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusBadgeColor(card.status)}`}>
@@ -309,20 +309,20 @@ export default function GiftCardsPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div>
-                    <p className="text-gray-500">Initial</p>
+                    <p className="text-gray-500 dark:text-gray-400">Initial</p>
                     <p className="font-medium">{formatPrice(card.initial_amount)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Solde</p>
+                    <p className="text-gray-500 dark:text-gray-400">Solde</p>
                     <p className="font-medium text-[#2AA8DC]">{formatPrice(card.current_balance)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Cree le</p>
+                    <p className="text-gray-500 dark:text-gray-400">Cree le</p>
                     <p className="font-medium">{formatDate(card.created_at)}</p>
                   </div>
                 </div>
                 {card.customer && (
-                  <p className="text-xs text-gray-500 mt-2">Client: {card.customer.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Client: {card.customer.name}</p>
                 )}
               </button>
             ))}

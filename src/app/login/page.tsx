@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Onboarding from '@/components/features/Onboarding';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,8 +11,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    const done = localStorage.getItem('corner_onboarding_done');
+    if (!done) setShowOnboarding(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +34,10 @@ export default function LoginPage() {
     }
     setLoading(false);
   };
+
+  if (showOnboarding) {
+    return <Onboarding onComplete={() => setShowOnboarding(false)} />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">

@@ -378,14 +378,14 @@ export default function StockPage() {
             placeholder="IMEI, modele, marque..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+            className="w-full pl-9 pr-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
           />
         </div>
 
         {/* CSV Import button */}
         <button
           onClick={() => setShowCsvModal(true)}
-          className="p-2.5 rounded-xl border border-gray-200 bg-white text-gray-500"
+          className="p-2.5 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400"
           title="Importer CSV"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -399,7 +399,7 @@ export default function StockPage() {
           className={`relative p-2.5 rounded-xl border ${
             showFilters || activeFilterCount > 0
               ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-              : 'bg-white text-gray-500 border-gray-200'
+              : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-600'
           }`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -426,7 +426,7 @@ export default function StockPage() {
           className={`px-2.5 py-2 rounded-xl border text-xs font-medium ${
             selectionMode
               ? 'bg-[#2AA8DC] text-white border-[#2AA8DC]'
-              : 'bg-white text-gray-500 border-gray-200'
+              : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-600'
           }`}
         >
           Selectionner
@@ -435,7 +435,7 @@ export default function StockPage() {
         {/* View toggle */}
         <button
           onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
-          className="p-2.5 rounded-xl border border-gray-200 bg-white text-gray-500"
+          className="p-2.5 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400"
         >
           {viewMode === 'list' ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -451,11 +451,11 @@ export default function StockPage() {
 
       {/* Filters panel */}
       {showFilters && (
-        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3 grid grid-cols-2 gap-2">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 p-3 mb-3 grid grid-cols-2 gap-2">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+            className="px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Tous les statuts</option>
             {(['in_stock', 'sold', 'in_repair', 'transferred', 'returned'] as ProductStatus[]).map((s) => (
@@ -466,7 +466,7 @@ export default function StockPage() {
           <select
             value={brandFilter}
             onChange={(e) => setBrandFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+            className="px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Toutes les marques</option>
             {BRANDS.map((b) => (
@@ -477,7 +477,7 @@ export default function StockPage() {
           <select
             value={conditionFilter}
             onChange={(e) => setConditionFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+            className="px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Tous les etats</option>
             {(['new', 'like_new', 'good', 'fair', 'poor'] as ProductCondition[]).map((c) => (
@@ -488,7 +488,7 @@ export default function StockPage() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+            className="px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
           >
             <option value="">Tous les types</option>
             {(['phone', 'accessory', 'part'] as ProductType[]).map((t) => (
@@ -554,12 +554,12 @@ export default function StockPage() {
                   )}
                   <button
                     onClick={() => selectionMode ? toggleSelection(p.id) : setSelectedProduct(p)}
-                    className="flex-1 bg-white rounded-xl border border-gray-100 p-3 flex items-center gap-3 text-left active:bg-gray-50 transition-colors"
+                    className="flex-1 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 flex items-center gap-3 text-left active:bg-gray-50 dark:bg-slate-900 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full flex-shrink-0 ${statusColors[p.status]}`} />
-                        <p className="font-medium text-sm text-gray-900 truncate">
+                        <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
                           {p.brand} {p.model}
                         </p>
                       </div>
@@ -567,7 +567,7 @@ export default function StockPage() {
                         {p.storage && (
                           <span className="text-xs text-gray-400">{p.storage}</span>
                         )}
-                        <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                        <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded">
                           {conditionLabels[p.condition]}
                         </span>
                         {p.bin_location && (
@@ -593,7 +593,7 @@ export default function StockPage() {
                       )}
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-semibold text-gray-900">{formatPrice(p.selling_price)}</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatPrice(p.selling_price)}</p>
                       <p className="text-[10px] text-gray-400">{statusLabels[p.status]}</p>
                     </div>
                   </button>
@@ -615,15 +615,15 @@ export default function StockPage() {
                   )}
                   <button
                     onClick={() => selectionMode ? toggleSelection(p.id) : setSelectedProduct(p)}
-                    className="w-full bg-white rounded-xl border border-gray-100 p-3 text-left active:bg-gray-50 transition-colors"
+                    className="w-full bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 text-left active:bg-gray-50 dark:bg-slate-900 transition-colors"
                   >
                     <div className="flex items-center gap-1.5 mb-2">
                       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${statusColors[p.status]}`} />
-                      <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                      <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded">
                         {conditionLabels[p.condition]}
                       </span>
                     </div>
-                    <p className="font-medium text-sm text-gray-900 truncate">{p.brand} {p.model}</p>
+                    <p className="font-medium text-sm text-gray-900 dark:text-white truncate">{p.brand} {p.model}</p>
                     {p.storage && <p className="text-xs text-gray-400 mt-0.5">{p.storage}</p>}
                     <div className="flex flex-wrap gap-1 mt-1">
                       {p.bin_location && (
@@ -636,7 +636,7 @@ export default function StockPage() {
                         <span className="text-[10px] px-1 py-0.5 bg-red-50 text-red-600 rounded font-medium">Bas</span>
                       )}
                     </div>
-                    <p className="text-sm font-semibold text-gray-900 mt-2">{formatPrice(p.selling_price)}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-2">{formatPrice(p.selling_price)}</p>
                   </button>
                 </div>
               ))}
@@ -672,11 +672,11 @@ export default function StockPage() {
             onClick={() => { setSelectedProduct(null); setShowTransferConfirm(false); }}
           />
           {/* Sheet */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 max-h-[80vh] overflow-y-auto animate-slide-up">
-            <div className="sticky top-0 bg-white pt-3 pb-2 px-4 border-b border-gray-100">
+          <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 rounded-t-2xl z-50 max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 pt-3 pb-2 px-4 border-b border-gray-100 dark:border-slate-700">
               <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {selectedProduct.brand} {selectedProduct.model}
                 </h2>
                 <button onClick={() => { setSelectedProduct(null); setShowTransferConfirm(false); }} className="p-1 text-gray-400">
@@ -692,7 +692,7 @@ export default function StockPage() {
                 <span className={`px-2.5 py-1 rounded-full text-xs text-white ${statusColors[selectedProduct.status]}`}>
                   {statusLabels[selectedProduct.status]}
                 </span>
-                <span className="px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                <span className="px-2.5 py-1 rounded-full text-xs bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200">
                   {conditionLabels[selectedProduct.condition]}
                 </span>
               </div>
@@ -739,7 +739,7 @@ export default function StockPage() {
               {selectedProduct.notes && (
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Notes</p>
-                  <p className="text-sm text-gray-700">{selectedProduct.notes}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200">{selectedProduct.notes}</p>
                 </div>
               )}
 
@@ -768,7 +768,7 @@ export default function StockPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setShowTransferConfirm(false)}
-                      className="flex-1 py-2 px-3 rounded-lg border border-gray-300 text-sm text-gray-600 bg-white"
+                      className="flex-1 py-2 px-3 rounded-lg border border-gray-300 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-slate-800"
                       disabled={transferring}
                     >
                       Annuler
@@ -791,7 +791,7 @@ export default function StockPage() {
                   setShowPrintPreview(true);
                   setSelectedProduct(null);
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 rounded-xl bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-200 dark:bg-slate-600 transition flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -805,8 +805,8 @@ export default function StockPage() {
 
       {/* Floating selection action bar */}
       {selectionMode && selectedIds.size > 0 && (
-        <div className="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-lg border border-gray-200 p-3 flex items-center justify-between z-30">
-          <span className="text-sm font-medium text-gray-700">
+        <div className="fixed bottom-20 left-4 right-4 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-600 p-3 flex items-center justify-between z-30">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
             {selectedIds.size} selectionne{selectedIds.size > 1 ? 's' : ''}
           </span>
           <button
@@ -822,9 +822,9 @@ export default function StockPage() {
       {showPrintPreview && (
         <>
           <div className="fixed inset-0 bg-black/40 z-50" onClick={() => setShowPrintPreview(false)} />
-          <div className="fixed inset-4 bg-white rounded-2xl z-50 overflow-y-auto flex flex-col">
-            <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="font-semibold text-gray-900">Apercu des etiquettes</h2>
+          <div className="fixed inset-4 bg-white dark:bg-slate-800 rounded-2xl z-50 overflow-y-auto flex flex-col">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900 dark:text-white">Apercu des etiquettes</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
@@ -858,9 +858,9 @@ export default function StockPage() {
       {showCsvModal && (
         <>
           <div className="fixed inset-0 bg-black/40 z-50" onClick={() => !importing && resetCsvModal()} />
-          <div className="fixed inset-4 bg-white rounded-2xl z-50 overflow-y-auto flex flex-col">
-            <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="font-semibold text-gray-900">Importer CSV</h2>
+          <div className="fixed inset-4 bg-white dark:bg-slate-800 rounded-2xl z-50 overflow-y-auto flex flex-col">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900 dark:text-white">Importer CSV</h2>
               <button onClick={() => !importing && resetCsvModal()} className="p-1 text-gray-400">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -870,13 +870,13 @@ export default function StockPage() {
             <div className="p-4 space-y-4 flex-1">
               {/* File input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fichier CSV</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Fichier CSV</label>
                 <input
                   ref={csvFileRef}
                   type="file"
                   accept=".csv"
                   onChange={handleCsvFileChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#2AA8DC] file:text-white hover:file:bg-[#2490c0] file:cursor-pointer"
+                  className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#2AA8DC] file:text-white hover:file:bg-[#2490c0] file:cursor-pointer"
                 />
               </div>
 
@@ -884,21 +884,21 @@ export default function StockPage() {
               {csvHeaders.length > 0 && (
                 <>
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Apercu ({Math.min(csvRows.length, 5)} premieres lignes sur {csvRows.length})</p>
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Apercu ({Math.min(csvRows.length, 5)} premieres lignes sur {csvRows.length})</p>
+                    <div className="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-lg">
                       <table className="min-w-full text-xs">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 dark:bg-slate-900">
                           <tr>
                             {csvHeaders.map((h, i) => (
-                              <th key={i} className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">{h}</th>
+                              <th key={i} className="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {csvRows.slice(0, 5).map((row, ri) => (
-                            <tr key={ri} className="border-t border-gray-100">
+                            <tr key={ri} className="border-t border-gray-100 dark:border-slate-700">
                               {row.map((cell, ci) => (
-                                <td key={ci} className="px-3 py-1.5 text-gray-700 whitespace-nowrap">{cell}</td>
+                                <td key={ci} className="px-3 py-1.5 text-gray-700 dark:text-gray-200 whitespace-nowrap">{cell}</td>
                               ))}
                             </tr>
                           ))}
@@ -909,11 +909,11 @@ export default function StockPage() {
 
                   {/* Column mapping */}
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Correspondance des colonnes</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Correspondance des colonnes</p>
                     <div className="space-y-2">
                       {csvHeaders.map((h, i) => (
                         <div key={i} className="flex items-center gap-3">
-                          <span className="text-sm text-gray-600 w-32 truncate flex-shrink-0">{h}</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300 w-32 truncate flex-shrink-0">{h}</span>
                           <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                           </svg>
@@ -924,7 +924,7 @@ export default function StockPage() {
                               newMapping[i] = e.target.value as TargetField;
                               setColumnMapping(newMapping);
                             }}
-                            className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                            className="flex-1 px-3 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg text-sm"
                           >
                             <option value="">-- Ignorer --</option>
                             {TARGET_FIELDS.map((f) => (
@@ -959,12 +959,12 @@ export default function StockPage() {
 
                   {/* Import progress */}
                   {importProgress && (
-                    <div className="bg-gray-50 rounded-xl p-3 space-y-2">
+                    <div className="bg-gray-50 dark:bg-slate-900 rounded-xl p-3 space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Progression</span>
-                        <span className="font-medium text-gray-800">{importProgress.done}/{importProgress.total}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Progression</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-100">{importProgress.done}/{importProgress.total}</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                         <div
                           className="bg-[#2AA8DC] h-2 rounded-full transition-all"
                           style={{ width: `${(importProgress.done / importProgress.total) * 100}%` }}
@@ -1025,7 +1025,7 @@ function DetailItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-sm font-medium text-gray-800">{value}</p>
+      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{value}</p>
     </div>
   );
 }

@@ -63,7 +63,7 @@ export default function AttendancePage() {
 
   if (!user || (user.role !== 'superadmin' && user.role !== 'manager')) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
         Acces reserve aux managers
       </div>
     );
@@ -81,7 +81,7 @@ export default function AttendancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20">
       {/* Header */}
       <div className="bg-[#2AA8DC] text-white p-4">
         <div className="max-w-lg mx-auto">
@@ -93,22 +93,22 @@ export default function AttendancePage() {
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Summary */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Total heures</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total heures</p>
             <p className="text-lg font-bold text-[#2AA8DC]">{formatHours(totals.total_hours)}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Jours travailles</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Jours travailles</p>
             <p className="text-lg font-bold">{totals.days_worked}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-xs text-gray-500">Pointages</p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Pointages</p>
             <p className="text-lg font-bold">{totals.record_count}</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm space-y-3">
           <select
             value={filterUser}
             onChange={(e) => setFilterUser(e.target.value)}
@@ -137,7 +137,7 @@ export default function AttendancePage() {
 
         {/* Per-Employee Summary */}
         {byEmployee.size > 0 && (
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm">
             <h3 className="font-medium text-sm mb-3">Resume par employe</h3>
             <div className="space-y-2">
               {Array.from(byEmployee.entries()).map(([uid, s]) => (
@@ -159,23 +159,23 @@ export default function AttendancePage() {
         ) : records.length === 0 ? (
           <div className="text-center text-gray-400 py-8">Aucun enregistrement</div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="text-left p-3 font-medium text-gray-600">Employe</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Date</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Entree</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Sortie</th>
-                    <th className="text-right p-3 font-medium text-gray-600">Heures</th>
+                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Employe</th>
+                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
+                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Entree</th>
+                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Sortie</th>
+                    <th className="text-right p-3 font-medium text-gray-600 dark:text-gray-300">Heures</th>
                   </tr>
                 </thead>
                 <tbody>
                   {records.map((r) => (
                     <tr key={r.id} className="border-t">
                       <td className="p-3">{r.user?.name || '...'}</td>
-                      <td className="p-3 text-gray-500">{formatDate(r.clock_in)}</td>
+                      <td className="p-3 text-gray-500 dark:text-gray-400">{formatDate(r.clock_in)}</td>
                       <td className="p-3">
                         {new Date(r.clock_in).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                       </td>

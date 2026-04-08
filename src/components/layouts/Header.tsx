@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useT, localeNames, localeFlags } from '@/contexts/I18nContext';
 import NotificationBell from '@/components/features/NotificationBell';
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const { locale, setLocale, t } = useT();
   const [showMenu, setShowMenu] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -38,7 +41,44 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
+          {/* Language switcher */}
+          <div className="relative">
+            <button
+              onClick={() => { setShowLangMenu(!showLangMenu); setShowMenu(false); }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-muted)] hover:bg-[var(--surface-2)] press transition-colors text-sm"
+              title="Langue"
+            >
+              {localeFlags[locale]}
+            </button>
+            {showLangMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowLangMenu(false)} />
+                <div className="absolute right-0 top-11 w-40 glass rounded-xl shadow-elevation-3 py-1 z-50 animate-scaleIn origin-top-right">
+                  {(['fr', 'ar', 'en'] as const).map((loc) => (
+                    <button
+                      key={loc}
+                      onClick={() => { setLocale(loc); setShowLangMenu(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
+                        locale === loc
+                          ? 'text-corner-blue font-medium bg-corner-blue/5'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)]'
+                      }`}
+                    >
+                      <span>{localeFlags[loc]}</span>
+                      <span>{localeNames[loc]}</span>
+                      {locale === loc && (
+                        <svg className="w-4 h-4 ms-auto text-corner-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Dark mode toggle */}
           <button
             onClick={() => {
@@ -46,7 +86,6 @@ export default function Header() {
               localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
             }}
             className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-muted)] hover:bg-[var(--surface-2)] press transition-colors"
-            title="Mode sombre"
             data-tour="header-dark"
           >
             <svg className="w-[18px] h-[18px] dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,9 +98,10 @@ export default function Header() {
 
           <span data-tour="header-notif"><NotificationBell /></span>
 
+          {/* User menu */}
           <div className="relative">
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => { setShowMenu(!showMenu); setShowLangMenu(false); }}
               className="w-9 h-9 rounded-xl bg-gradient-to-br from-corner-blue/20 to-corner-green/20 flex items-center justify-center text-sm font-bold text-corner-blue press transition-all"
             >
               {user.name.charAt(0).toUpperCase()}
@@ -69,16 +109,16 @@ export default function Header() {
             {showMenu && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-                <div className="absolute right-0 top-12 w-52 glass rounded-2xl shadow-elevation-3 py-1 z-50 animate-scaleIn origin-top-right">
+                <div className="absolute end-0 top-12 w-52 glass rounded-2xl shadow-elevation-3 py-1 z-50 animate-scaleIn origin-top-right rtl:origin-top-left">
                   <div className="px-4 py-3 border-b border-[var(--border)]">
                     <p className="text-sm font-semibold text-[var(--text-primary)]">{user.name}</p>
                     <p className="text-xs text-[var(--text-muted)] capitalize">{user.role}</p>
                   </div>
                   <button
                     onClick={logout}
-                    className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                    className="w-full text-start px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                   >
-                    Se deconnecter
+                    {t('auth.logout')}
                   </button>
                 </div>
               </>

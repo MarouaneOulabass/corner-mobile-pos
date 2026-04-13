@@ -31,7 +31,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export async function createToken(user: User, jti?: string): Promise<string> {
+export async function createToken(user: User & { organization_id?: string }, jti?: string): Promise<string> {
   const claims: Record<string, unknown> = {
     sub: user.id,
     aud: 'authenticated', // required for Supabase RLS to recognize authenticated role
@@ -39,6 +39,7 @@ export async function createToken(user: User, jti?: string): Promise<string> {
     name: user.name,
     role: user.role,
     store_id: user.store_id,
+    org_id: user.organization_id || '',
   };
 
   if (jti) {
@@ -58,6 +59,7 @@ export async function verifyToken(token: string): Promise<{
   name: string;
   role: UserRole;
   store_id: string;
+  org_id: string;
 } | null> {
   try {
     const { payload } = await jwtVerify(token, getJwtSecret());
@@ -67,6 +69,7 @@ export async function verifyToken(token: string): Promise<{
       name: string;
       role: UserRole;
       store_id: string;
+      org_id: string;
     };
   } catch {
     return null;
@@ -78,7 +81,7 @@ export async function authenticateUser(email: string, password: string): Promise
 
   const { data, error } = await supabase
     .from('users')
-    .select('*, store:stores(*)')
+    .select('*, store:stores(*), organization:organizations(*)')
     .eq('email', email)
     .single();
 
@@ -103,7 +106,7 @@ export async function getUserFromToken(token: string): Promise<User | null> {
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('users')
-    .select('*, store:stores(*)')
+    .select('*, store:stores(*), organization:organizations(*)')
     .eq('id', payload.sub)
     .single();
 
@@ -123,4 +126,30 @@ export function hasPermission(userRole: UserRole, requiredRole: UserRole): boole
 export function canAccessStore(user: User, storeId: string): boolean {
   if (user.role === 'superadmin') return true;
   return user.store_id === storeId;
+}
+
+// ─── Auth Context Helper ────────────────────────────────────────────────
+// Extracts and validates auth context from request headers set by middleware.
+// All API routes should use this instead of reading headers directly.
+
+export interface AuthContext {
+  orgId: string;
+  userId: string;
+  storeId: string;
+  role: UserRole;
+  requestId: string;
+}
+
+export function getAuthContext(request: Request): AuthContext {
+  const orgId = request.headers.get('x-org-id') || '';
+  const userId = request.headers.get('x-user-id') || '';
+  const storeId = request.headers.get('x-user-store') || '';
+  const role = (request.headers.get('x-user-role') || '') as UserRole;
+  const requestId = request.headers.get('x-request-id') || '';
+
+  if (!userId || !role) {
+    throw new Error('Missing authentication context');
+  }
+
+  return { orgId, userId, storeId, role, requestId };
 }

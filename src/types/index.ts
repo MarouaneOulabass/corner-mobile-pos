@@ -43,10 +43,30 @@ export type NotificationType =
   | 'trade_in_received' | 'whatsapp_sent' | 'cash_session'
   | 'installment_due' | 'gift_card_received';
 
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  country: string;
+  plan: string;
+  billing_status: string;
+  ice?: string;
+  if_number?: string;
+  rc?: string;
+  cnss?: string;
+  patente?: string;
+  logo_url?: string;
+  primary_color?: string;
+  settings?: Record<string, unknown>;
+  created_at: string;
+  deleted_at?: string;
+}
+
 export interface Store {
   id: string;
   name: string;
   location: string;
+  organization_id?: string;
   created_at: string;
 }
 
@@ -56,9 +76,11 @@ export interface User {
   name: string;
   role: UserRole;
   store_id: string;
+  organization_id?: string;
   avatar_url?: string;
   created_at: string;
   store?: Store;
+  organization?: Organization;
 }
 
 export interface Product {

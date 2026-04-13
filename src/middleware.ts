@@ -7,7 +7,7 @@ if (!process.env.NEXTAUTH_SECRET) {
 }
 const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
 
-const publicPaths = ['/login', '/api/auth', '/track', '/api/repairs/track', '/portal', '/api/portal'];
+const publicPaths = ['/login', '/api/auth', '/track', '/api/repairs/track', '/portal', '/api/portal', '/api/health', '/verify'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -42,12 +42,19 @@ export async function middleware(request: NextRequest) {
     const sub = payload.sub as string;
     const role = payload.role as UserRole;
     const storeId = payload.store_id as string;
+    const orgId = (payload.org_id as string) || '';
 
     // Add user info to request headers for API routes
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', sub);
     requestHeaders.set('x-user-role', role);
     requestHeaders.set('x-user-store', storeId);
+    requestHeaders.set('x-org-id', orgId);
+
+    // Generate request ID if not present
+    if (!requestHeaders.get('x-request-id')) {
+      requestHeaders.set('x-request-id', crypto.randomUUID());
+    }
 
     return NextResponse.next({ request: { headers: requestHeaders } });
   } catch {

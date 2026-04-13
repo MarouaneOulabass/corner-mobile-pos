@@ -31,15 +31,21 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export async function createToken(user: User): Promise<string> {
-  return new SignJWT({
+export async function createToken(user: User, jti?: string): Promise<string> {
+  const claims: Record<string, unknown> = {
     sub: user.id,
     aud: 'authenticated', // required for Supabase RLS to recognize authenticated role
     email: user.email,
     name: user.name,
     role: user.role,
     store_id: user.store_id,
-  })
+  };
+
+  if (jti) {
+    claims.jti = jti;
+  }
+
+  return new SignJWT(claims)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRY)

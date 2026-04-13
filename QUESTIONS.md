@@ -1,21 +1,31 @@
-# Questions & Décisions prises
+# QUESTIONS.md — Corner Mobile ERP
 
-## Décisions techniques
+## Open Questions (need user input)
 
-1. **Auth**: JWT custom au lieu de Supabase Auth, car le spec demande des rôles custom (superadmin/manager/seller) avec contrôle fin par magasin. Supabase Auth ne gère pas nativement ce modèle multi-tenant.
+1. **ICE / IF / RC / CNSS / patente** réels de Corner Mobile — nécessaires pour facturation conforme DGI. Actuellement placeholder.
+2. **Capital social** Corner Mobile + **RIB** — pour mentions légales factures.
+3. **Compte Sentry** — DSN à fournir pour activer error tracking. Code prêt mais DSN placeholder.
+4. **Compte Upstash Redis** — URL + token. Rate limiting fonctionne en mémoire pour l'instant, Redis recommandé pour multi-instance.
+5. **Taux de commission par défaut** — % sur marge ? Paliers ? Actuellement configurable par store via commission_rules.
+6. **Séquence numérotation factures** — `INV-YYYY-NNNNNN` par défaut. Confirmer le format souhaité.
+7. **Taux TVA par défaut pour ventes** — 20% standard appliqué. Corner Mobile est-il assujetti à la TVA ?
+8. **ERP_MASTER_SPEC.md** — fichier référencé dans le brief mais absent du repo. Travail basé sur le brief inline.
 
-2. **Passwords**: SHA-256 via Web Crypto API (compatible Edge Runtime du middleware Next.js). Pour la production, migrer vers bcrypt côté serveur serait préférable.
+## Resolved
 
-3. **IMEI Scanner**: Implémenté en mode recherche texte pour v1. Le scan caméra avec @zxing/library peut être ajouté comme amélioration.
+- ~~Fallback JWT secret~~ → Supprimé, NEXTAUTH_SECRET obligatoire (commit f01e8f0)
+- ~~RLS partielle~~ → Migration 006 appliquée, migration 007 en cours pour couverture complète
+- ~~Passwords SHA-256~~ → Migré vers bcrypt (12 rounds) avec migration auto
+- ~~IMEI Scanner~~ → @zxing/browser intégré avec scan caméra
+- ~~Offline POS~~ → localStorage queue avec sync auto implémenté
+- ~~Retours produits~~ → Module returns complet avec flux retour/échange
+- ~~WhatsApp~~ → wa.me fallback implémenté, API Business en attente approbation Meta
 
-4. **Impression étiquettes**: Utilisation de `window.print()` avec CSS `@media print` et bwip-js pour les barcodes. Le SDK Brother QL natif nécessite un driver desktop séparé.
+## Historical Decisions
 
-5. **Offline POS**: Les ventes hors ligne sont stockées dans localStorage et synchronisées au retour de la connexion. Pas de Service Worker complet pour v1.
-
-6. **WhatsApp**: Utilisation de liens `wa.me` (fallback) au lieu de l'API WhatsApp Business qui nécessite une approbation Meta.
-
-## Ambiguïtés restantes
-
-- Le format exact des reçus thermiques n'est pas spécifié — implémenté en format écran partageable.
-- Le seuil de "low stock alert" n'est pas défini — à configurer par le manager.
-- La gestion des retours produits n'est pas détaillée — le statut `returned` existe mais le flux n'est pas implémenté.
+1. **Auth**: JWT custom (jose) — Supabase Auth ne gère pas nativement les rôles multi-tenant
+2. **Passwords**: bcrypt (12 rounds) côté serveur, migration auto depuis SHA-256
+3. **IMEI Scanner**: @zxing/browser avec caméra + saisie manuelle
+4. **Impression étiquettes**: window.print() + bwip-js pour barcodes
+5. **Offline POS**: localStorage queue + sync auto
+6. **WhatsApp**: wa.me links (fallback), API Business en attente

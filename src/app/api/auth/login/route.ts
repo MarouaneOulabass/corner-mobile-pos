@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateUser, createToken } from '@/lib/auth';
+import { createServiceClient } from '@/lib/supabase';
+import { createSession } from '@/lib/sessions';
+import { SignJWT } from 'jose';
 
 // Simple in-memory rate limiter (per IP, 5 attempts per minute)
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
@@ -15,6 +18,14 @@ function checkRateLimit(ip: string): boolean {
   }
   record.count++;
   return record.count <= MAX_ATTEMPTS;
+}
+
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('NEXTAUTH_SECRET must be set and at least 32 characters');
+  }
+  return new TextEncoder().encode(secret);
 }
 
 export async function POST(request: NextRequest) {
@@ -43,7 +54,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 });
     }
 
-    const token = await createToken(user);
+    // Check if user has 2FA enabled
+    const supabase = createServiceClient();
+    const { data: twoFa } = await supabase
+      .from('user_2fa')
+      .select('enabled')
+      .eq('user_id', user.id)
+      .single();
+
+    if (twoFa?.enabled) {
+      // Issue a short-lived temp token for the 2FA validation step
+      const tempToken = await new SignJWT({
+        sub: user.id,
+        purpose: '2fa_pending',
+      })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('5m') // 5 minutes to complete 2FA
+        .sign(getJwtSecret());
+
+      return NextResponse.json({
+        requires2fa: true,
+        tempToken,
+      });
+    }
+
+    // No 2FA — create session and issue full token
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+    const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const { jti } = await createSession(user.id, ip, userAgent, expiresAt);
+
+    const token = await createToken(user, jti);
 
     const response = NextResponse.json({
       user: {

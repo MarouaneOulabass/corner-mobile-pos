@@ -181,7 +181,7 @@ export default function PrintSettingsPage() {
     <div className="p-4 max-w-lg mx-auto pb-24 space-y-6">
       {/* Page title */}
       <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200">
+        <button onClick={() => router.back()} className="p-2 -ms-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>

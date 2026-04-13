@@ -145,7 +145,7 @@ export default function AttendancePage() {
               {Array.from(byEmployee.entries()).map(([uid, s]) => (
                 <div key={uid} className="flex items-center justify-between text-sm border-b last:border-0 pb-2">
                   <span className="font-medium">{s.name}</span>
-                  <div className="text-right text-xs">
+                  <div className="text-end text-xs">
                     <p className="font-bold">{formatHours(s.hours)}</p>
                     <p className="text-gray-400">{s.days.size} jours</p>
                   </div>
@@ -166,11 +166,11 @@ export default function AttendancePage() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Employe</th>
-                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
-                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Entree</th>
-                    <th className="text-left p-3 font-medium text-gray-600 dark:text-gray-300">Sortie</th>
-                    <th className="text-right p-3 font-medium text-gray-600 dark:text-gray-300">Heures</th>
+                    <th className="text-start p-3 font-medium text-gray-600 dark:text-gray-300">Employe</th>
+                    <th className="text-start p-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
+                    <th className="text-start p-3 font-medium text-gray-600 dark:text-gray-300">Entree</th>
+                    <th className="text-start p-3 font-medium text-gray-600 dark:text-gray-300">Sortie</th>
+                    <th className="text-end p-3 font-medium text-gray-600 dark:text-gray-300">Heures</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -186,7 +186,7 @@ export default function AttendancePage() {
                           ? new Date(r.clock_out).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
                           : <span className="text-green-500">En cours</span>}
                       </td>
-                      <td className="p-3 text-right font-medium">
+                      <td className="p-3 text-end font-medium">
                         {r.total_hours != null ? formatHours(r.total_hours) : '--'}
                         {r.break_minutes > 0 && (
                           <span className="text-xs text-gray-400 block">Pause: {r.break_minutes}min</span>

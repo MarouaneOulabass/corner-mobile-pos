@@ -197,7 +197,7 @@ export default function SalesPage() {
                 {/* Sale header — tap to expand */}
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : sale.id)}
-                  className="w-full p-3 text-left"
+                  className="w-full p-3 text-start"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -214,7 +214,7 @@ export default function SalesPage() {
                         <p className="text-xs text-gray-400">Vendeur: {sale.seller.name}</p>
                       )}
                     </div>
-                    <div className="text-right flex items-center gap-2">
+                    <div className="text-end flex items-center gap-2">
                       <span className="text-sm font-bold text-gray-900 dark:text-white">{formatPrice(sale.total)}</span>
                       <svg
                         className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}

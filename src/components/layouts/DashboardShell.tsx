@@ -5,6 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from '@/components/layouts/Header';
 import BottomNav from '@/components/layouts/BottomNav';
+import GlobalSearch from '@/components/features/GlobalSearch';
+import AIAssistant from '@/components/features/AIAssistant';
 
 const publicPaths = ['/login', '/portal'];
 
@@ -71,6 +73,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         {children}
       </main>
       <BottomNav />
+      <GlobalSearch />
+      <AIAssistant />
     </div>
   );
 }

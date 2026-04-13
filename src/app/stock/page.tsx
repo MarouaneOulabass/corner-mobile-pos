@@ -56,7 +56,7 @@ export default function StockPage() {
       {list.error && (
         <div className="mx-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-3">
           {list.error}{' '}
-          <button onClick={() => { list.clearError(); refreshList(); }} className="ml-2 underline">Ressayer</button>
+          <button onClick={() => { list.clearError(); refreshList(); }} className="ms-2 underline">Ressayer</button>
         </div>
       )}
 
@@ -69,7 +69,7 @@ export default function StockPage() {
       {/* Search bar */}
       <div className="flex items-center gap-2 mb-3">
         <div className="relative flex-1">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -77,7 +77,7 @@ export default function StockPage() {
             placeholder="IMEI, modele, marque..."
             value={list.filters.search}
             onChange={(e) => list.setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
+            className="w-full ps-9 pe-3 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2AA8DC]/30 focus:border-[#2AA8DC]"
           />
         </div>
 
@@ -101,7 +101,7 @@ export default function StockPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
           {list.activeFilterCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+            <span className="absolute -top-1 -end-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
               {list.activeFilterCount}
             </span>
           )}
@@ -205,7 +205,7 @@ export default function StockPage() {
       {/* FAB */}
       <button
         onClick={() => router.push('/stock/add')}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-[#2AA8DC] text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-30"
+        className="fixed bottom-24 end-4 w-14 h-14 bg-[#2AA8DC] text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-30"
       >
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

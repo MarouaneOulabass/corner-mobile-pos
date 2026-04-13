@@ -65,10 +65,10 @@ export default function Header() {
                 {showStoreMenu && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowStoreMenu(false)} />
-                    <div className="absolute left-0 top-6 w-52 glass rounded-xl shadow-elevation-3 py-1 z-50 animate-scaleIn origin-top-left">
+                    <div className="absolute start-0 top-6 w-52 glass rounded-xl shadow-elevation-3 py-1 z-50 animate-scaleIn ltr:origin-top-left rtl:origin-top-right">
                       <button
                         onClick={() => { setSelectedStoreId(null); setShowStoreMenu(false); }}
-                        className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
+                        className={`w-full text-start px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
                           !selectedStoreId ? 'text-corner-blue font-medium bg-corner-blue/5' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)]'
                         }`}
                       >
@@ -84,7 +84,7 @@ export default function Header() {
                         <button
                           key={store.id}
                           onClick={() => { setSelectedStoreId(store.id); setShowStoreMenu(false); }}
-                          className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
+                          className={`w-full text-start px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
                             selectedStoreId === store.id ? 'text-corner-blue font-medium bg-corner-blue/5' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)]'
                           }`}
                         >
@@ -120,12 +120,12 @@ export default function Header() {
             {showLangMenu && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowLangMenu(false)} />
-                <div className="absolute right-0 top-11 w-40 glass rounded-xl shadow-elevation-3 py-1 z-50 animate-scaleIn origin-top-right">
+                <div className="absolute end-0 top-11 w-40 glass rounded-xl shadow-elevation-3 py-1 z-50 animate-scaleIn ltr:origin-top-right rtl:origin-top-left">
                   {(['fr', 'ar', 'en'] as const).map((loc) => (
                     <button
                       key={loc}
                       onClick={() => { setLocale(loc); setShowLangMenu(false); }}
-                      className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
+                      className={`w-full text-start px-3 py-2 text-sm flex items-center gap-2 transition-colors ${
                         locale === loc
                           ? 'text-corner-blue font-medium bg-corner-blue/5'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)]'

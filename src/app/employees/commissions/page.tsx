@@ -262,7 +262,7 @@ export default function CommissionsPage() {
               {Array.from(employeeSummary.entries()).map(([uid, s]) => (
                 <div key={uid} className="flex items-center justify-between text-sm border-b last:border-0 pb-2">
                   <span className="font-medium">{s.name}</span>
-                  <div className="text-right text-xs">
+                  <div className="text-end text-xs">
                     <p>Total: <span className="font-bold">{formatPrice(s.total)}</span></p>
                     <p className="text-gray-400">
                       P: {formatPrice(s.pending)} | A: {formatPrice(s.approved)} | $: {formatPrice(s.paid)}

@@ -51,7 +51,7 @@ export default function NotificationBell() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+          <span className="absolute -top-0.5 -end-0.5 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -60,12 +60,12 @@ export default function NotificationBell() {
       {showPanel && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowPanel(false)} />
-          <div className="absolute right-0 top-11 w-80 max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-100 z-50">
+          <div className="absolute end-0 top-11 w-80 max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-100 z-50">
             <div className="px-4 py-3 border-b border-gray-100">
               <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
             </div>
             {error ? (
-              <div className="px-4 py-4 text-center text-sm text-red-600">{error} <button onClick={() => { setError(null); fetchNotifications(); }} className="ml-2 underline">Réessayer</button></div>
+              <div className="px-4 py-4 text-center text-sm text-red-600">{error} <button onClick={() => { setError(null); fetchNotifications(); }} className="ms-2 underline">Réessayer</button></div>
             ) : notifications.length === 0 ? (
               <p className="px-4 py-8 text-center text-sm text-gray-400">Aucune notification</p>
             ) : (

@@ -73,7 +73,7 @@ export default function LoginPage() {
 
           {/* Email input */}
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-corner-blue transition-colors">
+            <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-corner-blue transition-colors">
               <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -82,7 +82,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white placeholder-slate-500 focus:outline-none focus:border-corner-blue/60 focus:ring-2 focus:ring-corner-blue/20 focus:bg-white/[0.08] transition-all text-[15px]"
+              className="w-full ps-12 pe-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white placeholder-slate-500 focus:outline-none focus:border-corner-blue/60 focus:ring-2 focus:ring-corner-blue/20 focus:bg-white/[0.08] transition-all text-[15px]"
               placeholder="email@cornermobile.ma"
               required
               autoComplete="email"
@@ -91,7 +91,7 @@ export default function LoginPage() {
 
           {/* Password input */}
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-corner-blue transition-colors">
+            <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-corner-blue transition-colors">
               <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
@@ -100,7 +100,7 @@ export default function LoginPage() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white placeholder-slate-500 focus:outline-none focus:border-corner-blue/60 focus:ring-2 focus:ring-corner-blue/20 focus:bg-white/[0.08] transition-all text-[15px]"
+              className="w-full ps-12 pe-12 py-3.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white placeholder-slate-500 focus:outline-none focus:border-corner-blue/60 focus:ring-2 focus:ring-corner-blue/20 focus:bg-white/[0.08] transition-all text-[15px]"
               placeholder="Mot de passe"
               required
               autoComplete="current-password"
@@ -108,7 +108,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+              className="absolute end-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
             >
               {showPassword ? (
                 <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

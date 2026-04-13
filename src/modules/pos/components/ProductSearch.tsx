@@ -87,7 +87,7 @@ export default function ProductSearch({
         <div className="flex gap-2">
           <div className="relative flex-1">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+              className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -100,10 +100,10 @@ export default function ProductSearch({
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
               placeholder="Rechercher par mod&#232;le, marque ou IMEI..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl ps-10 pe-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2AA8DC] focus:border-transparent"
             />
             {searching && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <div className="absolute end-3 top-1/2 -translate-y-1/2">
                 <div className="w-4 h-4 border-2 border-[#2AA8DC] border-t-transparent rounded-full animate-spin" />
               </div>
             )}
@@ -118,7 +118,7 @@ export default function ProductSearch({
               <button
                 key={product.id}
                 onClick={() => handleAddToCart(product)}
-                className="w-full text-left p-3 hover:bg-slate-700 border-b border-slate-700 last:border-0 transition-colors"
+                className="w-full text-start p-3 hover:bg-slate-700 border-b border-slate-700 last:border-0 transition-colors"
               >
                 <div className="flex justify-between items-start">
                   <div>

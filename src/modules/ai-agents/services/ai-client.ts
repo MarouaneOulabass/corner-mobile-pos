@@ -131,6 +131,43 @@ Suggère un diagnostic et les pièces probablement nécessaires. Réponds en JSO
   }
 }
 
+export async function chatWithAssistant(
+  prompt: string,
+  context: { page?: string },
+  history: { role: string; content: string }[],
+  userId: string
+): Promise<AiResult<string>> {
+  try {
+    const system = `Tu es l'assistant IA de Corner Mobile, un reseau de magasins de smartphones a Rabat, Maroc.
+Tu aides les utilisateurs avec des questions sur le stock, les ventes, les reparations, les clients, et la gestion du magasin.
+Reponds toujours en francais, de maniere concise et utile.
+L'utilisateur est actuellement sur la page: ${context.page || 'inconnue'}.
+Si on te pose une question hors de ton domaine (gestion de magasin de smartphones), reponds poliment que tu ne peux aider que sur les sujets lies au magasin.`;
+
+    const messages: { role: 'user' | 'assistant'; content: string }[] = [];
+    for (const msg of history) {
+      if (msg.role === 'user' || msg.role === 'assistant') {
+        messages.push({ role: msg.role as 'user' | 'assistant', content: msg.content });
+      }
+    }
+    messages.push({ role: 'user', content: prompt });
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system,
+      messages,
+    });
+
+    const textBlock = response.content.find(b => b.type === 'text');
+    const result = textBlock ? textBlock.text : '';
+    await logAiCall('assistant', prompt, result, userId);
+    return { data: result, error: null };
+  } catch {
+    return { data: null, error: 'Analyse indisponible' };
+  }
+}
+
 export async function normalizeCSVColumns(
   headers: string[],
   sampleRows: string[][],

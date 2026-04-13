@@ -4,12 +4,13 @@ import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { I18nProvider } from '@/contexts/I18nContext';
 import DashboardShell from '@/components/layouts/DashboardShell';
+import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 
 const inter = Inter({ subsets: ['latin', 'latin-ext'] });
 
 export const metadata: Metadata = {
-  title: 'Corner Mobile',
-  description: 'POS & Business Management — Corner Mobile',
+  title: 'Corner Mobile ERP',
+  description: 'ERP retail mobile-first pour télécom — POS, stock, réparations, comptabilité',
   manifest: '/manifest.json',
   icons: {
     apple: '/icons/icon.svg',
@@ -38,6 +39,7 @@ export default function RootLayout({
             </DashboardShell>
           </I18nProvider>
         </AuthProvider>
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );

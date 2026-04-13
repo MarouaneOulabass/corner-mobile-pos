@@ -228,7 +228,7 @@ export default function NewRepairPage() {
                         setCustomerSearch('');
                         setCustomers([]);
                       }}
-                      className="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-b-0"
+                      className="w-full text-start px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-b-0"
                     >
                       <p className="text-sm font-medium text-gray-900 dark:text-white">{c.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{c.phone}</p>

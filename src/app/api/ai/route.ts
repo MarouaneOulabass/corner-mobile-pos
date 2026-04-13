@@ -5,6 +5,7 @@ import {
   generateCustomerSummary,
   parseNaturalLanguageQuery,
   suggestRepairDiagnosis,
+  chatWithAssistant,
 } from '@/lib/ai';
 
 export async function POST(req: NextRequest) {
@@ -55,6 +56,12 @@ export async function POST(req: NextRequest) {
       case 'repair_diagnosis': {
         const { deviceModel, problemDescription } = data;
         const result = await suggestRepairDiagnosis(deviceModel, problemDescription, userId);
+        return NextResponse.json(result);
+      }
+
+      case 'assistant': {
+        const { prompt, context, history } = data;
+        const result = await chatWithAssistant(prompt, context, history || [], userId);
         return NextResponse.json(result);
       }
 

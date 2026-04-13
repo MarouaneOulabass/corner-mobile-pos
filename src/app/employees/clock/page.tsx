@@ -159,7 +159,7 @@ export default function ClockPage() {
                   min="0"
                   value={breakMinutes}
                   onChange={(e) => setBreakMinutes(parseInt(e.target.value) || 0)}
-                  className="border rounded-lg p-2 w-24 text-center ml-2"
+                  className="border rounded-lg p-2 w-24 text-center ms-2"
                 />
               </div>
 

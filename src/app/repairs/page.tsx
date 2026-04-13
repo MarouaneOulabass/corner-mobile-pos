@@ -71,7 +71,7 @@ export default function RepairsPage() {
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold text-gray-900 dark:text-white">Réparations</h1>
 
-      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error} <button onClick={() => { setError(null); fetchRepairs(); }} className="ml-2 underline">Réessayer</button></div>}
+      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error} <button onClick={() => { setError(null); fetchRepairs(); }} className="ms-2 underline">Réessayer</button></div>}
 
       {/* Search */}
       <input
@@ -128,7 +128,7 @@ export default function RepairsPage() {
             <button
               key={repair.id}
               onClick={() => router.push(`/repairs/${repair.id}`)}
-              className={`w-full text-left bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border transition-colors ${
+              className={`w-full text-start bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border transition-colors ${
                 isOverdue(repair)
                   ? 'border-red-300 bg-red-50/50'
                   : 'border-gray-100 dark:border-slate-700'
@@ -175,7 +175,7 @@ export default function RepairsPage() {
       {/* FAB */}
       <button
         onClick={() => router.push('/repairs/new')}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-[#2AA8DC] text-white rounded-full shadow-lg flex items-center justify-center text-2xl font-light hover:bg-[#2590c0] active:scale-95 transition-all z-30"
+        className="fixed bottom-24 end-4 w-14 h-14 bg-[#2AA8DC] text-white rounded-full shadow-lg flex items-center justify-center text-2xl font-light hover:bg-[#2590c0] active:scale-95 transition-all z-30"
       >
         +
       </button>

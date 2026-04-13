@@ -349,17 +349,17 @@ export default function ReportsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-gray-400">
-                      <th className="text-left px-4 py-2 font-medium">Modèle</th>
-                      <th className="text-right px-4 py-2 font-medium">Qté</th>
-                      <th className="text-right px-4 py-2 font-medium">CA</th>
+                      <th className="text-start px-4 py-2 font-medium">Modèle</th>
+                      <th className="text-end px-4 py-2 font-medium">Qté</th>
+                      <th className="text-end px-4 py-2 font-medium">CA</th>
                     </tr>
                   </thead>
                   <tbody>
                     {bestSellers.map((item, idx) => (
                       <tr key={idx} className="border-t border-gray-50">
                         <td className="px-4 py-2.5 text-gray-900 dark:text-white">{item.model}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{item.count}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(item.revenue)}</td>
+                        <td className="px-4 py-2.5 text-end text-gray-700 dark:text-gray-200">{item.count}</td>
+                        <td className="px-4 py-2.5 text-end text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(item.revenue)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -404,21 +404,21 @@ export default function ReportsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-gray-400">
-                      <th className="text-left px-4 py-2 font-medium">Vendeur</th>
-                      <th className="text-right px-4 py-2 font-medium">Ventes</th>
-                      <th className="text-right px-4 py-2 font-medium">CA</th>
-                      <th className="text-right px-4 py-2 font-medium">Marge</th>
-                      <th className="text-right px-4 py-2 font-medium">Remise moy.</th>
+                      <th className="text-start px-4 py-2 font-medium">Vendeur</th>
+                      <th className="text-end px-4 py-2 font-medium">Ventes</th>
+                      <th className="text-end px-4 py-2 font-medium">CA</th>
+                      <th className="text-end px-4 py-2 font-medium">Marge</th>
+                      <th className="text-end px-4 py-2 font-medium">Remise moy.</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sellers.map((s, idx) => (
                       <tr key={idx} className="border-t border-gray-50">
                         <td className="px-4 py-2.5 text-gray-900 dark:text-white whitespace-nowrap">{s.name}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{s.salesCount}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.revenue)}</td>
-                        <td className="px-4 py-2.5 text-right text-[#5BBF3E] whitespace-nowrap">{formatPrice(s.margin)}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.avgDiscount)}</td>
+                        <td className="px-4 py-2.5 text-end text-gray-700 dark:text-gray-200">{s.salesCount}</td>
+                        <td className="px-4 py-2.5 text-end text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.revenue)}</td>
+                        <td className="px-4 py-2.5 text-end text-[#5BBF3E] whitespace-nowrap">{formatPrice(s.margin)}</td>
+                        <td className="px-4 py-2.5 text-end text-gray-700 dark:text-gray-200 whitespace-nowrap">{formatPrice(s.avgDiscount)}</td>
                       </tr>
                     ))}
                   </tbody>

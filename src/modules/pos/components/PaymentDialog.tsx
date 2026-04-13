@@ -205,7 +205,7 @@ export default function PaymentDialog({
                   <button
                     key={c.id}
                     onClick={() => onSelectCustomer(c)}
-                    className="w-full text-left p-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition-colors"
+                    className="w-full text-start p-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition-colors"
                   >
                     {c.name} &mdash; {c.phone}
                   </button>

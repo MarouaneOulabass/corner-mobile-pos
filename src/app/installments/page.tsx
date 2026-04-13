@@ -107,7 +107,7 @@ export default function InstallmentsPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
             {error}
-            <button onClick={() => setError(null)} className="ml-2 font-bold">&times;</button>
+            <button onClick={() => setError(null)} className="ms-2 font-bold">&times;</button>
           </div>
         )}
 

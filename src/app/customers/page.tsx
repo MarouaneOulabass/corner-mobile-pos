@@ -88,7 +88,7 @@ export default function CustomersPage() {
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">Clients</h1>
       </div>
 
-      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-4">{error} <button onClick={() => { setError(null); fetchCustomers(); }} className="ml-2 underline">Réessayer</button></div>}
+      {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm mb-4">{error} <button onClick={() => { setError(null); fetchCustomers(); }} className="ms-2 underline">Réessayer</button></div>}
 
       {/* Search */}
       <input
@@ -120,7 +120,7 @@ export default function CustomersPage() {
             <button
               key={c.id}
               onClick={() => openCustomer(c)}
-              className="w-full text-left p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC]/30 transition"
+              className="w-full text-start p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-[#2AA8DC]/30 transition"
             >
               <div className="flex items-center justify-between">
                 <div>

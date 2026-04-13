@@ -44,7 +44,7 @@ interface ActivityItem {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const [data, setData] = useState<DashboardData>({
     salesToday: 0,
     transactionCount: 0,
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       setTimeout(() => setIsRefreshing(false), 600);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, activeStoreId]);
 
   useEffect(() => {
     if (!user) return;
@@ -82,7 +82,7 @@ export default function DashboardPage() {
     const interval = setInterval(fetchAll, 30000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, fetchAll]);
+  }, [user, activeStoreId, fetchAll]);
 
   // Guided tour on first visit
   useEffect(() => {
@@ -102,7 +102,8 @@ export default function DashboardPage() {
     weekAgo.setDate(weekAgo.getDate() - 7);
     const startOfWeek = weekAgo.toISOString();
 
-    const storeId = user!.store_id;
+    // activeStoreId: null = all stores (superadmin only), string = filter to that store
+    const filterStore = activeStoreId;
 
     // Fetch today's sales
     let salesQuery = supabase
@@ -111,8 +112,8 @@ export default function DashboardPage() {
       .gte('created_at', startOfDay)
       .lte('created_at', endOfDay);
 
-    if (user!.role !== 'superadmin') {
-      salesQuery = salesQuery.eq('store_id', storeId);
+    if (filterStore) {
+      salesQuery = salesQuery.eq('store_id', filterStore);
     }
 
     const { data: sales } = await salesQuery;
@@ -160,8 +161,8 @@ export default function DashboardPage() {
       .select('id', { count: 'exact', head: true })
       .eq('status', 'in_stock');
 
-    if (user!.role !== 'superadmin') {
-      stockQuery = stockQuery.eq('store_id', storeId);
+    if (filterStore) {
+      stockQuery = stockQuery.eq('store_id', filterStore);
     }
 
     const { count: inStockCount } = await stockQuery;
@@ -173,8 +174,8 @@ export default function DashboardPage() {
       .eq('status', 'sold')
       .gte('updated_at', startOfWeek);
 
-    if (user!.role !== 'superadmin') {
-      soldQuery = soldQuery.eq('store_id', storeId);
+    if (filterStore) {
+      soldQuery = soldQuery.eq('store_id', filterStore);
     }
 
     const { count: soldThisWeek } = await soldQuery;
@@ -185,8 +186,8 @@ export default function DashboardPage() {
       .select('status')
       .not('status', 'in', '("delivered","cancelled")');
 
-    if (user!.role !== 'superadmin') {
-      repairsQuery = repairsQuery.eq('store_id', storeId);
+    if (filterStore) {
+      repairsQuery = repairsQuery.eq('store_id', filterStore);
     }
 
     const { data: repairs } = await repairsQuery;
@@ -211,7 +212,7 @@ export default function DashboardPage() {
   }
 
   async function fetchStockAlerts() {
-    const storeId = user!.store_id;
+    const filterStore = activeStoreId;
     const sixtyDaysAgo = new Date();
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
     const cutoff = sixtyDaysAgo.toISOString();
@@ -223,8 +224,8 @@ export default function DashboardPage() {
       .eq('status', 'in_stock')
       .lt('created_at', cutoff);
 
-    if (user!.role !== 'superadmin') {
-      slowQuery = slowQuery.eq('store_id', storeId);
+    if (filterStore) {
+      slowQuery = slowQuery.eq('store_id', filterStore);
     }
 
     const { count: slowMoverCount } = await slowQuery;
@@ -235,8 +236,8 @@ export default function DashboardPage() {
       .select('id, purchase_price, selling_price')
       .eq('status', 'in_stock');
 
-    if (user!.role !== 'superadmin') {
-      marginQuery = marginQuery.eq('store_id', storeId);
+    if (filterStore) {
+      marginQuery = marginQuery.eq('store_id', filterStore);
     }
 
     const { data: marginProducts } = await marginQuery;
@@ -248,8 +249,7 @@ export default function DashboardPage() {
   }
 
   async function fetchActivities() {
-    const storeId = user!.store_id;
-    const isSuperadmin = user!.role === 'superadmin';
+    const filterStore = activeStoreId;
 
     // Fetch latest 5 sales
     let salesQ = supabase
@@ -257,7 +257,7 @@ export default function DashboardPage() {
       .select('id, total, created_at, seller:users(name), items:sale_items(product:products(brand, model))')
       .order('created_at', { ascending: false })
       .limit(5);
-    if (!isSuperadmin) salesQ = salesQ.eq('store_id', storeId);
+    if (filterStore) salesQ = salesQ.eq('store_id', filterStore);
     const { data: recentSales } = await salesQ;
 
     // Fetch latest 5 repairs
@@ -266,7 +266,7 @@ export default function DashboardPage() {
       .select('id, device_brand, device_model, created_at')
       .order('created_at', { ascending: false })
       .limit(5);
-    if (!isSuperadmin) repairsQ = repairsQ.eq('store_id', storeId);
+    if (filterStore) repairsQ = repairsQ.eq('store_id', filterStore);
     const { data: recentRepairs } = await repairsQ;
 
     // Fetch latest 5 transfers
@@ -275,7 +275,7 @@ export default function DashboardPage() {
       .select('id, created_at, product:products(brand, model), to_store:stores!to_store_id(name)')
       .order('created_at', { ascending: false })
       .limit(5);
-    if (!isSuperadmin) transfersQ = transfersQ.or(`from_store_id.eq.${storeId},to_store_id.eq.${storeId}`);
+    if (filterStore) transfersQ = transfersQ.or(`from_store_id.eq.${filterStore},to_store_id.eq.${filterStore}`);
     const { data: recentTransfers } = await transfersQ;
 
     const items: ActivityItem[] = [];

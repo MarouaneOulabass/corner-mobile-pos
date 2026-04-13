@@ -21,14 +21,14 @@ function todayString() {
 }
 
 export default function SalesPage() {
-  const { user } = useAuth();
+  const { user, selectedStoreId } = useAuth();
   const [stores, setStores] = useState<{id: string, name: string}[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState(todayString());
   const [dateTo, setDateTo] = useState(todayString());
-  const [storeFilter, setStoreFilter] = useState('');
+  const [storeFilter, setStoreFilter] = useState(selectedStoreId || '');
 
   const fetchSales = useCallback(async () => {
     if (!user) return;
@@ -66,7 +66,7 @@ export default function SalesPage() {
   useEffect(() => {
     fetchSales();
     fetch('/api/stores').then(r => r.json()).then(data => {
-      if (Array.isArray(data)) setStores(data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      if (data.stores) setStores(data.stores.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
     }).catch(() => {});
   }, [fetchSales]);
 

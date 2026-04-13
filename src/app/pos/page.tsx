@@ -33,7 +33,7 @@ function clearOfflineQueue() {
 }
 
 export default function POSPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,6 +65,7 @@ export default function POSPage() {
 
   const [isOffline, setIsOffline] = useState(false);
   const [offlineCount, setOfflineCount] = useState(0);
+  const [syncResult, setSyncResult] = useState<{ synced: number; failed: number } | null>(null);
 
   // --- Gift card state ---
   const [giftCardCode, setGiftCardCode] = useState('');
@@ -87,6 +88,7 @@ export default function POSPage() {
   const syncOfflineQueue = useCallback(async () => {
     const queue = getOfflineQueue();
     if (queue.length === 0) return;
+    const total = queue.length;
     const failed: unknown[] = [];
     for (const sd of queue) {
       try {
@@ -106,6 +108,11 @@ export default function POSPage() {
       clearOfflineQueue();
     }
     setOfflineCount(failed.length);
+    const synced = total - failed.length;
+    if (synced > 0 || failed.length > 0) {
+      setSyncResult({ synced, failed: failed.length });
+      setTimeout(() => setSyncResult(null), 6000);
+    }
   }, []);
 
   useEffect(() => {
@@ -167,7 +174,7 @@ export default function POSPage() {
           .from('products')
           .select('*')
           .eq('status', 'in_stock')
-          .eq('store_id', user?.store_id || '')
+          .eq('store_id', activeStoreId || user?.store_id || '')
           .or(`imei.ilike.%${query}%,model.ilike.%${query}%,brand.ilike.%${query}%`)
           .limit(10);
 
@@ -181,7 +188,7 @@ export default function POSPage() {
         setSearching(false);
       }
     },
-    [user?.store_id]
+    [user?.store_id, activeStoreId]
   );
 
   useEffect(() => {
@@ -264,7 +271,7 @@ export default function POSPage() {
       purchase_price: 0,
       selling_price: price,
       status: 'in_stock',
-      store_id: user?.store_id || '',
+      store_id: activeStoreId || user?.store_id || '',
       created_by: user?.id || '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -347,23 +354,25 @@ export default function POSPage() {
   );
 
   // --- Receipt data for thermal printing (memoized) ---
+  const storeId = activeStoreId || user?.store_id || '';
+
   const receiptESCPOS = useMemo(() => {
     if (!completedSale) return null;
     try {
-      const store = { id: user?.store_id || '', name: 'Corner Mobile', location: '', created_at: '' };
+      const store = { id: storeId, name: 'Corner Mobile', location: '', created_at: '' };
       return buildReceiptESCPOS(completedSale, store);
     } catch {
       return null;
     }
-  }, [completedSale, user?.store_id]);
+  }, [completedSale, storeId]);
 
   const receiptHTML = useMemo(() => {
     if (!completedSale) return '';
     try {
-      const store = { id: user?.store_id || '', name: 'Corner Mobile', location: '', created_at: '' };
+      const store = { id: storeId, name: 'Corner Mobile', location: '', created_at: '' };
       const template = {
         id: 'default',
-        store_id: user?.store_id || '',
+        store_id: storeId,
         header_text: 'Corner Mobile',
         footer_text: '',
         show_logo: false,
@@ -378,7 +387,7 @@ export default function POSPage() {
     } catch {
       return '';
     }
-  }, [completedSale, user?.store_id]);
+  }, [completedSale, storeId]);
 
   // --- Submit sale ---
   const handleSubmit = async () => {
@@ -623,8 +632,17 @@ export default function POSPage() {
   // ===================== MAIN POS SCREEN =====================
   return (
     <div className="min-h-screen bg-[#0F172A] text-white">
+      {/* Sync result toast */}
+      {syncResult && (
+        <div className={`text-white text-center text-sm py-1.5 font-medium ${syncResult.failed > 0 ? 'bg-orange-500' : 'bg-green-600'}`}>
+          {syncResult.failed === 0
+            ? `✓ ${syncResult.synced} vente(s) synchronisée(s) avec succès`
+            : `⚠ ${syncResult.synced} synchronisée(s) — ${syncResult.failed} échec(s), conservée(s) en file`}
+        </div>
+      )}
+
       {/* Offline badge */}
-      {(isOffline || offlineCount > 0) && (
+      {!syncResult && (isOffline || offlineCount > 0) && (
         <div className="bg-orange-500 text-white text-center text-sm py-1.5 font-medium">
           {isOffline
             ? 'Hors ligne \u2014 Les ventes seront synchronis\u00e9es automatiquement'

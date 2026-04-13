@@ -17,7 +17,7 @@ const commonProblems = [
 ];
 
 export default function NewRepairPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const router = useRouter();
 
   // Customer state
@@ -57,7 +57,7 @@ export default function NewRepairPage() {
     supabase
       .from('users')
       .select('id, name, role')
-      .eq('store_id', user.store_id)
+      .eq('store_id', activeStoreId || user.store_id)
       .then(({ data }) => {
         if (data) setTechnicians(data as User[]);
       });
@@ -130,7 +130,7 @@ export default function NewRepairPage() {
 
       const body = {
         customer_id: customerId,
-        store_id: user?.store_id,
+        store_id: activeStoreId || user?.store_id,
         device_brand: deviceBrand,
         device_model: deviceModel,
         imei: imei || undefined,

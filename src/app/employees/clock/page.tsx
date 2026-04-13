@@ -6,7 +6,7 @@ import { ClockRecord, User } from '@/types';
 import { formatDateTime, formatHours } from '@/lib/utils';
 
 export default function ClockPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const [clockedIn, setClockedIn] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<ClockRecord | null>(null);
   const [todayRecords, setTodayRecords] = useState<ClockRecord[]>([]);
@@ -51,7 +51,7 @@ export default function ClockPage() {
       const { data: users } = await supabase
         .from('users')
         .select('id, name, role, store_id')
-        .eq('store_id', user.store_id);
+        .eq('store_id', activeStoreId || user.store_id);
 
       if (!users) return;
 
@@ -59,7 +59,7 @@ export default function ClockPage() {
       const { data: records } = await supabase
         .from('clock_records')
         .select('*')
-        .eq('store_id', user.store_id)
+        .eq('store_id', activeStoreId || user.store_id)
         .is('clock_out', null);
 
       const recordMap = new Map((records || []).map((r) => [r.user_id, r]));

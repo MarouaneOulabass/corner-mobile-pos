@@ -40,14 +40,14 @@ interface TrendPoint {
 }
 
 export default function ReportsPage() {
-  const { user } = useAuth();
+  const { user, selectedStoreId } = useAuth();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() - 30);
     return d.toISOString().slice(0, 10);
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [storeFilter, setStoreFilter] = useState<string>('');
+  const [storeFilter, setStoreFilter] = useState<string>(selectedStoreId || '');
   const [stores, setStores] = useState<{ id: string; name: string }[]>([]);
   const [report, setReport] = useState<SalesReport>({ revenue: 0, margin: 0, avgBasket: 0, transactionCount: 0 });
   const [bestSellers, setBestSellers] = useState<BestSeller[]>([]);

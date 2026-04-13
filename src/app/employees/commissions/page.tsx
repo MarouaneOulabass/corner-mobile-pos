@@ -20,7 +20,7 @@ function monthRange() {
 }
 
 export default function CommissionsPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [employees, setEmployees] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +62,9 @@ export default function CommissionsPage() {
     // Load employees for filter
     import('@/lib/supabase').then(({ supabase }) => {
       const query = supabase.from('users').select('id, name, role, store_id');
-      if (user.role !== 'superadmin') {
+      if (activeStoreId) {
+        query.eq('store_id', activeStoreId);
+      } else if (user.role !== 'superadmin') {
         query.eq('store_id', user.store_id);
       }
       query.then(({ data }) => setEmployees((data as User[]) || []));

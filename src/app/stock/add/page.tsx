@@ -11,7 +11,7 @@ const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Oppo', 'Realme', 'Tecno
 const STORAGES = ['16 Go', '32 Go', '64 Go', '128 Go', '256 Go', '512 Go', '1 To'];
 
 export default function AddProductPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -172,7 +172,7 @@ export default function AddProductPage() {
         purchase_price: Number(form.purchase_price),
         selling_price: Number(form.selling_price),
         warranty_months: form.warranty_months ? Number(form.warranty_months) : undefined,
-        store_id: user.store_id,
+        store_id: activeStoreId || user.store_id,
         imei: form.imei || undefined,
         storage: form.storage || undefined,
         color: form.color || undefined,
@@ -185,12 +185,7 @@ export default function AddProductPage() {
 
       const res = await fetch('/api/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id,
-          'x-user-store': user.store_id,
-          'x-user-role': user.role,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 

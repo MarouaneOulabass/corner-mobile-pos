@@ -156,7 +156,7 @@ const menuSections = [
 const roleLabels: Record<string, string> = { superadmin: 'Super Admin', manager: 'Gérant', seller: 'Vendeur' };
 
 export default function MenuPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, selectedStoreId, setSelectedStoreId } = useAuth();
 
   if (!user) return null;
 
@@ -172,7 +172,7 @@ export default function MenuPage() {
           </div>
           <div>
             <p className="font-semibold">{user.name}</p>
-            <p className="text-sm text-white/80">{roleLabels[user.role] || user.role} — {user.store?.name}</p>
+            <p className="text-sm text-white/80">{roleLabels[user.role] || user.role}{user.role !== 'superadmin' && user.store?.name ? ` — ${user.store.name}` : ''}</p>
           </div>
         </div>
       </div>

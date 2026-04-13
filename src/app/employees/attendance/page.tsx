@@ -17,7 +17,7 @@ function weekRange() {
 }
 
 export default function AttendancePage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const [records, setRecords] = useState<ClockRecord[]>([]);
   const [employees, setEmployees] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,9 @@ export default function AttendancePage() {
     if (!user) return;
     import('@/lib/supabase').then(({ supabase }) => {
       const query = supabase.from('users').select('id, name, role, store_id');
-      if (user.role !== 'superadmin') {
+      if (activeStoreId) {
+        query.eq('store_id', activeStoreId);
+      } else if (user.role !== 'superadmin') {
         query.eq('store_id', user.store_id);
       }
       query.then(({ data }) => setEmployees((data as User[]) || []));

@@ -56,7 +56,7 @@ function autoDetectMapping(headers: string[]): TargetField[] {
 }
 
 export default function StockPage() {
-  const { user } = useAuth();
+  const { user, activeStoreId } = useAuth();
   const router = useRouter();
 
   const [stores, setStores] = useState<{id: string, name: string}[]>([]);
@@ -118,14 +118,9 @@ export default function StockPage() {
         if (brandFilter) params.set('brand', brandFilter);
         if (conditionFilter) params.set('condition', conditionFilter);
         if (typeFilter) params.set('product_type', typeFilter);
-        if (user.role !== 'superadmin') params.set('store_id', user.store_id);
+        if (activeStoreId) params.set('store_id', activeStoreId);
 
-        const res = await fetch(`/api/products?${params.toString()}`, {
-          headers: {
-            'x-user-store': user.store_id,
-            'x-user-role': user.role,
-          },
-        });
+        const res = await fetch(`/api/products?${params.toString()}`);
         const data = await res.json();
 
         if (append) {
@@ -141,7 +136,7 @@ export default function StockPage() {
         setLoadingMore(false);
       }
     },
-    [user, search, statusFilter, brandFilter, conditionFilter, typeFilter]
+    [user, activeStoreId, search, statusFilter, brandFilter, conditionFilter, typeFilter]
   );
 
   // Reset and fetch on filter change
@@ -150,7 +145,7 @@ export default function StockPage() {
     fetchProducts(1);
     // Fetch stores dynamically
     fetch('/api/stores').then(r => r.json()).then(data => {
-      if (Array.isArray(data)) setStores(data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      if (data.stores) setStores(data.stores.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
     }).catch(() => {});
   }, [fetchProducts]);
 
@@ -260,7 +255,7 @@ export default function StockPage() {
         selling_price: Number(product.selling_price) || 0,
         supplier: product.supplier || undefined,
         product_type: 'phone',
-        store_id: user.store_id,
+        store_id: activeStoreId || user.store_id,
         created_by: user.id,
       });
     }
@@ -270,9 +265,6 @@ export default function StockPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-store': user.store_id,
-          'x-user-role': user.role,
-          'x-user-id': user.id,
         },
         body: JSON.stringify({ products }),
       });
@@ -316,11 +308,7 @@ export default function StockPage() {
     try {
       const res = await fetch('/api/transfers', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-store': user.store_id,
-          'x-user-role': user.role,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_id: selectedProduct.id,
           to_store_id: dest.id,

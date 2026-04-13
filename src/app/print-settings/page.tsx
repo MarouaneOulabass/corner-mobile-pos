@@ -83,13 +83,7 @@ export default function PrintSettingsPage() {
   useEffect(() => {
     async function loadTemplate() {
       try {
-        const res = await fetch('/api/receipt-templates', {
-          headers: {
-            'x-user-id': user?.id || '',
-            'x-user-role': user?.role || '',
-            'x-user-store': user?.store_id || '',
-          },
-        });
+        const res = await fetch('/api/receipt-templates');
         if (res.ok) {
           const data = await res.json();
           if (data.template) {
@@ -145,12 +139,7 @@ export default function PrintSettingsPage() {
     try {
       const res = await fetch('/api/receipt-templates', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id,
-          'x-user-role': user.role,
-          'x-user-store': user.store_id,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(template),
       });
 

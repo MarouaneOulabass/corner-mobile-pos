@@ -34,6 +34,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 export async function createToken(user: User): Promise<string> {
   return new SignJWT({
     sub: user.id,
+    aud: 'authenticated', // required for Supabase RLS to recognize authenticated role
     email: user.email,
     name: user.name,
     role: user.role,

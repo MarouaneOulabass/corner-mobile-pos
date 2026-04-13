@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { UserRole } from '@/types';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || 'fallback-secret');
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is required');
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
 
 const publicPaths = ['/login', '/api/auth', '/track', '/api/repairs/track', '/portal', '/api/portal'];
 

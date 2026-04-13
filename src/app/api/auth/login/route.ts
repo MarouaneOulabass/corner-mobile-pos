@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
         store_id: user.store_id,
         store: user.store,
       },
+      // Returned so the client can set it on the Supabase client for RLS
+      token,
     });
 
     response.cookies.set('token', token, {

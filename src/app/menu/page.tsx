@@ -98,6 +98,67 @@ const menuSections = [
     ],
   },
   {
+    title: 'Comptabilite',
+    items: [
+      {
+        title: 'Comptabilite',
+        description: 'Tableau de bord comptable',
+        href: '/accounting',
+        icon: '📒',
+        minRole: 'manager' as const,
+      },
+      {
+        title: 'Journaux',
+        description: 'Journaux comptables',
+        href: '/accounting/journals',
+        icon: '📓',
+        minRole: 'manager' as const,
+      },
+      {
+        title: 'Grand Livre',
+        description: 'Comptes et mouvements',
+        href: '/accounting/ledger',
+        icon: '📖',
+        minRole: 'manager' as const,
+      },
+      {
+        title: 'Balance',
+        description: 'Balance comptable',
+        href: '/accounting/balance',
+        icon: '⚖️',
+        minRole: 'manager' as const,
+      },
+      {
+        title: 'Factures',
+        description: 'Gestion des factures',
+        href: '/accounting/invoices',
+        icon: '🧾',
+        minRole: 'manager' as const,
+      },
+      {
+        title: 'Declarations TVA',
+        description: 'Declarations et suivi TVA',
+        href: '/accounting/declarations',
+        icon: '🏛️',
+        minRole: 'superadmin' as const,
+      },
+      {
+        title: 'Clotures',
+        description: 'Clotures de periodes',
+        href: '/accounting/closings',
+        icon: '🔒',
+        minRole: 'superadmin' as const,
+      },
+      {
+        title: 'Exports',
+        description: 'Exporter vers Sage, Ciel, CSV',
+        href: '/accounting/exports',
+        icon: '📤',
+        minRole: 'manager' as const,
+      },
+    ],
+  },
+  {
     title: 'Gestion',
     items: [
       {
